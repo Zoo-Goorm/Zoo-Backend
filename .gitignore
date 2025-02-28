@@ -1,0 +1,12 @@
+.idea
+.gradle
+
+# 빌드 파일 제외
+build/
+out/
+
+# 로그 & 환경 파일
+*.log
+.env
+
+
