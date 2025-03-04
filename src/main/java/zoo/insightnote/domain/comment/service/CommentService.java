@@ -1,5 +1,7 @@
 package zoo.insightnote.domain.comment.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.comment.dto.CommentRequest;
@@ -22,7 +24,6 @@ public class CommentService {
     private final InsightRepository insightRepository;
 
     public CommentResponse createComment(Long insightId, Long userId, CommentRequest.Create request) {
-
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(null, "인사이트 노트를 찾을 수 없음"));
 
@@ -32,6 +33,17 @@ public class CommentService {
         Comment comment = CommentMapper.toEntity(insight, user, request);
         comment = commentRepository.save(comment);
         return CommentMapper.toResponse(comment);
+    }
+
+    public List<CommentResponse> findCommentsByInsightId(Long insightId) {
+        List<Comment> comments = commentRepository.findAllByInsightId(insightId);
+
+        List<CommentResponse> responses = new ArrayList<>();
+        for (Comment comment : comments) {
+            responses.add(CommentMapper.toResponse(comment));
+        }
+
+        return responses;
     }
 
 }

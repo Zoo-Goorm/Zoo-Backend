@@ -1,8 +1,12 @@
 package zoo.insightnote.domain.comment.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,8 +81,8 @@ class CommentServiceTest {
         CommentResponse.Default response = (CommentResponse.Default) commentService.createComment(insight.getId(), author.getId(), request);
 
         // then
-        Assertions.assertThat(response.id()).isEqualTo(1L);
-        Assertions.assertThat(response.content()).isEqualTo("작성하신 노트 잘보았습니다!");
+        assertThat(response.commentId()).isEqualTo(1L);
+        assertThat(response.content()).isEqualTo("작성하신 노트 잘보았습니다!");
     }
 
     @Test
@@ -110,6 +114,24 @@ class CommentServiceTest {
         Assertions.assertThatThrownBy(() -> commentService.createComment(insight.getId(), author.getId(), request))
                 .isInstanceOf(CustomException.class)
                 .hasMessage("사용자를 찾을 수 없음");
+    }
+
+    @Test
+    @DisplayName("테스트 성공: 인사이트 노트의 모든 댓글을 조회한다.")
+    void 인사이트_노트_모든_댓글_조회() {
+        // given
+        List<Comment> comments = Arrays.asList(
+                new Comment(1L, author, insight, "댓글1"),
+                new Comment(2L, author, insight, "댓글2")
+        );
+
+        when(commentRepository.findAllByInsightId(eq(1L))).thenReturn(comments);
+
+        // when
+        List<CommentResponse> result = commentService.findCommentsByInsightId(1L);
+
+        // then
+        assertThat(result).hasSize(2);
     }
 
 

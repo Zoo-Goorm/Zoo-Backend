@@ -33,7 +33,7 @@ public class Comment extends BaseTimeEntity {
     private User user;
 
     //TODO : insight Entity 개발 완료시 nullable = false로 수정
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "insight_id", nullable = true)
     private Insight insight;
 
