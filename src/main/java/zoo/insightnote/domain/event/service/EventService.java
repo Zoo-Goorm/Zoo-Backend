@@ -98,6 +98,16 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
+        List<String> imageUrls = imageRepository.findByEntityIdAndEntityType(event.getId(), EntityType.EVENT)
+                .stream()
+                .map(Image::getFileUrl)
+                .collect(Collectors.toList());
+
+        if (!imageUrls.isEmpty()) {
+            s3Service.deleteImages(imageUrls);
+        }
+        imageRepository.deleteByEntityIdAndEntityType(event.getId(), EntityType.EVENT);
+
         eventRepository.delete(event);
     }
 }

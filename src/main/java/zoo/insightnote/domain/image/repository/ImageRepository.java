@@ -9,6 +9,8 @@ import java.util.List;
 public interface ImageRepository extends JpaRepository<Image, Long> {
     void deleteByFileUrlIn(List<String> fileUrls);
 
+    void deleteByEntityIdAndEntityType(Long entityId, EntityType entityType);
+
     List<Image> findByEntityIdAndEntityType(Long entityId, EntityType entityType);
 
 }
