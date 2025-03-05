@@ -73,22 +73,19 @@ public class KakaoPayService {
     // 결제 승인 요청
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        // ✅ Redis에서 tid 조회 (orderId를 기반으로 검색)
+
+        // ✅ Redis에서 tid 조회
         String tid = getTidKey(requestDto.getOrderId());
         if (tid == null) {
+            log.error("❌ Redis에서 tid 조회 실패! (orderId={})", requestDto.getOrderId());
             throw new RuntimeException("tid 정보를 찾을 수 없습니다. (orderId=" + requestDto.getOrderId() + ")");
         }
 
-        ResponseEntity<KakaoPayApproveResponseDto> response = sendApproveRequest(requestDto, tid);
-        log.info("✅ 카카오페이 결제 승인 성공: {}", response.getBody());
-
-        return response; // ✅ 컨트롤러에서도 응답을 반환하도록 수정
-    }
-
-    private ResponseEntity<KakaoPayApproveResponseDto> sendApproveRequest(PaymentApproveRequestDto requestDto, String tid) {
+        // ✅ 승인 요청용 HttpEntity 생성
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
 
         try {
+            // ✅ 카카오페이 승인 요청 실행
             ResponseEntity<KakaoPayApproveResponseDto> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/approve",
                     HttpMethod.POST,
@@ -96,10 +93,11 @@ public class KakaoPayService {
                     KakaoPayApproveResponseDto.class
             );
 
-           return response;
+            log.info("✅ 카카오페이 결제 승인 성공");
+            return response;
         } catch (Exception e) {
-            log.error("❌ 카카오페이 결제 요청 실패", e);
-            throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
+            log.error("❌ 카카오페이 결제 승인 실패", e);
+            throw new RuntimeException("카카오페이 결제 승인 중 오류 발생");
         }
     }
 
