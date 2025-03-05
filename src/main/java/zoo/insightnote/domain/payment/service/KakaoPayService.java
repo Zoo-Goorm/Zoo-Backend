@@ -3,14 +3,18 @@ package zoo.insightnote.domain.payment.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,8 @@ public class KakaoPayService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final long PAYMENT_EXPIRATION = 10 * 60; // 10분
 
     @Value("${kakao.api.cid}")
     private String cid;
@@ -26,7 +32,17 @@ public class KakaoPayService {
     @Value("${kakao.api.admin-key}")
     private String adminKey;
 
-    public void requestPayment(PaymentRequestDto requestDto) {
+
+    private void saveTidKey(Long orderId, String tid) {
+        String tidKey = "payment:" + orderId;
+        redisTemplate.opsForValue().set(tidKey, tid, PAYMENT_EXPIRATION, TimeUnit.SECONDS);
+    }
+
+    public String getTidKey(Long orderId) {
+        String tidKey = "payment:" + orderId;
+        return redisTemplate.opsForValue().get(tidKey);
+    }
+
     public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestDto requestDto) {
         HttpEntity<String> paymentHttpEntity = createPaymentHttpEntity(requestDto);
 
