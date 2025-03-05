@@ -5,11 +5,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event {
     @Id
@@ -19,6 +24,15 @@ public class Event {
     private String name;
     private String description;
     private String location;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    @Builder
+    public Event(String name, String description, String location, LocalDateTime startTime, LocalDateTime endTime) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
