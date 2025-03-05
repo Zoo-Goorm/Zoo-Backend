@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +118,24 @@ class ReplyServiceTest {
                 .hasMessage(ErrorCode.DELETED_COMMENT_CANNOT_HAVE_REPLY.getErrorMessage());
 
         verify(replyRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("테스트 성공 : 사용자는 댓글에 달린 대댓글을 모두 조회할 수 있다.")
+    void 모든_대댓글_조회_성공() {
+        //given
+        List<Reply> replies = Arrays.asList(
+                new Reply(1L, author, parentComment, "대댓글1"),
+                new Reply(2L, author, parentComment, "대댓글1")
+        );
+
+        when(replyRepository.findAllByCommentId(parentComment.getId())).thenReturn(replies);
+
+        //when
+        List<ReplyResponse> responses = replyService.findRepliesByCommentId(parentComment.getId());
+
+        //then
+        Assertions.assertThat(replies.size()).isEqualTo(responses.size());
     }
 
 

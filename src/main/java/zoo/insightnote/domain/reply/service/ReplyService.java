@@ -1,5 +1,7 @@
 package zoo.insightnote.domain.reply.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.comment.entity.Comment;
@@ -36,6 +38,19 @@ public class ReplyService {
         return ReplyMapper.toResponse(reply);
     }
 
+    public List<ReplyResponse> findRepliesByCommentId(Long commentId) {
+
+        List<Reply> replies = replyRepository.findAllByCommentId(commentId);
+
+        List<ReplyResponse> responses = new ArrayList<>();
+        for (Reply reply : replies) {
+            responses.add(ReplyMapper.toResponse(reply));
+        }
+
+        return responses;
+    }
+
+    // existsById();
     private Comment hasComment(Long commentId) {
         try {
             return commentService.findCommentById(commentId);
