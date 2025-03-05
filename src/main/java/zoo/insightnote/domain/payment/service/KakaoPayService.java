@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 
 import java.util.Map;
@@ -67,7 +70,40 @@ public class KakaoPayService {
         }
     }
 
-    private HttpEntity<String> createPaymentHttpEntity(PaymentRequestDto requestDto) {
+    // 결제 승인 요청
+    @Transactional
+    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
+        // ✅ Redis에서 tid 조회 (orderId를 기반으로 검색)
+        String tid = getTidKey(requestDto.getOrderId());
+        if (tid == null) {
+            throw new RuntimeException("tid 정보를 찾을 수 없습니다. (orderId=" + requestDto.getOrderId() + ")");
+        }
+
+        ResponseEntity<KakaoPayApproveResponseDto> response = sendApproveRequest(requestDto, tid);
+        log.info("✅ 카카오페이 결제 승인 성공: {}", response.getBody());
+
+        return response; // ✅ 컨트롤러에서도 응답을 반환하도록 수정
+    }
+
+    private ResponseEntity<KakaoPayApproveResponseDto> sendApproveRequest(PaymentApproveRequestDto requestDto, String tid) {
+        HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
+
+        try {
+            ResponseEntity<KakaoPayApproveResponseDto> response = restTemplate.exchange(
+                    "https://open-api.kakaopay.com/online/v1/payment/approve",
+                    HttpMethod.POST,
+                    paymentApproveHttpEntity,
+                    KakaoPayApproveResponseDto.class
+            );
+
+           return response;
+        } catch (Exception e) {
+            log.error("❌ 카카오페이 결제 요청 실패", e);
+            throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
+        }
+    }
+
+    private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
         headers.set("Content-Type", "application/json");
@@ -97,5 +133,31 @@ public class KakaoPayService {
 
         return requestEntity;
     }
+
+    private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequestDto requestDto, String tid) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "SECRET_KEY " + adminKey);
+        headers.set("Content-Type", "application/json");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("cid", cid);
+        params.put("tid", tid);
+        params.put("partner_order_id", requestDto.getOrderId());
+        params.put("partner_user_id", requestDto.getUserId());
+        params.put("pg_token", requestDto.getPgToken());
+
+        String jsonParams;
+        try {
+            jsonParams = objectMapper.writeValueAsString(params);
+        } catch (JsonProcessingException e) {
+            log.error("JSON 변환 실패", e);
+            throw new RuntimeException("JSON 변환 오류 발생");
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
+
+        return requestEntity;
+    }
+
 }
 
