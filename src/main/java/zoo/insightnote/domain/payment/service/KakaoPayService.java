@@ -76,9 +76,9 @@ public class KakaoPayService {
         params.put("total_amount", requestDto.getTotalAmount());
         params.put("tax_free_amount", 0);
 
-        params.put("approval_url", "https://localhost:8080/api/v1/payment/approve");
-        params.put("cancel_url", "https://localhost:8080/api/v1/payment/cancel");
-        params.put("fail_url", "https://localhost:8080/api/v1/payment/fail");
+        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + requestDto.getOrderId() + "&user_id=" + requestDto.getUserId());
+        params.put("cancel_url", "http://localhost:8080/api/v1/payment/cancel");
+        params.put("fail_url", "http://localhost:8080/api/v1/payment/fail");
 
         String jsonParams;
         try {
