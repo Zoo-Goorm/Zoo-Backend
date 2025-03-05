@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.comment.dto.CommentRequest;
 import zoo.insightnote.domain.comment.dto.CommentResponse;
 import zoo.insightnote.domain.comment.entity.Comment;
@@ -14,6 +15,7 @@ import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class CommentService {
     private final InsightRepository insightRepository;
 
     public CommentResponse createComment(Long insightId, Long userId, CommentRequest.Create request) {
+
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(null, "인사이트 노트를 찾을 수 없음"));
 
@@ -36,6 +39,7 @@ public class CommentService {
     }
 
     public List<CommentResponse> findCommentsByInsightId(Long insightId) {
+
         List<Comment> comments = commentRepository.findAllByInsightId(insightId);
 
         List<CommentResponse> responses = new ArrayList<>();
@@ -44,6 +48,30 @@ public class CommentService {
         }
 
         return responses;
+    }
+
+    // 댓글을 작성할 때 인사이트 노트를 찾을까 말까?
+    @Transactional
+    public CommentResponse updateComment(Long insightId, Long userId, Long commentId, CommentRequest.Update request) {
+
+        Comment comment = findCommentById(commentId);
+
+        validateAuthorCheck(comment, userId);
+
+        comment.update(request.content());
+
+        return CommentMapper.toResponse(comment);
+    }
+
+    private Comment findCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    private void validateAuthorCheck(Comment comment, Long userId) {
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_COMMENT_MODIFICATION);
+        }
     }
 
 }

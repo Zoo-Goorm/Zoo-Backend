@@ -10,9 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zoo.insightnote.domain.comment.dto.CommentRequest;
 import zoo.insightnote.domain.comment.dto.CommentRequest.Create;
 import zoo.insightnote.domain.comment.dto.CommentResponse;
 import zoo.insightnote.domain.comment.service.CommentService;
@@ -25,19 +27,35 @@ public class CommentControllerImpl implements CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{insightId}/comments")
-    public ResponseEntity<CommentResponse> writeComment(@PathVariable("insightId") Long insightId,
+    public ResponseEntity<CommentResponse> writeComment(@PathVariable Long insightId,
                                                         @AuthenticationPrincipal UserDetails userDetails,
                                                         @RequestBody Create request) {
-        if (userDetails == null) {
-            userDetails = new User("1", "temp", Collections.emptyList());
-        }
-        return ResponseEntity.ok()
-                .body(commentService.createComment(insightId, Long.valueOf(userDetails.getUsername()), request));
+        userDetails = validateUser(userDetails);
+        CommentResponse response = commentService.createComment(insightId, Long.valueOf(userDetails.getUsername()), request);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{insightId}/comments")
-    public ResponseEntity<List<CommentResponse>> listComments(@PathVariable("insightId") Long insightId) {
+    public ResponseEntity<List<CommentResponse>> listComments(@PathVariable Long insightId) {
         return ResponseEntity.ok().body(commentService.findCommentsByInsightId(insightId));
+    }
+
+    @PutMapping("/{insightId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long insightId,
+                                                         @PathVariable Long commentId,
+                                                         @AuthenticationPrincipal UserDetails userDetails,
+                                                         @RequestBody CommentRequest.Update request) {
+        userDetails = validateUser(userDetails);
+        CommentResponse response = commentService.updateComment(insightId, Long.valueOf(userDetails.getUsername()), commentId, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    // 임시 로직
+    private UserDetails validateUser(UserDetails userDetails) {
+        if (userDetails != null) {
+            return userDetails;
+        }
+        return new User("001", "password", Collections.emptyList());
     }
 
 }

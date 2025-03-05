@@ -78,7 +78,8 @@ class CommentServiceTest {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(author));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
-        CommentResponse.Default response = (CommentResponse.Default) commentService.createComment(insight.getId(), author.getId(), request);
+        CommentResponse.Default response = (CommentResponse.Default) commentService.createComment(insight.getId(),
+                author.getId(), request);
 
         // then
         assertThat(response.commentId()).isEqualTo(1L);
@@ -132,6 +133,40 @@ class CommentServiceTest {
 
         // then
         assertThat(result).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("테스트 성공 : 본인이 작성한 댓글은 수정할 수 있다.")
+    void 댓글_수정_성공() {
+        //given
+        String updatedContent = "수정된 댓글 내용";
+        CommentRequest.Update request = new CommentRequest.Update(updatedContent);
+
+        when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
+
+        //when
+        CommentResponse.Default response = (CommentResponse.Default) commentService.updateComment(insight.getId(),
+                author.getId(), comment.getId(), request);
+
+        //then
+        Assertions.assertThat(response.content()).isEqualTo(updatedContent);
+    }
+
+    @Test
+    @DisplayName("테스트 성공 : 본인이 작성한 댓글은 수정할 수 있다.")
+    void 댓글_수정_실패() {
+        //given
+        Long anotherAuthorId = 2L;
+        String updatedContent = "수정된 댓글 내용";
+        CommentRequest.Update request = new CommentRequest.Update(updatedContent);
+
+        when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
+
+        //when && then
+        Assertions.assertThatThrownBy(() -> commentService.updateComment(insight.getId(), anotherAuthorId, comment.getId(), request))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("작성자만 댓글을 수정할 수 있습니다.");
+
     }
 
 
