@@ -10,6 +10,7 @@ import zoo.insightnote.domain.event.repository.EventRepository;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.image.entity.Image;
 import zoo.insightnote.domain.image.repository.ImageRepository;
+import zoo.insightnote.domain.s3.service.S3Service;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class EventService {
     private final EventRepository eventRepository;
     private final ImageRepository imageRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public Event createEventWithImages(Event event, List<String> imageUrls) {
@@ -46,6 +48,39 @@ public class EventService {
     public EventResponseDto updateEvent(Long id, EventUpdateRequestDto request) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+
+        // 기존 DB에 저장된 이미지 리스트 가져오기
+        List<String> existingImageUrls = imageRepository.findByEntityIdAndEntityType(event.getId(), EntityType.EVENT)
+                .stream()
+                .map(Image::getFileUrl)
+                .collect(Collectors.toList());
+
+        // 클라이언트에서 보낸 새로운 이미지 리스트
+        List<String> newImageUrls = request.imageUrls();
+
+        // 삭제할 이미지 찾기 (기존에 있었는데 요청에서는 사라진 이미지)
+        List<String> deletedImageUrls = existingImageUrls.stream()
+                .filter(url -> !newImageUrls.contains(url))
+                .collect(Collectors.toList());
+
+        // 추가할 이미지 찾기 (요청에서 새롭게 추가된 이미지)
+        List<String> addedImageUrls = newImageUrls.stream()
+                .filter(url -> !existingImageUrls.contains(url))
+                .collect(Collectors.toList());
+
+        // S3 & DB에서 삭제할 이미지가 있으면 삭제
+        if (!deletedImageUrls.isEmpty()) {
+            s3Service.deleteImages(deletedImageUrls);
+            imageRepository.deleteByFileUrlIn(deletedImageUrls);
+        }
+
+        // 새롭게 추가된 이미지 저장
+        if (!addedImageUrls.isEmpty()) {
+            List<Image> addedImages = addedImageUrls.stream()
+                    .map(url -> Image.of("event-image", url, event.getId(), EntityType.EVENT))
+                    .collect(Collectors.toList());
+            imageRepository.saveAll(addedImages);
+        }
 
         event.update(
                 request.name(),

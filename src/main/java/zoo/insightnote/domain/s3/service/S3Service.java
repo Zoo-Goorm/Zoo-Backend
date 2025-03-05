@@ -42,4 +42,15 @@ public class S3Service {
 
         return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
     }
+
+    public void deleteImages(List<String> imageUrls) {
+        for (String imageUrl : imageUrls) {
+            String key = extractKeyFromUrl(imageUrl);
+            amazonS3Client.deleteObject(bucket, key);
+        }
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        return imageUrl.replace("https://" + bucket + ".s3.ap-northeast-2.amazonaws.com/", "");
+    }
 }

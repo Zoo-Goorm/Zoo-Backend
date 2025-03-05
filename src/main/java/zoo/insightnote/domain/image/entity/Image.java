@@ -1,10 +1,11 @@
 package zoo.insightnote.domain.image.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import zoo.insightnote.global.entity.BaseTimeEntity;
 
 @Entity
-
+@Getter
 public class Image extends BaseTimeEntity {
 
     @Id
