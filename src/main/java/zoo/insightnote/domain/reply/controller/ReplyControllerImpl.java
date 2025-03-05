@@ -26,6 +26,7 @@ public class ReplyControllerImpl implements ReplyController {
 
     private final ReplyService replyService;
 
+    @Override
     @PostMapping("/{insightId}/comments/{commentId}/replies")
     public ResponseEntity<ReplyResponse> writeReply(@PathVariable Long insightId,
                                                     @PathVariable Long commentId,
@@ -38,14 +39,18 @@ public class ReplyControllerImpl implements ReplyController {
         return ResponseEntity.ok().body(response);
     }
 
+
+    @Override
     @GetMapping("/{insightId}/comments/{commentId}/replies")
-    public ResponseEntity<List<ReplyResponse>> listReplies(@PathVariable String insightId,
+    public ResponseEntity<List<ReplyResponse>> listReplies(@PathVariable Long insightId,
                                                            @PathVariable Long commentId) {
         List<ReplyResponse> response = replyService.findRepliesByCommentId(commentId);
 
         return ResponseEntity.ok().body(response);
     }
 
+
+    @Override
     @PutMapping("/{insightId}/comments/{commentId}/{replyId}")
     public ResponseEntity<ReplyResponse> updateReply(@PathVariable Long insightId,
                                                      @PathVariable Long commentId,
@@ -60,7 +65,7 @@ public class ReplyControllerImpl implements ReplyController {
 
         return ResponseEntity.ok().body(response);
     }
-
+    @Override
     @DeleteMapping("/{insightId}/comments/{commentId}/{replyId}")
     public ResponseEntity<ReplyResponse> deleteReply(@PathVariable Long insightId,
                                                      @PathVariable Long commentId,
