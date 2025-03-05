@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.event.dto.req.EventUpdateRequestDto;
+import zoo.insightnote.domain.event.dto.req.EventRequestDto;
 import zoo.insightnote.domain.event.dto.res.EventResponseDto;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.repository.EventRepository;
@@ -25,17 +26,25 @@ public class EventService {
     private final S3Service s3Service;
 
     @Transactional
-    public Event createEventWithImages(Event event, List<String> imageUrls) {
+    public EventResponseDto createEvent(EventRequestDto request) {
+        Event event = Event.builder()
+                .name(request.name())
+                .description(request.description())
+                .location(request.location())
+                .startTime(request.startTime())
+                .endTime(request.endTime())
+                .build();
 
         Event savedEvent = eventRepository.save(event);
 
-        // 이미지 저장(클라이언트에서 전달)
-        List<Image> images = imageUrls.stream()
+        // 이미지 저장 (클라이언트에서 전달)
+        List<Image> images = request.imageUrls().stream()
                 .map(url -> Image.of("event-image", url, savedEvent.getId(), EntityType.EVENT))
                 .collect(Collectors.toList());
 
         imageRepository.saveAll(images);
-        return savedEvent;
+
+        return EventResponseDto.fromEntity(savedEvent);
     }
 
     public EventResponseDto getEventById(Long id) {
