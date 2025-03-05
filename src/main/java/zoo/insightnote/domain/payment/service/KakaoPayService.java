@@ -27,6 +27,31 @@ public class KakaoPayService {
     private String adminKey;
 
     public void requestPayment(PaymentRequestDto requestDto) {
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestDto requestDto) {
+        HttpEntity<String> paymentHttpEntity = createPaymentHttpEntity(requestDto);
+
+        try {
+            ResponseEntity<KakaoPayReadyResponseDto> response = restTemplate.exchange(
+                    "https://open-api.kakaopay.com/online/v1/payment/ready",
+                    HttpMethod.POST,
+                    paymentHttpEntity,
+                    KakaoPayReadyResponseDto.class
+            );
+            log.info("카카오페이 결제 요청 성공: {}", response.getBody().getTid());
+            saveTidKey(requestDto.getOrderId(), response.getBody().getTid());
+
+            return response;
+        } catch (Exception e) {
+            log.error("카카오페이 결제 요청 실패", e);
+            throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
+        }
+    }
+
+    private HttpEntity<String> createPaymentHttpEntity(PaymentRequestDto requestDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "SECRET_KEY " + adminKey);
+        headers.set("Content-Type", "application/json");
+
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("partner_order_id", requestDto.getOrderId());
@@ -40,9 +65,6 @@ public class KakaoPayService {
         params.put("cancel_url", "https://localhost:8080/api/v1/payment/cancel");
         params.put("fail_url", "https://localhost:8080/api/v1/payment/fail");
 
-        // 🔹 로그로 params 확인
-        log.info("카카오페이 요청 params: {}", params);
-
         String jsonParams;
         try {
             jsonParams = objectMapper.writeValueAsString(params);
@@ -51,28 +73,9 @@ public class KakaoPayService {
             throw new RuntimeException("JSON 변환 오류 발생");
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY" + adminKey);
-        headers.set("Content-Type", "application/json");
-
-        // 🔹 로그 출력해서 adminKey 확인
-        log.info("카카오페이 요청 헤더: {}", headers);
-
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
 
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    "https://open-api.kakaopay.com/online/v1/payment/ready",
-                    HttpMethod.POST,
-                    requestEntity,
-                    String.class
-            );
-
-            log.info("카카오페이 결제 요청 성공: {}", response.getBody());
-        } catch (Exception e) {
-            log.error("카카오페이 결제 요청 실패", e);
-            throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
-        }
+        return requestEntity;
     }
 }
 
