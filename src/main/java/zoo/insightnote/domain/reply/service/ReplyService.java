@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.comment.entity.Comment;
 import zoo.insightnote.domain.comment.service.CommentService;
 import zoo.insightnote.domain.reply.dto.ReplyRequest;
+import zoo.insightnote.domain.reply.dto.ReplyRequest.Update;
 import zoo.insightnote.domain.reply.dto.ReplyResponse;
 import zoo.insightnote.domain.reply.entity.Reply;
 import zoo.insightnote.domain.reply.mapper.ReplyMapper;
@@ -59,4 +60,47 @@ public class ReplyService {
         }
     }
 
+    public ReplyResponse updateReply(Long commentId, Long replyId, Long userId, Update request) {
+
+        hasComment(commentId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+
+        Reply reply = findReplyById(replyId);
+
+        validateAuthor(reply, user.getId());
+
+        reply.update(request.content());
+
+        return ReplyMapper.toResponse(reply);
+    }
+
+    public ReplyResponse deleteReply(Long commentId, Long replyId, Long userId) {
+
+        hasComment(commentId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+
+        Reply reply = findReplyById(replyId);
+
+        validateAuthor(reply, user.getId());
+
+        replyRepository.deleteById(reply.getId());
+
+        return ReplyMapper.toResponse(reply);
+    }
+
+
+    public Reply findReplyById(Long replyId) {
+        return replyRepository.findById(replyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.DELETED_COMMENT_CANNOT_HAVE_REPLY));
+    }
+
+    private void validateAuthor(Reply reply, Long userId) {
+        if (!reply.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_COMMENT_MODIFICATION);
+        }
+    }
 }

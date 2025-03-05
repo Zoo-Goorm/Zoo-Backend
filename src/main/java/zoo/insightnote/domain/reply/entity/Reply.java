@@ -38,4 +38,10 @@ public class Reply extends BaseTimeEntity {
     private Comment comment;
 
     private String content;
+
+    public void update(String content) {
+        if (content != null) {
+            this.content = content;
+        }
+    }
 }

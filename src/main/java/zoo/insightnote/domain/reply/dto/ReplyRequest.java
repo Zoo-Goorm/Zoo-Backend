@@ -4,4 +4,8 @@ public interface ReplyRequest {
     record Create(String content) implements ReplyRequest{
 
     }
+
+    record Update(String content){
+
+    }
 }

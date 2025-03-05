@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +42,34 @@ public class ReplyControllerImpl implements ReplyController {
     public ResponseEntity<List<ReplyResponse>> listReplies(@PathVariable String insightId,
                                                            @PathVariable Long commentId) {
         List<ReplyResponse> response = replyService.findRepliesByCommentId(commentId);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/{insightId}/comments/{commentId}/{replyId}")
+    public ResponseEntity<ReplyResponse> updateReply(@PathVariable Long insightId,
+                                                     @PathVariable Long commentId,
+                                                     @PathVariable Long replyId,
+                                                     @AuthenticationPrincipal UserDetails userDetails,
+                                                     @RequestBody ReplyRequest.Update request) {
+
+        userDetails = validateUser(userDetails);
+
+        ReplyResponse response = replyService.updateReply(commentId, replyId,
+                Long.valueOf(userDetails.getUsername()), request);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{insightId}/comments/{commentId}/{replyId}")
+    public ResponseEntity<ReplyResponse> deleteReply(@PathVariable Long insightId,
+                                                     @PathVariable Long commentId,
+                                                     @PathVariable Long replyId,
+                                                     @AuthenticationPrincipal UserDetails userDetails) {
+        userDetails = validateUser(userDetails);
+
+        ReplyResponse response = replyService.deleteReply(commentId, replyId,
+                Long.valueOf(userDetails.getUsername()));
 
         return ResponseEntity.ok().body(response);
     }

@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import zoo.insightnote.domain.comment.entity.Comment;
 import zoo.insightnote.domain.comment.service.CommentService;
 import zoo.insightnote.domain.reply.dto.ReplyRequest.Create;
+import zoo.insightnote.domain.reply.dto.ReplyRequest.Update;
 import zoo.insightnote.domain.reply.dto.ReplyResponse;
 import zoo.insightnote.domain.reply.entity.Reply;
 import zoo.insightnote.domain.reply.repository.ReplyRepository;
@@ -137,6 +138,89 @@ class ReplyServiceTest {
         //then
         Assertions.assertThat(replies.size()).isEqualTo(responses.size());
     }
+
+    @Test
+    @DisplayName("테스트 성공 : 사용자가 대댓글을 정상적으로 수정할 수 있다.")
+    void 사용자는_대댓글을_정상적으로_수정할_수_있다() {
+        // given
+        Update request = new Update("수정된 대댓글 내용");
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(author));
+        when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
+
+        // when
+        ReplyResponse.Default response = (ReplyResponse.Default) replyService.updateReply(parentComment.getId(), reply.getId(), author.getId(), request);
+
+        // then
+        Assertions.assertThat(response.content()).isEqualTo(request.content());
+    }
+
+    @Test
+    @DisplayName("테스트 실패 : 사용자가 대댓글 작성자가 아니면 수정할 수 없다.")
+    void 사용자는_대댓글_작성자가_아니면_수정할_수_없다() {
+        // given
+        Update request = new Update("수정된 대댓글 내용");
+        User anotherUser = User.builder().id(3L).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
+        when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
+
+        // when & then
+        Assertions.assertThatThrownBy(() ->
+                        replyService.updateReply(parentComment.getId(), reply.getId(), anotherUser.getId(), request))
+                .isInstanceOf(CustomException.class);
+    }
+
+    @Test
+    @DisplayName("테스트 성공 : 사용자가 대댓글을 정상적으로 삭제할 수 있다.")
+    void 사용자는_대댓글을_정상적으로_삭제할_수_있다() {
+        // given
+        when(userRepository.findById(any())).thenReturn(Optional.of(author));
+        when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
+
+        // when
+        ReplyResponse response = replyService.deleteReply(parentComment.getId(), reply.getId(), author.getId());
+
+        // then
+        verify(replyRepository, times(1)).deleteById(reply.getId());
+    }
+
+    @Test
+    @DisplayName("테스트 실패 : 사용자가 대댓글 작성자가 아니면 삭제할 수 없다.")
+    void 사용자는_대댓글_작성자가_아니면_삭제할_수_없다() {
+        // given
+        User anotherUser = User.builder().id(3L).build();
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
+        when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
+
+        // when & then
+        Assertions.assertThatThrownBy(() ->
+                        replyService.deleteReply(parentComment.getId(), reply.getId(), anotherUser.getId()))
+                .isInstanceOf(CustomException.class);
+    }
+
+    @Test
+    @DisplayName("테스트 실패 : 댓글이 이미 삭제된 경우 대댓글을 삭제할 수 없다.")
+    void 삭제된_댓글에는_대댓글을_삭제할_수_없다() {
+        // given
+        when(userRepository.findById(any())).thenReturn(Optional.of(author));
+
+        parentComment = Comment.builder()
+                .id(999L)
+                .user(parentAuthor)
+                .content("삭제된 댓글")
+                .build();
+
+        // when & then
+        Assertions.assertThatThrownBy(() ->
+                        replyService.deleteReply(parentComment.getId(), reply.getId(), author.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.DELETED_COMMENT_CANNOT_HAVE_REPLY.getErrorMessage());
+
+    }
+
+
 
 
 
