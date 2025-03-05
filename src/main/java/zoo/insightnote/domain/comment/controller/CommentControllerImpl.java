@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +48,15 @@ public class CommentControllerImpl implements CommentController {
                                                          @RequestBody CommentRequest.Update request) {
         userDetails = validateUser(userDetails);
         CommentResponse response = commentService.updateComment(insightId, Long.valueOf(userDetails.getUsername()), commentId, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{insightId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> deleteComment(@PathVariable Long insightId,
+                                                         @PathVariable Long commentId,
+                                                         @AuthenticationPrincipal UserDetails userDetails) {
+        userDetails = validateUser(userDetails);
+        CommentResponse response = commentService.deleteComment(insightId, Long.valueOf(userDetails.getUsername()), commentId);
         return ResponseEntity.ok().body(response);
     }
 

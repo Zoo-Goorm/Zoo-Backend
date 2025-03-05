@@ -34,7 +34,9 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없음"));
 
         Comment comment = CommentMapper.toEntity(insight, user, request);
+
         comment = commentRepository.save(comment);
+
         return CommentMapper.toResponse(comment);
     }
 
@@ -50,17 +52,27 @@ public class CommentService {
         return responses;
     }
 
-    // 댓글을 작성할 때 인사이트 노트를 찾을까 말까?
     @Transactional
     public CommentResponse updateComment(Long insightId, Long userId, Long commentId, CommentRequest.Update request) {
 
         Comment comment = findCommentById(commentId);
 
-        validateAuthorCheck(comment, userId);
+        validateAuthor(comment, userId);
 
         comment.update(request.content());
 
         return CommentMapper.toResponse(comment);
+    }
+
+    public CommentResponse deleteComment(Long insightId, Long userId, Long commentId) {
+
+        Comment comment = findCommentById(commentId);
+
+        validateAuthor(comment, userId);
+
+        commentRepository.deleteById(commentId);
+
+        return new CommentResponse.Delete(commentId);
     }
 
     private Comment findCommentById(Long commentId) {
@@ -68,7 +80,7 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
-    private void validateAuthorCheck(Comment comment, Long userId) {
+    private void validateAuthor(Comment comment, Long userId) {
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_COMMENT_MODIFICATION);
         }
