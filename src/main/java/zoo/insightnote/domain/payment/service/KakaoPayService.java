@@ -43,21 +43,26 @@ public class KakaoPayService {
         return redisTemplate.opsForValue().get(tidKey);
     }
 
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestDto requestDto) {
-        HttpEntity<String> paymentHttpEntity = createPaymentHttpEntity(requestDto);
+    // 결제 요청
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto requestDto) {
+        HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto);
 
         try {
             ResponseEntity<KakaoPayReadyResponseDto> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/ready",
                     HttpMethod.POST,
-                    paymentHttpEntity,
+                    paymentReqeustHttpEntity,
                     KakaoPayReadyResponseDto.class
             );
-            saveTidKey(requestDto.getOrderId(), response.getBody().getTid());
+
+            String tid = response.getBody().getTid();
+            log.info("✅ 카카오페이 결제 요청 성공");
+
+            saveTidKey(requestDto.getOrderId(), tid);
 
             return response;
         } catch (Exception e) {
-            log.error("카카오페이 결제 요청 실패", e);
+            log.error("❌ 카카오페이 결제 요청 실패", e);
             throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
         }
     }
