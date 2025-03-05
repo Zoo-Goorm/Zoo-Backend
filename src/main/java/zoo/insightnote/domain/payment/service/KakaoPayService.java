@@ -34,12 +34,12 @@ public class KakaoPayService {
 
 
     private void saveTidKey(Long orderId, String tid) {
-        String tidKey = "payment:" + orderId;
+        String tidKey = "payment: " + orderId;
         redisTemplate.opsForValue().set(tidKey, tid, PAYMENT_EXPIRATION, TimeUnit.SECONDS);
     }
 
     public String getTidKey(Long orderId) {
-        String tidKey = "payment:" + orderId;
+        String tidKey = "payment: " + orderId;
         return redisTemplate.opsForValue().get(tidKey);
     }
 
@@ -53,7 +53,6 @@ public class KakaoPayService {
                     paymentHttpEntity,
                     KakaoPayReadyResponseDto.class
             );
-            log.info("카카오페이 결제 요청 성공: {}", response.getBody().getTid());
             saveTidKey(requestDto.getOrderId(), response.getBody().getTid());
 
             return response;
