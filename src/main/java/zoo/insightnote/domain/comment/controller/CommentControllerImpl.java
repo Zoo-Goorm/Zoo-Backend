@@ -27,6 +27,7 @@ public class CommentControllerImpl implements CommentController {
 
     private final CommentService commentService;
 
+    @Override
     @PostMapping("/{insightId}/comments")
     public ResponseEntity<CommentResponse> writeComment(@PathVariable Long insightId,
                                                         @AuthenticationPrincipal UserDetails userDetails,
@@ -36,11 +37,13 @@ public class CommentControllerImpl implements CommentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Override
     @GetMapping("/{insightId}/comments")
     public ResponseEntity<List<CommentResponse>> listComments(@PathVariable Long insightId) {
         return ResponseEntity.ok().body(commentService.findCommentsByInsightId(insightId));
     }
 
+    @Override
     @PutMapping("/{insightId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(@PathVariable Long insightId,
                                                          @PathVariable Long commentId,
@@ -51,6 +54,7 @@ public class CommentControllerImpl implements CommentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Override
     @DeleteMapping("/{insightId}/comments/{commentId}")
     public ResponseEntity<CommentResponse> deleteComment(@PathVariable Long insightId,
                                                          @PathVariable Long commentId,

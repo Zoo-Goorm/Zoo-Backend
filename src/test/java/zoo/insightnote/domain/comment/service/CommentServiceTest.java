@@ -153,7 +153,7 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("테스트 성공 : 본인이 작성한 댓글은 수정할 수 있다.")
+    @DisplayName("테스트 실패 : 본인이 작성하지 않은 댓글은 수정할 수 없다.")
     void 댓글_수정_실패() {
         //given
         Long anotherAuthorId = 2L;
