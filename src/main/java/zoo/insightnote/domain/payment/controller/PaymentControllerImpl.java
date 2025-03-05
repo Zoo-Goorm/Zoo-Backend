@@ -2,12 +2,10 @@ package zoo.insightnote.domain.payment.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestDto;
+import org.springframework.web.bind.annotation.*;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.service.KakaoPayService;
 
@@ -19,8 +17,20 @@ public class PaymentControllerImpl implements PaymentController{
 
     // 주문 정보를 가지고 카카오페이 API에 결제 요청
     @PostMapping("/request")
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(@RequestBody PaymentRequestDto requestDto) {
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(@RequestBody PaymentRequestReadyDto requestDto) {
         ResponseEntity<KakaoPayReadyResponseDto> response = kakaoPayService.requestPayment(requestDto);
+        return response;
+    }
+
+    // 카카오페이 API 결제 승인 대기
+    @GetMapping("/approve")
+    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(
+            @RequestParam(value = "order_id") Long orderId,
+            @RequestParam(value = "user_id") Long userId,
+            @RequestParam(value = "pg_token") String pgToken
+    ) {
+        PaymentApproveRequestDto request = new PaymentApproveRequestDto(orderId, userId, pgToken);
+        ResponseEntity<KakaoPayApproveResponseDto> response = kakaoPayService.approvePayment(request);
         return response;
     }
 }
