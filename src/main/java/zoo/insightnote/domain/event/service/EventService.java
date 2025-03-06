@@ -47,6 +47,12 @@ public class EventService {
         return EventResponseDto.fromEntity(savedEvent);
     }
 
+    // 세션 생성시 이벤트 객체를 받기 위한 메서드
+    public Event findById(Long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+    }
+
     public EventResponseDto getEventById(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
