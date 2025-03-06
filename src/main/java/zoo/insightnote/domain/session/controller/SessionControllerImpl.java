@@ -29,5 +29,11 @@ public class SessionControllerImpl implements SessionController{
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{sessionId}")
+    public ResponseEntity<Void> deleteSession(@PathVariable Long sessionId) {
+        sessionService.deleteSession(sessionId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

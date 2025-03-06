@@ -57,4 +57,14 @@ public class SessionService {
 
         return SessionMapper.toResponse(session);
     }
+
+    @Transactional
+    public void deleteSession(Long sessionId) {
+        if (!sessionRepository.existsById(sessionId)) {
+            throw new CustomException(ErrorCode.SESSION_NOT_FOUND);
+        }
+        imageService.deleteImagesByEntity(sessionId, EntityType.SESSION);
+
+        sessionRepository.deleteById(sessionId);
+    }
 }
