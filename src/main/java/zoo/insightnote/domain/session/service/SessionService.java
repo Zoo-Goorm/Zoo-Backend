@@ -60,12 +60,12 @@ public class SessionService {
 
     @Transactional
     public void deleteSession(Long sessionId) {
-        if (!sessionRepository.existsById(sessionId)) {
-            throw new CustomException(ErrorCode.SESSION_NOT_FOUND);
-        }
-        imageService.deleteImagesByEntity(sessionId, EntityType.SESSION);
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        
+        imageService.deleteImagesByEntity(session.getId(), EntityType.SESSION);
 
-        sessionRepository.deleteById(sessionId);
+        sessionRepository.delete(session);
     }
 
     @Transactional(readOnly = true)
