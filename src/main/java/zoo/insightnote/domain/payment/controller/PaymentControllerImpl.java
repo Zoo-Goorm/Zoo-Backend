@@ -23,6 +23,7 @@ public class PaymentControllerImpl implements PaymentController{
         return response;
     }
 
+    // 카카오페이 API에서 결제 요청 승인
     @GetMapping("/approve")
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(
             @RequestParam(value = "order_id") Long orderId,
