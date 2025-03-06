@@ -1,5 +1,7 @@
 package zoo.insightnote.domain.event.dto.req;
 
+import zoo.insightnote.domain.image.dto.ImageRequest;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,5 +11,5 @@ public record EventUpdateRequestDto(
         String location,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        List<String> imageUrls
+        List<ImageRequest.UploadImage> images
 ) {}
