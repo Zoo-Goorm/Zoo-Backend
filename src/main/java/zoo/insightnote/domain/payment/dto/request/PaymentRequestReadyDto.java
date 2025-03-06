@@ -1,6 +1,8 @@
 package zoo.insightnote.domain.payment.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,18 +12,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PaymentRequestReadyDto {
-    @NotBlank
+    @NotNull
     private Long orderId;
 
-    @NotBlank
+    @NotNull
     private Long userId;
 
     @NotBlank
     private String itemName;
 
-    @NotBlank
+    @Positive()
     private int totalAmount;
 
-    @NotBlank
+    @Positive()
     private int quantity;
 }
