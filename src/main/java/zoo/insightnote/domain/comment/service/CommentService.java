@@ -35,7 +35,7 @@ public class CommentService {
 
         Comment comment = CommentMapper.toEntity(insight, user, request);
 
-        comment = commentRepository.save(comment);
+        commentRepository.save(comment);
 
         return CommentMapper.toResponse(comment);
     }
@@ -75,7 +75,7 @@ public class CommentService {
         return new CommentResponse.Delete(commentId);
     }
 
-    private Comment findCommentById(Long commentId) {
+    public Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }

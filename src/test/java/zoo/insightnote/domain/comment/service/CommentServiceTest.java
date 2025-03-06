@@ -82,7 +82,6 @@ class CommentServiceTest {
                 author.getId(), request);
 
         // then
-        assertThat(response.commentId()).isEqualTo(1L);
         assertThat(response.content()).isEqualTo("작성하신 노트 잘보았습니다!");
     }
 

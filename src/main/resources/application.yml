@@ -1,7 +1,7 @@
 spring:
   application:
     name: InsightNote
-
+    
   config:
     import: "optional:file:.env[.properties]"
 
@@ -39,4 +39,3 @@ kakao:
   api:
     cid: TC0ONETIME
     admin-key: ${KAKAO_API_KEY}
-
