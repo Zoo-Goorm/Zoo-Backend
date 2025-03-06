@@ -1,4 +1,32 @@
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      default_batch_fetch_size: 100
+
+  cloud:
+    aws:
+      s3:
+        credentials:
+          accessKey: ${AWS_S3_ACCESSKEY}
+          secretKey: ${AWS_S3_SECRETKEY}
+        bucket: ${AWS_S3_BUCKET}
+      region:
+        static: ${AWS_REGION}
+      stack:
+        auto: false
+   
   application:
     name: InsightNote
   data:
