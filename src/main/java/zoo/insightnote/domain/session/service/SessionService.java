@@ -67,4 +67,12 @@ public class SessionService {
 
         sessionRepository.deleteById(sessionId);
     }
+
+    @Transactional(readOnly = true)
+    public SessionResponse.Default getSessionById(Long sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+
+        return SessionMapper.toResponse(session);
+    }
 }

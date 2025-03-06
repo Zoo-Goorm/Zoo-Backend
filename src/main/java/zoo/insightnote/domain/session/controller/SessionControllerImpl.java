@@ -35,5 +35,11 @@ public class SessionControllerImpl implements SessionController{
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{sessionId}")
+    public ResponseEntity<SessionResponse.Default> getSessionById(@PathVariable Long sessionId) {
+        SessionResponse.Default response = sessionService.getSessionById(sessionId);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
