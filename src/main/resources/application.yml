@@ -26,3 +26,10 @@ spring:
         static: ${AWS_REGION}
       stack:
         auto: false
+   
+  application:
+    name: InsightNote
+  data:
+    redis:
+      host: localhost
+      port: 6379
