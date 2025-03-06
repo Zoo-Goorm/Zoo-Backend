@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 
 import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
+import zoo.insightnote.domain.session.dto.SessionRequest;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
 @Entity
@@ -57,4 +58,16 @@ public class Session {
     private String videoLink;
 
     private String location;
+
+    public void update(SessionRequest.Update request) {
+        if (request.name() != null) this.name = request.name();
+        if (request.shortDescription() != null) this.shortDescription = request.shortDescription();
+        if (request.longDescription() != null) this.longDescription = request.longDescription();
+        if (request.maxCapacity() != null) this.maxCapacity = request.maxCapacity();
+        if (request.startTime() != null) this.startTime = request.startTime();
+        if (request.endTime() != null) this.endTime = request.endTime();
+        if (request.status() != null) this.status = request.status();
+        if (request.videoLink() != null) this.videoLink = request.videoLink();
+        if (request.location() != null) this.location = request.location();
+    }
 }

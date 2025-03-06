@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.service.EventService;
+import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.session.dto.SessionRequest;
 import zoo.insightnote.domain.session.dto.SessionResponse;
@@ -14,6 +15,8 @@ import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
 import zoo.insightnote.domain.image.service.ImageService;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -40,4 +43,18 @@ public class SessionService {
         return SessionMapper.toResponse(session);
     }
 
+    @Transactional
+    public SessionResponse.Default updateSession(Long sessionId, SessionRequest.Update request) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        session.update(request);
+
+        imageService.updateImages(new ImageRequest.UploadImages(
+                session.getId(),
+                EntityType.SESSION,
+                request.images()
+        ));
+
+        return SessionMapper.toResponse(session);
+    }
 }

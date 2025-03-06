@@ -23,4 +23,18 @@ public interface SessionRequest {
             List<ImageRequest.UploadImage> images
     ) implements SessionRequest {
     }
+
+    record Update(
+            String name,
+            String shortDescription,
+            String longDescription,
+            Integer maxCapacity,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            SessionStatus status,
+            String videoLink,
+            String location,
+            List<ImageRequest.UploadImage> images
+    ) implements SessionRequest {
+    }
 }

@@ -9,6 +9,9 @@ public enum ErrorCode {
     // 행사
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 이벤트가 존재하지 않습니다."),
 
+    // 세션
+    SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 세션을 찾을 수 없습니다."),
+
     // 연사
     SPEAKER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 연사가 존재하지 않습니다."),
 
