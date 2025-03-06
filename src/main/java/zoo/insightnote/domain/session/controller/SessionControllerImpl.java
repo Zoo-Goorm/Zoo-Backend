@@ -2,10 +2,7 @@ package zoo.insightnote.domain.session.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.session.dto.SessionRequest;
 import zoo.insightnote.domain.session.dto.SessionResponse;
 import zoo.insightnote.domain.session.service.SessionService;
@@ -23,4 +20,14 @@ public class SessionControllerImpl implements SessionController{
         SessionResponse.Default response = sessionService.createSession(request);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{sessionId}")
+    public ResponseEntity<SessionResponse.Default> updateSession(
+            @PathVariable Long sessionId,
+            @RequestBody SessionRequest.Update request) {
+        SessionResponse.Default response = sessionService.updateSession(sessionId, request);
+        return ResponseEntity.ok(response);
+    }
+
+
 }
