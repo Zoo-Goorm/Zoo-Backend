@@ -6,5 +6,4 @@ import zoo.insightnote.domain.session.entity.Session;
 import java.util.List;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
-    List<Session> findByEventId(Long eventId);
 }
