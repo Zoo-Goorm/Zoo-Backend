@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.payment.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class PaymentControllerImpl implements PaymentController{
 
     // 주문 정보를 가지고 카카오페이 API에 결제 요청
     @PostMapping("/request")
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(@RequestBody PaymentRequestReadyDto requestDto) {
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(@RequestBody @Valid PaymentRequestReadyDto requestDto) {
         ResponseEntity<KakaoPayReadyResponseDto> response = kakaoPayService.requestPayment(requestDto);
         return response;
     }
@@ -31,5 +32,4 @@ public class PaymentControllerImpl implements PaymentController{
         PaymentApproveRequestDto requestDto = new PaymentApproveRequestDto(orderId, userId, pgToken);
         return kakaoPayService.approvePayment(requestDto);
     }
-
 }
