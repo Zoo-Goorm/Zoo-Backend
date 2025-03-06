@@ -36,9 +36,9 @@ public class SessionService {
 
         Session session = SessionMapper.toEntity(request, event, speaker);
 
-        sessionRepository.save(session);
+        Session savedSession = sessionRepository.save(session);
 
-        imageService.saveImages(session.getId(), EntityType.SESSION, request.images());
+        imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.images());
 
         return SessionMapper.toResponse(session);
     }
