@@ -73,4 +73,20 @@ public class ImageService {
             imageRepository.saveAll(imagesToSave);
         }
     }
+
+    @Transactional
+    public void deleteImagesByEntity(Long entityId, EntityType entityType) {
+        List<Image> images = imageRepository.findByEntityIdAndEntityType(entityId, entityType);
+
+        if (images.isEmpty()) return;
+
+        List<String> imageUrls = images.stream()
+                .map(Image::getFileUrl)
+                .collect(Collectors.toList());
+
+        s3Service.deleteImages(imageUrls);
+
+        imageRepository.deleteByEntityIdAndEntityType(entityId, entityType);
+    }
+
 }
