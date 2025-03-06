@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -66,7 +68,7 @@ public class KakaoPayService {
             return response;
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 요청 실패", e);
-            throw new RuntimeException("카카오페이 결제 요청 중 오류 발생");
+            throw new CustomException(ErrorCode.KAKAO_PAY_REQUEST_FAILED);
         }
     }
 
@@ -78,7 +80,7 @@ public class KakaoPayService {
         String tid = getTidKey(requestDto.getOrderId());
         if (tid == null) {
             log.error("❌ Redis에서 tid 조회 실패! (orderId={})", requestDto.getOrderId());
-            throw new RuntimeException("tid 정보를 찾을 수 없습니다. (orderId=" + requestDto.getOrderId() + ")");
+                throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
         }
 
         // ✅ 승인 요청용 HttpEntity 생성
@@ -97,7 +99,7 @@ public class KakaoPayService {
             return response;
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 승인 실패", e);
-            throw new RuntimeException("카카오페이 결제 승인 중 오류 발생");
+            throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
         }
     }
 
@@ -124,7 +126,7 @@ public class KakaoPayService {
             jsonParams = objectMapper.writeValueAsString(params);
         } catch (JsonProcessingException e) {
             log.error("JSON 변환 실패", e);
-            throw new RuntimeException("JSON 변환 오류 발생");
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
         }
 
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
