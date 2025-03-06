@@ -29,8 +29,7 @@ public class ReplyService {
 
         Comment comment = hasComment(commentId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+        User user = findUserById(userId);
 
         Reply reply = ReplyMapper.toEntity(comment, user, request.content());
 
@@ -51,7 +50,6 @@ public class ReplyService {
         return responses;
     }
 
-    // existsById();
     private Comment hasComment(Long commentId) {
         try {
             return commentService.findCommentById(commentId);
@@ -64,8 +62,7 @@ public class ReplyService {
 
         hasComment(commentId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+        User user = findUserById(userId);
 
         Reply reply = findReplyById(replyId);
 
@@ -80,8 +77,7 @@ public class ReplyService {
 
         hasComment(commentId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+        User user = findUserById(userId);
 
         Reply reply = findReplyById(replyId);
 
@@ -92,6 +88,11 @@ public class ReplyService {
         return ReplyMapper.toResponse(reply);
     }
 
+    // TODO : 유저 도메인 개발 완료시 삭제
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(null, "사용자를 찾을 수 없습니다."));
+    }
 
     public Reply findReplyById(Long replyId) {
         return replyRepository.findById(replyId)

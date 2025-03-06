@@ -19,6 +19,10 @@ import zoo.insightnote.domain.reply.dto.ReplyRequest;
 import zoo.insightnote.domain.reply.dto.ReplyResponse;
 import zoo.insightnote.domain.reply.service.ReplyService;
 
+/**
+ * TODO : SQL 성능 개선 및 리팩토링
+ */
+
 @RestController
 @RequestMapping("/api/v1/insights")
 @RequiredArgsConstructor
@@ -28,54 +32,53 @@ public class ReplyControllerImpl implements ReplyController {
 
     @Override
     @PostMapping("/{insightId}/comments/{commentId}/replies")
-    public ResponseEntity<ReplyResponse> writeReply(@PathVariable Long insightId,
-                                                    @PathVariable Long commentId,
-                                                    @AuthenticationPrincipal UserDetails userDetails,
-                                                    @RequestBody ReplyRequest.Create request) {
+    public ResponseEntity<ReplyResponse> writeReply(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ReplyRequest.Create request)
+    {
         userDetails = validateUser(userDetails);
-
         ReplyResponse response = replyService.createReply(commentId, Long.valueOf(userDetails.getUsername()), request);
-
         return ResponseEntity.ok().body(response);
     }
 
 
     @Override
     @GetMapping("/{insightId}/comments/{commentId}/replies")
-    public ResponseEntity<List<ReplyResponse>> listReplies(@PathVariable Long insightId,
-                                                           @PathVariable Long commentId) {
+    public ResponseEntity<List<ReplyResponse>> listReplies(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId)
+    {
         List<ReplyResponse> response = replyService.findRepliesByCommentId(commentId);
-
         return ResponseEntity.ok().body(response);
     }
 
 
     @Override
     @PutMapping("/{insightId}/comments/{commentId}/{replyId}")
-    public ResponseEntity<ReplyResponse> updateReply(@PathVariable Long insightId,
-                                                     @PathVariable Long commentId,
-                                                     @PathVariable Long replyId,
-                                                     @AuthenticationPrincipal UserDetails userDetails,
-                                                     @RequestBody ReplyRequest.Update request) {
-
+    public ResponseEntity<ReplyResponse> updateReply(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @PathVariable Long replyId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ReplyRequest.Update request)
+    {
         userDetails = validateUser(userDetails);
-
-        ReplyResponse response = replyService.updateReply(commentId, replyId,
-                Long.valueOf(userDetails.getUsername()), request);
-
+        ReplyResponse response = replyService.updateReply(commentId, replyId, Long.valueOf(userDetails.getUsername()), request);
         return ResponseEntity.ok().body(response);
     }
     @Override
     @DeleteMapping("/{insightId}/comments/{commentId}/{replyId}")
-    public ResponseEntity<ReplyResponse> deleteReply(@PathVariable Long insightId,
-                                                     @PathVariable Long commentId,
-                                                     @PathVariable Long replyId,
-                                                     @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ReplyResponse> deleteReply(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @PathVariable Long replyId,
+            @AuthenticationPrincipal UserDetails userDetails)
+    {
         userDetails = validateUser(userDetails);
-
         ReplyResponse response = replyService.deleteReply(commentId, replyId,
                 Long.valueOf(userDetails.getUsername()));
-
         return ResponseEntity.ok().body(response);
     }
 
