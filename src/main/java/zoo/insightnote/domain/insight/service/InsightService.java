@@ -24,7 +24,7 @@ public class InsightService {
     private final ImageService imageService;
 
     @Transactional
-    public InsightResponseDto createInsight(InsightRequestDto.CreateDto request) {
+    public InsightResponseDto.InsightRes createInsight(InsightRequestDto.CreateDto request) {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
@@ -37,7 +37,7 @@ public class InsightService {
     }
 
     @Transactional
-    public InsightResponseDto updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
+    public InsightResponseDto.InsightRes updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
@@ -57,5 +57,12 @@ public class InsightService {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
         insightRepository.delete(insight);
+    }
+
+    @Transactional(readOnly = true)
+    public InsightResponseDto.InsightRes getInsightById(Long insightId) {
+        Insight insight = insightRepository.findById(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+        return InsightMapper.toResponse(insight);
     }
 }

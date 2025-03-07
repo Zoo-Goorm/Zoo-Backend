@@ -5,15 +5,17 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@AllArgsConstructor
 public class InsightResponseDto {
 
-    private Long id;
-    private Long sessionId;
-    private String memo;
-    private Boolean isPublic;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    @Getter
+    @AllArgsConstructor
+    public static class InsightRes {
+        private Long id;
+        private Long sessionId;
+        private String memo;
+        private Boolean isPublic;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+    }
 
 }

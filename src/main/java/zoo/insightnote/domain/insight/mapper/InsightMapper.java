@@ -11,8 +11,8 @@ public class InsightMapper {
         return Insight.create(session, request.getMemo(), request.getIsPublic());
     }
 
-    public static InsightResponseDto toResponse(Insight insight) {
-        return new InsightResponseDto(
+    public static InsightResponseDto.InsightRes toResponse(Insight insight) {
+        return new InsightResponseDto.InsightRes(
                 insight.getId(),
                 insight.getSession().getId(),
                 insight.getMemo(),
