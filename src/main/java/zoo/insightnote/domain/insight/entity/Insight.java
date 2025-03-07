@@ -45,7 +45,13 @@ public class Insight extends BaseTimeEntity {
                 .build();
     }
 
-    public void changeIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void updateIfChanged(String newMemo, Boolean newIsPublic) {
+        if (newMemo != null && !newMemo.equals(this.memo)) {
+            this.memo = newMemo;
+        }
+        if (newIsPublic != null && !newIsPublic.equals(this.isPublic)) {
+            this.isPublic = newIsPublic;
+        }
+
     }
 }

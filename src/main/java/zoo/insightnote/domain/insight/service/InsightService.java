@@ -3,6 +3,7 @@ package zoo.insightnote.domain.insight.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
@@ -33,5 +34,21 @@ public class InsightService {
         imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
 
         return InsightMapper.toResponse(savedInsight);
+    }
+
+    @Transactional
+    public InsightResponseDto updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
+        Insight insight = insightRepository.findById(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+
+        insight.updateIfChanged(request.getMemo(), request.getIsPublic());
+
+        imageService.updateImages(new ImageRequest.UploadImages(
+                insight.getId(),
+                EntityType.INSIGHT,
+                request.getImages()
+        ));
+
+        return InsightMapper.toResponse(insight);
     }
 }

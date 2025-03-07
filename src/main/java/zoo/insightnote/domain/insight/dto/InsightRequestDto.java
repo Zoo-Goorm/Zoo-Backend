@@ -22,5 +22,6 @@ public class InsightRequestDto {
     public static class UpdateDto {
         private String memo;
         private Boolean isPublic;
+        private List<ImageRequest.UploadImage> images;
     }
 }
