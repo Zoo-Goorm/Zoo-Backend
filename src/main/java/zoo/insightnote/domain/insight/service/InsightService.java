@@ -1,7 +1,37 @@
 package zoo.insightnote.domain.insight.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import zoo.insightnote.domain.image.entity.EntityType;
+import zoo.insightnote.domain.image.service.ImageService;
+import zoo.insightnote.domain.insight.dto.InsightRequestDto;
+import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.entity.Insight;
+import zoo.insightnote.domain.insight.mapper.InsightMapper;
+import zoo.insightnote.domain.insight.repository.InsightRepository;
+import zoo.insightnote.domain.session.entity.Session;
+import zoo.insightnote.domain.session.repository.SessionRepository;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 @Service
+@RequiredArgsConstructor
 public class InsightService {
+    private final InsightRepository insightRepository;
+    private final SessionRepository sessionRepository;
+    private final ImageService imageService;
+
+    @Transactional
+    public InsightResponseDto createInsight(InsightRequestDto.CreateDto request) {
+        Session session = sessionRepository.findById(request.getSessionId())
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+
+        Insight insight = InsightMapper.toEntity(request, session);
+        Insight savedInsight = insightRepository.save(insight);
+
+        imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
+
+        return InsightMapper.toResponse(savedInsight);
+    }
 }
