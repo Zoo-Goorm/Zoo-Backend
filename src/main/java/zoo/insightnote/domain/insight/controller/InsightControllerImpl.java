@@ -28,4 +28,10 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(updatedInsight);
     }
 
+    @DeleteMapping("/{insightId}")
+    public ResponseEntity<Void> deleteInsight(@PathVariable Long insightId) {
+        insightService.deleteInsight(insightId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -51,4 +51,11 @@ public class InsightService {
 
         return InsightMapper.toResponse(insight);
     }
+
+    @Transactional
+    public void deleteInsight(Long insightId) {
+        Insight insight = insightRepository.findById(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+        insightRepository.delete(insight);
+    }
 }
