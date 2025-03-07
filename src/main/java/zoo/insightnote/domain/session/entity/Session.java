@@ -59,6 +59,23 @@ public class Session {
 
     private String location;
 
+    public static Session create(SessionRequest.Create request, Event event, Speaker speaker) {
+        return Session.builder()
+                .event(event)
+                .speaker(speaker)
+                .eventDay(request.eventDay())
+                .name(request.name())
+                .shortDescription(request.shortDescription())
+                .longDescription(request.longDescription())
+                .maxCapacity(request.maxCapacity())
+                .startTime(request.startTime())
+                .endTime(request.endTime())
+                .status(request.status())
+                .videoLink(request.videoLink())
+                .location(request.location())
+                .build();
+    }
+
     public void update(SessionRequest.Update request) {
         if (request.name() != null) this.name = request.name();
         if (request.shortDescription() != null) this.shortDescription = request.shortDescription();
