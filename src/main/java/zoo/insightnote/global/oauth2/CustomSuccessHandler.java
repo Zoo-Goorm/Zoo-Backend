@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,6 +19,9 @@ import zoo.insightnote.global.jwt.JWTUtil;
 @Component
 @RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Value("${FRONT_URL}")
+    private String frontUrl;
 
     private final JWTUtil jwtUtil;
 
@@ -33,7 +37,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role, 60*60*60L);
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:3000/"); // 추후 프론트 배포 서버로 변경 해야됨.
+        response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
     private Cookie createCookie(String key, String value) {
