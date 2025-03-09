@@ -11,4 +11,10 @@ public class UserDto {
     private String name;
     private String username;
     private String role;
+
+    @Builder
+    public UserDto(String username, String Role) {
+        this.username = username;
+        this.role = Role;
+    }
 }
