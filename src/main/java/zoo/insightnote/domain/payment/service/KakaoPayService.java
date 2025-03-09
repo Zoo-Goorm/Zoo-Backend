@@ -74,14 +74,7 @@ public class KakaoPayService {
 
     // 결제 승인 요청
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-
-        // ✅ Redis에서 tid 조회
-        String tid = getTidKey(requestDto.getOrderId());
-        if (tid == null) {
-            log.error("❌ Redis에서 tid 조회 실패! (orderId={})", requestDto.getOrderId());
-                throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
+    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(String tid, PaymentApproveRequestDto requestDto) {
 
         // ✅ 승인 요청용 HttpEntity 생성
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
@@ -95,7 +88,6 @@ public class KakaoPayService {
                     KakaoPayApproveResponseDto.class
             );
 
-            log.info("✅ 카카오페이 결제 승인 성공");
             return response;
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 승인 실패", e);
@@ -158,6 +150,5 @@ public class KakaoPayService {
 
         return requestEntity;
     }
-
 }
 

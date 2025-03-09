@@ -9,12 +9,14 @@ import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.service.KakaoPayService;
+import zoo.insightnote.domain.payment.service.PaymentService;
 
 @RestController
 @RequestMapping("/api/v1/payment")
 @RequiredArgsConstructor
 public class PaymentControllerImpl implements PaymentController{
     private final KakaoPayService kakaoPayService;
+    private final PaymentService paymentService;
 
     // 주문 정보를 가지고 카카오페이 API에 결제 요청
     @PostMapping("/request")
@@ -31,6 +33,6 @@ public class PaymentControllerImpl implements PaymentController{
             @RequestParam(value = "pg_token") String pgToken
     ) {
         PaymentApproveRequestDto requestDto = new PaymentApproveRequestDto(orderId, userId, pgToken);
-        return kakaoPayService.approvePayment(requestDto);
+        return paymentService.approvePayment(requestDto);
     }
 }
