@@ -41,8 +41,15 @@ public class PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
         }
 
-        ResponseEntity<KakaoPayApproveResponseDto> response = kakaoPayService.approvePayment(tid, requestDto);
-        savePaymentInfo(response.getBody());
+        String getSessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
+        if (getSessionIds == null) {
+            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Long> sessionIds = objectMapper.readValue(getSessionIds, new TypeReference<List<Long>>() {});
 
         return response;
     }
