@@ -49,7 +49,7 @@ public class KakaoPayService {
     }
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto requestDto) {
+    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto);
 
         try {
@@ -74,8 +74,7 @@ public class KakaoPayService {
 
     // 결제 승인 요청
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(String tid, PaymentApproveRequestDto requestDto) {
-
+    public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequestDto requestDto) {
         // ✅ 승인 요청용 HttpEntity 생성
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
 
