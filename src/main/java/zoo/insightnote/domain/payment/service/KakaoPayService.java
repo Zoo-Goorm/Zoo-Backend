@@ -17,6 +17,7 @@ import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +107,7 @@ public class KakaoPayService {
                     KakaoPayApproveResponseDto.class
             );
 
-            return response;
+            return response.getBody();
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 승인 실패", e);
             throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
