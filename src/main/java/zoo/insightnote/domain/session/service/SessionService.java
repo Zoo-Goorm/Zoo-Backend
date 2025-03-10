@@ -7,12 +7,15 @@ import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.service.EventService;
 import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
+import zoo.insightnote.domain.keyword.entity.Keyword;
+import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
+import zoo.insightnote.domain.sessionKeyword.service.SessionKeywordService;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
 import zoo.insightnote.domain.image.service.ImageService;
@@ -29,9 +32,8 @@ public class SessionService {
     private final EventService eventService;
     private final SpeakerService speakerService;
     private final ImageService imageService;
-
-    // 지울예정
-    private final SessionKeywordRepository sessionKeywordRepository;
+    private final SessionKeywordService sessionKeywordService;
+    private final KeywordService keywordService;
 
 
     @Transactional
@@ -45,22 +47,29 @@ public class SessionService {
 
         Session savedSession = sessionRepository.save(session);
 
-        List<String> keywords = request.getKeywords();
-
         imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.getImages());
 
-        return SessionMapper.toResponse(session, keywords);
+        List<Keyword> keywords = request.getKeywords().stream()
+                .map(keywordService::findOrCreateByName)
+                .toList();
+        sessionKeywordService.saveSessionKeywords(savedSession, keywords);
+
+        return SessionMapper.toResponse(session, request.getKeywords());
     }
 
+
+    // 세션 업데이트
     @Transactional
     public SessionResponseDto.SessionRes updateSession(Long sessionId, SessionRequestDto.Update request) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
         session.update(request);
 
-
-        // 키워드 로직 필요함
-
+        // 세션 키워드 업데이트 로직 필요함
+        List<Keyword> newKeywords = request.getKeywords().stream()
+                .map(keywordService::findOrCreateByName)
+                .toList();
+        sessionKeywordService.updateSessionKeywords(session, newKeywords);
 
         imageService.updateImages(new ImageRequest.UploadImages(
                 session.getId(),
@@ -71,31 +80,26 @@ public class SessionService {
         return SessionMapper.toResponse(session, request.getKeywords());
     }
 
+    // 세션 삭제
     @Transactional
     public void deleteSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-
-        // 키워드 삭제 로직 필요함
-
+        sessionKeywordService.deleteSessionKeywords(session);
 
         imageService.deleteImagesByEntity(session.getId(), EntityType.SESSION);
 
         sessionRepository.delete(session);
     }
 
+    // 세션 단일 조회
     @Transactional(readOnly = true)
     public SessionResponseDto.SessionRes getSessionById(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-
-        // 키워드 조회 기능 필요함
-        List<String> keywords = sessionKeywordRepository.findBySession(session).stream()
-                .map(sk -> sk.getKeyword().getName())
-                .toList();
-
+        List<String> keywords = sessionKeywordService.getKeywordsBySession(session);
 
         return SessionMapper.toResponse(session, keywords);
     }
