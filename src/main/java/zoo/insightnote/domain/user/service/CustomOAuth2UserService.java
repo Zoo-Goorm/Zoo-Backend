@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.user.dto.CustomOAuth2User;
 import zoo.insightnote.domain.user.dto.GoogleResponse;
 import zoo.insightnote.domain.user.dto.KakaoResponse;
@@ -18,6 +19,7 @@ import zoo.insightnote.domain.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -40,6 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             User user = User.builder()
                     .username(username)
                     .name(oAuth2Response.getName())
+                    .email(oAuth2Response.getEmail())
                     .role(USER)
                     .build();
             userRepository.save(user);
@@ -47,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDto userDto = UserDto.builder()
                     .username(username)
                     .name(user.getName())
+                    .email(user.getEmail())
                     .role("ROLE_USER")
                     .build();
             return new CustomOAuth2User(userDto);
@@ -57,6 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         UserDto userDto = UserDto.builder()
                 .username(username)
                 .name(existData.getName())
+                .email(existData.getEmail())
                 .role("ROLE_USER")
                 .build();
         return new CustomOAuth2User(userDto);
