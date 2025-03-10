@@ -12,8 +12,10 @@ public class Image extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String fileName;
 
+    @Column(nullable = false)
     private String fileUrl;
 
     private Long entityId;
