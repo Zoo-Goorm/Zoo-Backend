@@ -1,20 +1,12 @@
 package zoo.insightnote.domain.session.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
-import zoo.insightnote.domain.session.dto.SessionRequest;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
 @Entity
@@ -59,32 +51,32 @@ public class Session {
 
     private String location;
 
-    public static Session create(SessionRequest.Create request, Event event, Speaker speaker) {
+    public static Session create(SessionRequestDto.Create request, Event event, Speaker speaker) {
         return Session.builder()
                 .event(event)
                 .speaker(speaker)
-                .eventDay(request.eventDay())
-                .name(request.name())
-                .shortDescription(request.shortDescription())
-                .longDescription(request.longDescription())
-                .maxCapacity(request.maxCapacity())
-                .startTime(request.startTime())
-                .endTime(request.endTime())
-                .status(request.status())
-                .videoLink(request.videoLink())
-                .location(request.location())
+                .eventDay(request.getEventDay())
+                .name(request.getName())
+                .shortDescription(request.getShortDescription())
+                .longDescription(request.getLongDescription())
+                .maxCapacity(request.getMaxCapacity())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .status(request.getStatus())
+                .videoLink(request.getVideoLink())
+                .location(request.getLocation())
                 .build();
     }
 
-    public void update(SessionRequest.Update request) {
-        if (request.name() != null) this.name = request.name();
-        if (request.shortDescription() != null) this.shortDescription = request.shortDescription();
-        if (request.longDescription() != null) this.longDescription = request.longDescription();
-        if (request.maxCapacity() != null) this.maxCapacity = request.maxCapacity();
-        if (request.startTime() != null) this.startTime = request.startTime();
-        if (request.endTime() != null) this.endTime = request.endTime();
-        if (request.status() != null) this.status = request.status();
-        if (request.videoLink() != null) this.videoLink = request.videoLink();
-        if (request.location() != null) this.location = request.location();
+    public void update(SessionRequestDto.Update request) {
+        if (request.getName() != null) this.name = request.getName();
+        if (request.getShortDescription() != null) this.shortDescription = request.getShortDescription();
+        if (request.getLongDescription() != null) this.longDescription = request.getLongDescription();
+        if (request.getMaxCapacity() != null) this.maxCapacity = request.getMaxCapacity();
+        if (request.getStartTime() != null) this.startTime = request.getStartTime();
+        if (request.getEndTime() != null) this.endTime = request.getEndTime();
+        if (request.getStatus() != null) this.status = request.getStatus();
+        if (request.getVideoLink() != null) this.videoLink = request.getVideoLink();
+        if (request.getLocation() != null) this.location = request.getLocation();
     }
 }

@@ -12,13 +12,13 @@ public class InsightMapper {
     }
 
     public static InsightResponseDto.InsightRes toResponse(Insight insight) {
-        return new InsightResponseDto.InsightRes(
-                insight.getId(),
-                insight.getSession().getId(),
-                insight.getMemo(),
-                insight.getIsPublic(),
-                insight.getCreateAt(),
-                insight.getUpdatedAt()
-        );
+        return InsightResponseDto.InsightRes.builder()
+                .id(insight.getId())
+                .sessionId(insight.getSession().getId())
+                .memo(insight.getMemo())
+                .isPublic(insight.getIsPublic())
+                .createdAt(insight.getCreateAt())
+                .updatedAt(insight.getUpdatedAt())
+                .build();
     }
 }
