@@ -17,9 +17,7 @@ import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -69,7 +67,9 @@ public class KakaoPayService {
 
     // 결제 요청
     public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto) {
-        HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto);
+        Long orderId = createOrderId();
+
+        HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, orderId);
 
         try {
             ResponseEntity<KakaoPayReadyResponseDto> response = restTemplate.exchange(
@@ -82,8 +82,8 @@ public class KakaoPayService {
             String tid = response.getBody().getTid();
             log.info("✅ 카카오페이 결제 요청 성공");
 
-            saveTidKey(requestDto.getOrderId(), tid);
-            saveSessionIds(requestDto.getOrderId(), requestDto.getSessionIds());
+            saveTidKey(orderId, tid);
+            saveSessionIds(orderId, requestDto.getSessionIds());
 
             return response;
         } catch (Exception e) {
@@ -114,21 +114,21 @@ public class KakaoPayService {
         }
     }
 
-    private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto) {
+    private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
-        params.put("partner_order_id", requestDto.getOrderId());
+        params.put("partner_order_id", orderId);
         params.put("partner_user_id", requestDto.getUserId());
         params.put("item_name", requestDto.getItemName());
         params.put("quantity", requestDto.getQuantity());
         params.put("total_amount", requestDto.getTotalAmount());
         params.put("tax_free_amount", 0);
 
-        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + requestDto.getOrderId() + "&user_id=" + requestDto.getUserId());
+        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + requestDto.getUserId());
         params.put("cancel_url", "http://localhost:8080/api/v1/payment/cancel");
         params.put("fail_url", "http://localhost:8080/api/v1/payment/fail");
 
@@ -168,6 +168,11 @@ public class KakaoPayService {
         HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
 
         return requestEntity;
+    }
+
+    private Long createOrderId() {
+        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
+        return orderId;
     }
 }
 
