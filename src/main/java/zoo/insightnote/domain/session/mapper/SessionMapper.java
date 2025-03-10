@@ -1,29 +1,32 @@
 package zoo.insightnote.domain.session.mapper;
 
 import zoo.insightnote.domain.event.entity.Event;
-import zoo.insightnote.domain.session.dto.SessionRequest;
-import zoo.insightnote.domain.session.dto.SessionResponse;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
+import java.util.List;
+
 public class SessionMapper {
 
-    public static Session toEntity(SessionRequest.Create request, Event event, Speaker speaker) {
+    public static Session toEntity(SessionRequestDto.Create request, Event event, Speaker speaker) {
         return Session.create(request, event, speaker);
     }
 
     // Session엔티티 객체를 dto에서 정의한 record르 변환
-    public static SessionResponse.Default toResponse(Session session) {
-        return new SessionResponse.Default(
-                session.getId(),
-                session.getName(),
-                session.getShortDescription(),
-                session.getLongDescription(),
-                session.getMaxCapacity(),
-                session.getStartTime(),
-                session.getEndTime(),
-                session.getLocation(),
-                session.getStatus()
-        );
+    public static SessionResponseDto.SessionRes toResponse(Session session, List<String> keywords) {
+        return SessionResponseDto.SessionRes.builder()
+                .id(session.getId())
+                .name(session.getName())
+                .shortDescription(session.getShortDescription())
+                .location(session.getLocation())
+                .maxCapacity(session.getMaxCapacity())
+                .startTime(session.getStartTime())
+                .endTime(session.getEndTime())
+                .speakerName(session.getSpeaker().getName())
+                .keywords(keywords)
+                .status(session.getStatus())
+                .build();
     }
 }

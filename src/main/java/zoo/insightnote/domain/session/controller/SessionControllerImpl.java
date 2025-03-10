@@ -3,8 +3,8 @@ package zoo.insightnote.domain.session.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.session.dto.SessionRequest;
-import zoo.insightnote.domain.session.dto.SessionResponse;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.service.SessionService;
 
 @RestController
@@ -15,19 +15,19 @@ public class SessionControllerImpl implements SessionController {
 
     @Override
     @PostMapping
-    public ResponseEntity<SessionResponse.Default> createSession(
-            @RequestBody SessionRequest.Create request
+    public ResponseEntity<SessionResponseDto.SessionRes> createSession(
+            @RequestBody SessionRequestDto.Create request
     ) {
-        SessionResponse.Default response = sessionService.createSession(request);
+        SessionResponseDto.SessionRes response = sessionService.createSession(request);
         return ResponseEntity.ok(response);
     }
 
     @Override
     @PutMapping("/{sessionId}")
-    public ResponseEntity<SessionResponse.Default> updateSession(
+    public ResponseEntity<SessionResponseDto.SessionRes> updateSession(
             @PathVariable Long sessionId,
-            @RequestBody SessionRequest.Update request) {
-        SessionResponse.Default response = sessionService.updateSession(sessionId, request);
+            @RequestBody SessionRequestDto.Update request) {
+        SessionResponseDto.SessionRes response = sessionService.updateSession(sessionId, request);
         return ResponseEntity.ok(response);
     }
 
@@ -40,8 +40,8 @@ public class SessionControllerImpl implements SessionController {
 
     @Override
     @GetMapping("/{sessionId}")
-    public ResponseEntity<SessionResponse.Default> getSessionById(@PathVariable Long sessionId) {
-        SessionResponse.Default response = sessionService.getSessionById(sessionId);
+    public ResponseEntity<SessionResponseDto.SessionRes> getSessionById(@PathVariable Long sessionId) {
+        SessionResponseDto.SessionRes response = sessionService.getSessionById(sessionId);
         return ResponseEntity.ok(response);
     }
 

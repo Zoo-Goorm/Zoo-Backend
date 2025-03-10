@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.session.dto.SessionRequest;
-import zoo.insightnote.domain.session.dto.SessionResponse;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.SessionResponseDto;
 
 @Tag(name = "SESSION", description = "세션 관련 API")
 @RequestMapping("/api/v1/sessions")
@@ -21,8 +21,8 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping
-    ResponseEntity<SessionResponse.Default> createSession(
-            @RequestBody SessionRequest.Create request
+    ResponseEntity<SessionResponseDto.SessionRes> createSession(
+            @RequestBody SessionRequestDto.Create request
     );
 
     @Operation(summary = "세션 수정", description = "기존 세션 정보를 수정합니다.")
@@ -32,9 +32,9 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PutMapping("/{sessionId}")
-    ResponseEntity<SessionResponse.Default> updateSession(
+    ResponseEntity<SessionResponseDto.SessionRes> updateSession(
             @Parameter(description = "수정할 세션 ID") @PathVariable Long sessionId,
-            @RequestBody SessionRequest.Update request
+            @RequestBody SessionRequestDto.Update request
     );
 
     @Operation(summary = "세션 삭제", description = "특정 ID의 세션을 삭제합니다.")
@@ -55,7 +55,7 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/{sessionId}")
-    ResponseEntity<SessionResponse.Default> getSessionById(
+    ResponseEntity<SessionResponseDto.SessionRes> getSessionById(
             @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
     );
 }
