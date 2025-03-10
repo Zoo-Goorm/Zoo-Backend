@@ -16,9 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRequestReadyDto {
     @NotNull
-    private Long orderId;
-
-    @NotNull
     private Long userId;
 
     @NotBlank
