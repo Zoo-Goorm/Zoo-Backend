@@ -78,7 +78,6 @@ jobs:
             echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" > .env
             echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
             echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-            echo "DATABASE_DRIVER=${{ secrets.DATABASE_DRIVER }}" >> .env
             echo "AWS_S3_ACCESSKEY=${{ secrets.AWS_S3_ACCESSKEY }}" >> .env
             echo "AWS_S3_SECRETKEY=${{ secrets.AWS_S3_SECRETKEY }}" >> .env
             echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
