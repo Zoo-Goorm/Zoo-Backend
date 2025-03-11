@@ -95,11 +95,9 @@ public class KakaoPayService {
     // 결제 승인 요청
     @Transactional
     public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequestDto requestDto) {
-        // ✅ 승인 요청용 HttpEntity 생성
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
 
         try {
-            // ✅ 카카오페이 승인 요청 실행
             ResponseEntity<KakaoPayApproveResponseDto> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/approve",
                     HttpMethod.POST,
@@ -107,12 +105,15 @@ public class KakaoPayService {
                     KakaoPayApproveResponseDto.class
             );
 
+            log.info("✅ 카카오페이 결제 승인 성공");
+
             return response.getBody();
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 승인 실패", e);
             throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
         }
     }
+
 
     private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
@@ -175,4 +176,3 @@ public class KakaoPayService {
         return orderId;
     }
 }
-
