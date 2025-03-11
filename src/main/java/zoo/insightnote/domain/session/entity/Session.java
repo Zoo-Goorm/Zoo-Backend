@@ -40,6 +40,9 @@ public class Session {
 
     private Integer maxCapacity;
 
+    // 세션 참가자 count용
+    private Integer participantCount;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;

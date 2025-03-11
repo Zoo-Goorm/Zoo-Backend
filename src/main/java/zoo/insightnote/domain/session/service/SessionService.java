@@ -12,6 +12,7 @@ import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
+import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
@@ -22,7 +23,11 @@ import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -103,4 +108,72 @@ public class SessionService {
 
         return SessionMapper.toResponse(session, keywords);
     }
+
+
+    // 1. 세션 전체 조회 (연사 이미지 제외, 인원수 제외, 키워드 포함)
+    @Transactional(readOnly = true)
+    public List<SessionResponseDto.SessionAllRes> getAllSessions() {
+        List<Object[]> results = sessionRepository.findAllSessions();
+
+        // 세션 ID별로 키워드 매핑
+        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new LinkedHashMap<>();
+
+        for (Object[] row : results) {
+            Long sessionId = (Long) row[0];
+            String keyword = (String) row[2];
+
+            sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionAllRes.builder()
+                    .id(sessionId)
+                    .name((String) row[1])
+                    .shortDescription((String) row[3])
+                    .location((String) row[4])
+                    .startTime((LocalDateTime) row[5])
+                    .endTime((LocalDateTime) row[6])
+                    .keywords(new ArrayList<>())
+                    .build());
+
+            if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
+                sessionMap.get(sessionId).getKeywords().add(keyword);
+            }
+        }
+
+        return new ArrayList<>(sessionMap.values());
+    }
+
+    // 2. 세션 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
+    @Transactional(readOnly = true)
+    public List<SessionResponseDto.SessionDetailedRes> getAllSessionsWithDetails() {
+        List<Object[]> results = sessionRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
+
+        // 세션 ID별로 데이터 매핑
+        Map<Long, SessionResponseDto.SessionDetailedRes> sessionMap = new LinkedHashMap<>();
+
+        for (Object[] row : results) {
+            Long sessionId = (Long) row[0];
+            String keyword = (String) row[2];
+
+
+            sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionDetailedRes.builder()
+                    .id(sessionId)
+                    .name((String) row[1])
+                    .shortDescription((String) row[3])
+                    .maxCapacity((Integer) row[4])
+                    .participantCount((Integer) row[5])
+                    .location((String) row[6])
+                    .speakerName((String) row[7])
+                    .speakerImageUrl((String) row[8])
+                    .startTime((LocalDateTime) row[9])
+                    .endTime((LocalDateTime) row[10])
+                    .status((SessionStatus) row[11])
+                    .keywords(new ArrayList<>())
+                    .build());
+
+            if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
+                sessionMap.get(sessionId).getKeywords().add(keyword);
+            }
+        }
+
+        return new ArrayList<>(sessionMap.values());
+    }
+
 }

@@ -29,4 +29,36 @@ public class SessionMapper {
                 .status(session.getStatus())
                 .build();
     }
+
+
+    public static SessionResponseDto.SessionAllRes toAllResponse(Session session, List<String> keywords) {
+        return SessionResponseDto.SessionAllRes.builder()
+                .id(session.getId())
+                .name(session.getName())
+                .shortDescription(session.getShortDescription())
+                .startTime(session.getStartTime())
+                .endTime(session.getEndTime())
+                .location(session.getLocation())
+                .build();
+    }
+
+
+    public static SessionResponseDto.SessionDetailedRes toDetailedResponse(Session session, String speakerImageUrl, int participantCount ,  List<String> keywords) {
+        return SessionResponseDto.SessionDetailedRes.builder()
+                .id(session.getId())
+                .name(session.getName())
+                .shortDescription(session.getShortDescription())
+                .startTime(session.getStartTime())
+                .endTime(session.getEndTime())
+                .speakerName(session.getSpeaker().getName())
+                .speakerImageUrl(speakerImageUrl)
+                .maxCapacity(participantCount)
+                .keywords(keywords)
+                .status(session.getStatus())
+                .location(session.getLocation())
+                .build();
+    }
+
+
+
 }
