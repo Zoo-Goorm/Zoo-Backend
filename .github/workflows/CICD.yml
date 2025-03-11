@@ -92,7 +92,7 @@ jobs:
             echo "KAKAO_API_KEY=${{ secrets.FRONT_URL }}" >> .env
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml --env-file /home/ubuntu/.env up -d
 
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
