@@ -9,11 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.global.entity.BaseTimeEntity;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Insight extends BaseTimeEntity {
 
@@ -28,4 +34,24 @@ public class Insight extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String memo;
 
+    @Column(nullable = false)
+    private Boolean isPublic;
+
+    public static Insight create(Session session, String memo, Boolean isPublic) {
+        return Insight.builder()
+                .session(session)
+                .memo(memo)
+                .isPublic(isPublic != null ? isPublic : true)
+                .build();
+    }
+
+    public void updateIfChanged(String newMemo, Boolean newIsPublic) {
+        if (newMemo != null && !newMemo.equals(this.memo)) {
+            this.memo = newMemo;
+        }
+        if (newIsPublic != null && !newIsPublic.equals(this.isPublic)) {
+            this.isPublic = newIsPublic;
+        }
+
+    }
 }

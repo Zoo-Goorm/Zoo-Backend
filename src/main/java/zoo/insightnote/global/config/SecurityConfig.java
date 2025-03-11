@@ -21,6 +21,7 @@ import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
 import zoo.insightnote.global.jwt.JWTFilter;
 import zoo.insightnote.global.jwt.JWTUtil;
 import zoo.insightnote.global.oauth2.CustomSuccessHandler;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -65,7 +66,10 @@ public class SecurityConfig {
 
         //From 로그인 방식 disable
         http
-                .formLogin((auth) -> auth.disable());
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable);
 
         //HTTP Basic 인증 방식 disable
         http
