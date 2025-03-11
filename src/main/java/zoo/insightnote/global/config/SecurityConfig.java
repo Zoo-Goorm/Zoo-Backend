@@ -86,7 +86,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 문서 접근 허용
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token").permitAll() // Swagger 문서 접근 허용
                         .anyRequest().authenticated()
                 );
 
