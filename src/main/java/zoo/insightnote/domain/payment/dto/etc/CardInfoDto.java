@@ -1,33 +1,43 @@
 package zoo.insightnote.domain.payment.dto.etc;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class CardInfoDto {
-    private String purchase_corp;
+    @JsonProperty("kakaopay_purchase_corp")
+    private String kakaopayPurchaseCorp; // 카카오페이 매입사명
 
-    private String purchase_corp_code;
+    @JsonProperty("kakaopay_purchase_corp_code")
+    private String kakaopayPurchaseCorpCode; // 카카오페이 매입사 코드
 
-    private String issuer_corp;
+    @JsonProperty("kakaopay_issuer_corp")
+    private String kakaopayIssuerCorp; // 카카오페이 발급사명
 
-    private String issuer_corp_code;
+    @JsonProperty("kakaopay_issuer_corp_code")
+    private String kakaopayIssuerCorpCode; // 카카오페이 발급사 코드
 
-    private String bin;
+    @JsonProperty("bin")
+    private String bin; // 카드 BIN
 
-    private String card_type;
+    @JsonProperty("card_type")
+    private String cardType; // 카드 타입
 
-    private String install_month;
+    @JsonProperty("install_month")
+    private String installMonth; // 할부 개월 수
 
-    private String approved_id;
+    @JsonProperty("approved_id")
+    private String approvedId; // 카드사 승인번호
 
-    private String card_mid;
+    @JsonProperty("card_mid")
+    private String cardMid; // 카드사 가맹점 번호
 
-    private String interest_free_install;
+    @JsonProperty("interest_free_install")
+    private String interestFreeInstall; // 무이자할부 여부 (Y/N)
 
-    private String card_item_code;
+    @JsonProperty("installment_type")
+    private String installmentType; // 할부 유형
+
+    @JsonProperty("card_item_code")
+    private String cardItemCode; // 카드 상품 코드
 }

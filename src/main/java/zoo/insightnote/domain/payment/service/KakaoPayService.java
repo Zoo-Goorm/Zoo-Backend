@@ -17,8 +17,7 @@ import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -29,7 +28,8 @@ public class KakaoPayService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, String> redisTemplate;
-    private final long PAYMENT_EXPIRATION = 10 * 60; // 10분
+    private final long PAYMENT_TID_EXPIRATION = 10 * 60; // 10분
+    private final long PAYMENT_SESSION_KEYS_EXPIRATION = 5 * 60; // 5분
 
     @Value("${kakao.api.cid}")
     private String cid;
@@ -39,18 +39,37 @@ public class KakaoPayService {
 
 
     private void saveTidKey(Long orderId, String tid) {
-        String tidKey = "payment: " + orderId;
-        redisTemplate.opsForValue().set(tidKey, tid, PAYMENT_EXPIRATION, TimeUnit.SECONDS);
+        String tidKey = "payment:tid: " + orderId;
+        redisTemplate.opsForValue().set(tidKey, tid, PAYMENT_TID_EXPIRATION, TimeUnit.SECONDS);
     }
 
     public String getTidKey(Long orderId) {
-        String tidKey = "payment: " + orderId;
+        String tidKey = "payment:tid: " + orderId;
         return redisTemplate.opsForValue().get(tidKey);
     }
 
+    private void saveSessionIds(Long orderId, List<Long> sessionsId) {
+        String sessionIdsKey = "payment:sessions: " + orderId;
+        try {
+            // ✅ JSON으로 변환하여 Redis에 저장
+            String jsonSessionIds = objectMapper.writeValueAsString(sessionsId);
+            redisTemplate.opsForValue().set(sessionIdsKey, jsonSessionIds, PAYMENT_SESSION_KEYS_EXPIRATION, TimeUnit.SECONDS);
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 오류 (sessionIds 저장 실패)", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
+    }
+
+    public String getSessionIds(Long orderId) {
+        String sessionIdsKey = "payment:sessions: " + orderId;
+        return redisTemplate.opsForValue().get(sessionIdsKey);
+    }
+
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto requestDto) {
-        HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto);
+    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto) {
+        Long orderId = createOrderId();
+
+        HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, orderId);
 
         try {
             ResponseEntity<KakaoPayReadyResponseDto> response = restTemplate.exchange(
@@ -63,7 +82,8 @@ public class KakaoPayService {
             String tid = response.getBody().getTid();
             log.info("✅ 카카오페이 결제 요청 성공");
 
-            saveTidKey(requestDto.getOrderId(), tid);
+            saveTidKey(orderId, tid);
+            saveSessionIds(orderId, requestDto.getSessionIds());
 
             return response;
         } catch (Exception e) {
@@ -74,20 +94,10 @@ public class KakaoPayService {
 
     // 결제 승인 요청
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-
-        // ✅ Redis에서 tid 조회
-        String tid = getTidKey(requestDto.getOrderId());
-        if (tid == null) {
-            log.error("❌ Redis에서 tid 조회 실패! (orderId={})", requestDto.getOrderId());
-                throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
-
-        // ✅ 승인 요청용 HttpEntity 생성
+    public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequestDto requestDto) {
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, tid);
 
         try {
-            // ✅ 카카오페이 승인 요청 실행
             ResponseEntity<KakaoPayApproveResponseDto> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/approve",
                     HttpMethod.POST,
@@ -96,28 +106,30 @@ public class KakaoPayService {
             );
 
             log.info("✅ 카카오페이 결제 승인 성공");
-            return response;
+
+            return response.getBody();
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 승인 실패", e);
             throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
         }
     }
 
-    private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto) {
+
+    private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
-        params.put("partner_order_id", requestDto.getOrderId());
+        params.put("partner_order_id", orderId);
         params.put("partner_user_id", requestDto.getUserId());
         params.put("item_name", requestDto.getItemName());
         params.put("quantity", requestDto.getQuantity());
         params.put("total_amount", requestDto.getTotalAmount());
         params.put("tax_free_amount", 0);
 
-        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + requestDto.getOrderId() + "&user_id=" + requestDto.getUserId());
+        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + requestDto.getUserId());
         params.put("cancel_url", "http://localhost:8080/api/v1/payment/cancel");
         params.put("fail_url", "http://localhost:8080/api/v1/payment/fail");
 
@@ -159,5 +171,8 @@ public class KakaoPayService {
         return requestEntity;
     }
 
+    private Long createOrderId() {
+        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
+        return orderId;
+    }
 }
-
