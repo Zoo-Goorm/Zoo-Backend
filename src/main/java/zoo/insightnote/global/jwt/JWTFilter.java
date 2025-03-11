@@ -41,7 +41,7 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static String getAuthorization(HttpServletRequest request) {
+    private String getAuthorization(HttpServletRequest request) {
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
@@ -55,15 +55,13 @@ public class JWTFilter extends OncePerRequestFilter {
     private void checkToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
                            String token) throws IOException, ServletException {
         if (jwtUtil.isExpired(token)) {
-            filterChain.doFilter(request, response);
             throw new IllegalArgumentException("token expired");
         }
     }
 
-    private static void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
+    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
                                   String authorization) throws IOException, ServletException {
         if (authorization == null) {
-            filterChain.doFilter(request, response);
             throw new IllegalArgumentException("token null");
         }
     }
