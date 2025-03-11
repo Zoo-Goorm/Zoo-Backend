@@ -2,10 +2,14 @@ spring:
   application:
     name: InsightNote
 
+  profiles:
+    active: blue
+    group:
+      blue: blue, oauth
+      green: green, oauth
+
   config:
     import: optional:file:.env[.properties]
-  profiles:
-    include: oauth
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -44,3 +48,9 @@ kakao:
   api:
     cid: TC0ONETIME
     admin-key: ${KAKAO_API_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
