@@ -205,7 +205,6 @@ public class SessionService {
             groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>())
                     .add(sessionMap.get(sessionId));
         }
-
         return groupedByDate;
     }
 }
