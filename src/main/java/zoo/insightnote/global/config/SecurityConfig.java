@@ -66,10 +66,7 @@ public class SecurityConfig {
 
         //From 로그인 방식 disable
         http
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable);
+                .formLogin((auth) -> auth.disable());
 
         //HTTP Basic 인증 방식 disable
         http
@@ -89,8 +86,9 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 문서 접근 허용
+                        .anyRequest().authenticated()
+                );
 
         //세션 설정 : STATELESS
         http
