@@ -36,6 +36,7 @@ public class SessionResponseDto {
         private String shortDescription;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
+        private String timeRange;
         private String location;
     }
 
@@ -52,6 +53,7 @@ public class SessionResponseDto {
         private Integer participantCount;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
+        private String timeRange;
         private SessionStatus status;
         private String location;
     }

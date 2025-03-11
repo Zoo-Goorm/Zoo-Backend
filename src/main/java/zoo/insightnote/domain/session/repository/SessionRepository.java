@@ -31,7 +31,9 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     LEFT JOIN Image img ON img.entityId = sp.id AND img.entityType = :entityType
     LEFT JOIN SessionKeyword sk ON sk.session.id = s.id
     LEFT JOIN Keyword k ON sk.keyword.id = k.id
-    ORDER BY s.id ASC
+    ORDER BY
+        CASE WHEN s.maxCapacity = s.participantCount THEN 1 ELSE 0 END ASC, 
+        s.id ASC
     """)
     List<Object[]> findAllSessionsWithDetails(@Param("entityType") EntityType entityType);
 }

@@ -23,6 +23,7 @@ import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -108,47 +109,77 @@ public class SessionService {
 
     // 1. 세션 전체 조회 (연사 이미지 제외, 인원수 제외, 키워드 포함)
     @Transactional(readOnly = true)
-    public List<SessionResponseDto.SessionAllRes> getAllSessions() {
+    public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
         List<Object[]> results = sessionRepository.findAllSessions();
 
-        // 세션 ID별로 키워드 매핑
-        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new HashMap<>();;
+        // 날짜별로 데이터를 그룹화할 Map
+        Map<String, List<SessionResponseDto.SessionAllRes>> groupedByDate = new LinkedHashMap<>();
+
+        // 세션 ID별로 데이터 매핑 (중복 데이터 방지)
+        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new HashMap<>();
 
         for (Object[] row : results) {
             Long sessionId = (Long) row[0];
             String keyword = (String) row[2];
+            LocalDateTime startTime = (LocalDateTime) row[5];
+            LocalDateTime endTime = (LocalDateTime) row[6];
 
+            // 날짜 포맷 (예: 3월 10일)
+            String formattedDate = startTime.format(DateTimeFormatter.ofPattern("M월 d일"));
+
+            // 시간 범위 포맷 (예: 08:00~09:00)
+            String timeRange = startTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    + "~" + endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+            // 세션이 이미 존재하지 않으면 추가
             sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionAllRes.builder()
                     .id(sessionId)
                     .name((String) row[1])
                     .shortDescription((String) row[3])
                     .location((String) row[4])
-                    .startTime((LocalDateTime) row[5])
-                    .endTime((LocalDateTime) row[6])
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .timeRange(timeRange)
                     .keywords(new ArrayList<>())
                     .build());
 
+            // 키워드 추가 (중복 방지)
             if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
                 sessionMap.get(sessionId).getKeywords().add(keyword);
             }
+
+            // 날짜별로 세션을 그룹화
+            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>())
+                    .add(sessionMap.get(sessionId));
         }
 
-        return new ArrayList<>(sessionMap.values());
+        return groupedByDate;
     }
 
     // 2. 세션 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
     @Transactional(readOnly = true)
-    public List<SessionResponseDto.SessionDetailedRes> getAllSessionsWithDetails() {
+    public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
         List<Object[]> results = sessionRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
 
-        // 세션 ID별로 데이터 매핑
-        Map<Long, SessionResponseDto.SessionDetailedRes> sessionMap =new HashMap<>();;
+        // 날짜별로 데이터를 그룹화할 Map
+        Map<String, List<SessionResponseDto.SessionDetailedRes>> groupedByDate = new LinkedHashMap<>();
+
+        // 세션 ID별로 데이터 매핑 (중복 데이터 방지)
+        Map<Long, SessionResponseDto.SessionDetailedRes> sessionMap = new HashMap<>();
 
         for (Object[] row : results) {
             Long sessionId = (Long) row[0];
             String keyword = (String) row[2];
+            LocalDateTime startTime = (LocalDateTime) row[9];
+            LocalDateTime endTime = (LocalDateTime) row[10];
 
+            // 날짜 포맷 (예: 4월 10일)
+            String formattedDate = startTime.format(DateTimeFormatter.ofPattern("M월 d일"));
 
+            // 시간 범위 포맷 (예: 13:00~14:00)
+            String timeRange = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "~" + endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+            // 세션이 이미 존재하지 않으면 추가
             sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionDetailedRes.builder()
                     .id(sessionId)
                     .name((String) row[1])
@@ -158,18 +189,23 @@ public class SessionService {
                     .location((String) row[6])
                     .speakerName((String) row[7])
                     .speakerImageUrl((String) row[8])
-                    .startTime((LocalDateTime) row[9])
+                    .startTime(startTime)
                     .endTime((LocalDateTime) row[10])
                     .status((SessionStatus) row[11])
+                    .timeRange(timeRange)
                     .keywords(new ArrayList<>())
                     .build());
 
+            // 키워드 추가 (중복 방지)
             if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
                 sessionMap.get(sessionId).getKeywords().add(keyword);
             }
+
+            // 날짜별로 세션을 그룹화
+            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>())
+                    .add(sessionMap.get(sessionId));
         }
 
-        return new ArrayList<>(sessionMap.values());
+        return groupedByDate;
     }
-
 }
