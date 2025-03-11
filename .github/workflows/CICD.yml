@@ -83,16 +83,15 @@ jobs:
             echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
             echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
             echo "KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.KAKAO_CLIENT }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.KAKAO_SECRET }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.GOOGLE_CLIENT }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.GOOGLE_SECRET }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.JWT_SECRET }}" >> .env
-            echo "KAKAO_API_KEY=${{ secrets.FRONT_URL }}" >> .env
+            echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> .env
+            echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> .env
+            echo "GOOGLE_CLIENT=${{ secrets.GOOGLE_CLIENT }}" >> .env
+            echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml --env-file /home/ubuntu/.env up -d
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
