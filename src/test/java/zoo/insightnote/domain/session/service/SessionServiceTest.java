@@ -20,7 +20,7 @@ import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -47,7 +47,7 @@ class SessionServiceTest {
     void setUp() {
         // 테스트용 Event, Speaker, Session 객체 초기화
         event = new Event(1L, "Tech Conference", "Event Description", "Location",
-                LocalDate.now(), LocalDate.now().plusDays(1));
+                LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 
         speaker = new Speaker(1L, "요한", "yohan@example.com", "010-1234-5678");
 
@@ -60,8 +60,8 @@ class SessionServiceTest {
                 .shortDescription("짧은 설명")
                 .longDescription("긴 설명")
                 .maxCapacity(100)
-                .startTime(LocalDate.now())
-                .endTime(LocalDate.now().plusHours(2))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusHours(2))
                 .status(SessionStatus.BEFORE_START) //
                 .videoLink("https://example.com")
                 .location("2층")

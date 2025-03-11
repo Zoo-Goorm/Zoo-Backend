@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.*;
 
@@ -21,11 +21,11 @@ public class Event {
     private String name;
     private String description;
     private String location;
-    private LocalDate startTime;
-    private LocalDate endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     @Builder
-    public Event(String name, String description, String location, LocalDate startTime, LocalDate endTime) {
+    public Event(String name, String description, String location, LocalDateTime startTime, LocalDateTime endTime) {
         this.name = name;
         this.description = description;
         this.location = location;
@@ -33,7 +33,7 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public void update(String name, String description, String location, LocalDate startTime, LocalDate endTime) {
+    public void update(String name, String description, String location, LocalDateTime startTime, LocalDateTime endTime) {
         if (isChanged(this.name, name)) this.name = name;
         if (isChanged(this.description, description)) this.description = description;
         if (isChanged(this.location, location)) this.location = location;

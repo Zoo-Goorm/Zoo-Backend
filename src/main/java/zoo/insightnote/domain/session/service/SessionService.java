@@ -22,7 +22,7 @@ import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -123,8 +123,8 @@ public class SessionService {
                     .name((String) row[1])
                     .shortDescription((String) row[3])
                     .location((String) row[4])
-                    .startTime((LocalDate) row[5])
-                    .endTime((LocalDate) row[6])
+                    .startTime((LocalDateTime) row[5])
+                    .endTime((LocalDateTime) row[6])
                     .keywords(new ArrayList<>())
                     .build());
 
@@ -158,8 +158,8 @@ public class SessionService {
                     .location((String) row[6])
                     .speakerName((String) row[7])
                     .speakerImageUrl((String) row[8])
-                    .startTime((LocalDate) row[9])
-                    .endTime((LocalDate) row[10])
+                    .startTime((LocalDateTime) row[9])
+                    .endTime((LocalDateTime) row[10])
                     .status((SessionStatus) row[11])
                     .keywords(new ArrayList<>())
                     .build());
