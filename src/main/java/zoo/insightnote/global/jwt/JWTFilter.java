@@ -9,6 +9,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import zoo.insightnote.domain.user.dto.CustomOAuth2User;
@@ -55,14 +56,14 @@ public class JWTFilter extends OncePerRequestFilter {
     private void checkToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
                            String token) throws IOException, ServletException {
         if (jwtUtil.isExpired(token)) {
-            throw new IllegalArgumentException("token expired");
+            throw new AuthenticationException("token expired") {};
         }
     }
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
                                   String authorization) throws IOException, ServletException {
         if (authorization == null) {
-            throw new IllegalArgumentException("token null");
+            throw new AuthenticationException("token null") {};
         }
     }
 }
