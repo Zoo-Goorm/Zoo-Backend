@@ -7,6 +7,8 @@ import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.service.SessionService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/sessions")
@@ -44,5 +46,20 @@ public class SessionControllerImpl implements SessionController {
         SessionResponseDto.SessionRes response = sessionService.getSessionById(sessionId);
         return ResponseEntity.ok(response);
     }
+
+    // 1. 세션 전체 조회 (이미지 제외, 인원수 제외)
+    @GetMapping
+    public ResponseEntity<List<SessionResponseDto.SessionAllRes>> getAllSessions() {
+        List<SessionResponseDto.SessionAllRes> response = sessionService.getAllSessions();
+        return ResponseEntity.ok(response);
+    }
+
+    // 2. 세션 전체 조회 (연사 이미지, 인원수 포함)
+    @GetMapping("/detailed")
+    public ResponseEntity<List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
+        List<SessionResponseDto.SessionDetailedRes> response = sessionService.getAllSessionsWithDetails();
+        return ResponseEntity.ok(response);
+    }
+
 
 }
