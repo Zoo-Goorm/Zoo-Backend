@@ -6,7 +6,7 @@ import lombok.Getter;
 import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public class SessionRequestDto {
@@ -22,8 +22,8 @@ public class SessionRequestDto {
         private String shortDescription;
         private String longDescription;
         private Integer maxCapacity;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private LocalDate startTime;
+        private LocalDate endTime;
         private SessionStatus status;
         private String videoLink;
         private String location;
@@ -39,8 +39,8 @@ public class SessionRequestDto {
         private String shortDescription;
         private String longDescription;
         private Integer maxCapacity;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private LocalDate startTime;
+        private LocalDate endTime;
         private SessionStatus status;
         private String videoLink;
         private String location;

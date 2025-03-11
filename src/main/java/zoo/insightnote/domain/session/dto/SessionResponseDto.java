@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -20,8 +20,8 @@ public class SessionResponseDto {
         private String shortDescription;
         private String location;
         private Integer maxCapacity;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private LocalDate startTime;
+        private LocalDate endTime;
         private String speakerName;
         private List<String> keywords;
         private SessionStatus status;
@@ -34,8 +34,8 @@ public class SessionResponseDto {
         private String name;
         private List<String> keywords;
         private String shortDescription;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private LocalDate startTime;
+        private LocalDate endTime;
         private String location;
     }
 
@@ -50,8 +50,8 @@ public class SessionResponseDto {
         private String shortDescription;
         private Integer maxCapacity;
         private Integer participantCount;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
+        private LocalDate startTime;
+        private LocalDate endTime;
         private SessionStatus status;
         private String location;
     }

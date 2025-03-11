@@ -3,7 +3,9 @@ package zoo.insightnote.global.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.EntityListeners;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,11 +19,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class BaseTimeEntity {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createAt;
+    private LocalDate createAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
-    private LocalDateTime deletedAt;
+    private LocalDate deletedAt;
 }

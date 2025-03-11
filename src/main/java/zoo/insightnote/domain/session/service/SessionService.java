@@ -15,7 +15,6 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
 import zoo.insightnote.domain.session.repository.SessionRepository;
-import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
 import zoo.insightnote.domain.sessionKeyword.service.SessionKeywordService;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
@@ -23,11 +22,8 @@ import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -116,7 +112,7 @@ public class SessionService {
         List<Object[]> results = sessionRepository.findAllSessions();
 
         // 세션 ID별로 키워드 매핑
-        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new LinkedHashMap<>();
+        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new HashMap<>();;
 
         for (Object[] row : results) {
             Long sessionId = (Long) row[0];
@@ -127,8 +123,8 @@ public class SessionService {
                     .name((String) row[1])
                     .shortDescription((String) row[3])
                     .location((String) row[4])
-                    .startTime((LocalDateTime) row[5])
-                    .endTime((LocalDateTime) row[6])
+                    .startTime((LocalDate) row[5])
+                    .endTime((LocalDate) row[6])
                     .keywords(new ArrayList<>())
                     .build());
 
@@ -146,7 +142,7 @@ public class SessionService {
         List<Object[]> results = sessionRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
 
         // 세션 ID별로 데이터 매핑
-        Map<Long, SessionResponseDto.SessionDetailedRes> sessionMap = new LinkedHashMap<>();
+        Map<Long, SessionResponseDto.SessionDetailedRes> sessionMap =new HashMap<>();;
 
         for (Object[] row : results) {
             Long sessionId = (Long) row[0];
@@ -162,8 +158,8 @@ public class SessionService {
                     .location((String) row[6])
                     .speakerName((String) row[7])
                     .speakerImageUrl((String) row[8])
-                    .startTime((LocalDateTime) row[9])
-                    .endTime((LocalDateTime) row[10])
+                    .startTime((LocalDate) row[9])
+                    .endTime((LocalDate) row[10])
                     .status((SessionStatus) row[11])
                     .keywords(new ArrayList<>())
                     .build());

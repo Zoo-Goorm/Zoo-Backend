@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.payment.dto.etc.AmountDto;
 import zoo.insightnote.domain.payment.dto.etc.CardInfoDto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,9 +31,9 @@ public class KakaoPayApproveResponseDto {
 
     private String item_name;
 
-    private LocalDateTime created_at;
+    private LocalDate created_at;
 
-    private LocalDateTime approved_at;
+    private LocalDate approved_at;
 
     private CardInfoDto card_info;
 

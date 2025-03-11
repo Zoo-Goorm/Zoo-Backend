@@ -9,7 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.session.entity.Session;
@@ -31,5 +31,5 @@ public class Reservation {
     private Session session;
 
     private Boolean checked;
-    private LocalDateTime startReservation;
+    private LocalDate startReservation;
 }

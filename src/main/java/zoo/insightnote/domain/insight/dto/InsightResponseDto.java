@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class InsightResponseDto {
 
@@ -16,8 +16,8 @@ public class InsightResponseDto {
         private Long sessionId;
         private String memo;
         private Boolean isPublic;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+        private LocalDate createdAt;
+        private LocalDate updatedAt;
     }
 
 }

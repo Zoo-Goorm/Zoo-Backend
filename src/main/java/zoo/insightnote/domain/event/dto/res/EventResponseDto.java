@@ -1,15 +1,15 @@
 package zoo.insightnote.domain.event.dto.res;
 
 import zoo.insightnote.domain.event.entity.Event;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record EventResponseDto(
         Long id,
         String name,
         String description,
         String location,
-        LocalDateTime startTime,
-        LocalDateTime endTime
+        LocalDate startTime,
+        LocalDate endTime
 ) {
     public static EventResponseDto fromEntity(Event event) {
         return new EventResponseDto(

@@ -2,7 +2,7 @@ package zoo.insightnote.domain.session.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
@@ -43,9 +43,9 @@ public class Session {
     // 세션 참가자 count용
     private Integer participantCount;
 
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
-    private LocalDateTime endTime;
+    private LocalDate endTime;
 
     @Enumerated(EnumType.STRING)
     private SessionStatus status;

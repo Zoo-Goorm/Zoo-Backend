@@ -18,6 +18,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     FROM Session s
     LEFT JOIN SessionKeyword sk ON sk.session.id = s.id
     LEFT JOIN Keyword k ON sk.keyword.id = k.id
+    ORDER BY s.id ASC
     """)
     List<Object[]> findAllSessions();
 
@@ -30,6 +31,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     LEFT JOIN Image img ON img.entityId = sp.id AND img.entityType = :entityType
     LEFT JOIN SessionKeyword sk ON sk.session.id = s.id
     LEFT JOIN Keyword k ON sk.keyword.id = k.id
+    ORDER BY s.id ASC
     """)
     List<Object[]> findAllSessionsWithDetails(@Param("entityType") EntityType entityType);
 }
