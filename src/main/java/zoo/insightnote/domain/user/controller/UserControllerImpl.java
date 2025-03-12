@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.global.jwt.JWTUtil;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/v1/user")
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
 
