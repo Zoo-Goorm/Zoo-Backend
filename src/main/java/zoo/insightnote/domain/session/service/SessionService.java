@@ -107,7 +107,7 @@ public class SessionService {
     }
 
 
-    // 1. 세션 전체 조회 (연사 이미지 제외, 인원수 제외, 키워드 포함)
+
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
         List<Object[]> results = sessionRepository.findAllSessions();
@@ -128,8 +128,7 @@ public class SessionService {
             String formattedDate = startTime.format(DateTimeFormatter.ofPattern("M월 d일"));
 
             // 시간 범위 포맷 (예: 08:00~09:00)
-            String timeRange = startTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-                    + "~" + endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+            String timeRange = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "~" + endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
             // 세션이 이미 존재하지 않으면 추가
             sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionAllRes.builder()
@@ -143,15 +142,24 @@ public class SessionService {
                     .keywords(new ArrayList<>())
                     .build());
 
-            // 키워드 추가 (중복 방지)
-            if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
+            // 키워드 중복 방지하여 추가
+            if (keyword != null) {
                 sessionMap.get(sessionId).getKeywords().add(keyword);
             }
 
-            // 날짜별로 세션을 그룹화
-            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>())
-                    .add(sessionMap.get(sessionId));
+            // 날짜별로 세션을 그룹화 (중복 방지)
+            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>());
+            if (!groupedByDate.get(formattedDate).contains(sessionMap.get(sessionId))) {
+                groupedByDate.get(formattedDate).add(sessionMap.get(sessionId));
+            }
         }
+
+        // Set을 List로 변환하여 최종 응답에 맞게 설정
+        groupedByDate.values().forEach(sessions ->
+                sessions.replaceAll(session -> session.toBuilder()
+                        .keywords(new LinkedHashSet<>(session.getKeywords()))
+                        .build())
+        );
 
         return groupedByDate;
     }
@@ -169,9 +177,9 @@ public class SessionService {
 
         for (Object[] row : results) {
             Long sessionId = (Long) row[0];
-            String keyword = (String) row[2];
-            LocalDateTime startTime = (LocalDateTime) row[9];
-            LocalDateTime endTime = (LocalDateTime) row[10];
+            String keyword = (String) row[11];
+            LocalDateTime startTime = (LocalDateTime) row[8];
+            LocalDateTime endTime = (LocalDateTime) row[9];
 
             // 날짜 포맷 (예: 4월 10일)
             String formattedDate = startTime.format(DateTimeFormatter.ofPattern("M월 d일"));
@@ -183,28 +191,38 @@ public class SessionService {
             sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionDetailedRes.builder()
                     .id(sessionId)
                     .name((String) row[1])
-                    .shortDescription((String) row[3])
-                    .maxCapacity((Integer) row[4])
-                    .participantCount((Integer) row[5])
-                    .location((String) row[6])
-                    .speakerName((String) row[7])
-                    .speakerImageUrl((String) row[8])
+                    .shortDescription((String) row[2])
+                    .maxCapacity((Integer) row[3])
+                    .participantCount((Integer) row[4])
+                    .location((String) row[5])
+                    .speakerName((String) row[6])
+                    .speakerImageUrl((String) row[7])
                     .startTime(startTime)
-                    .endTime((LocalDateTime) row[10])
-                    .status((SessionStatus) row[11])
+                    .endTime(endTime)
+                    .status((SessionStatus) row[10])
                     .timeRange(timeRange)
                     .keywords(new ArrayList<>())
                     .build());
 
-            // 키워드 추가 (중복 방지)
-            if (keyword != null && !sessionMap.get(sessionId).getKeywords().contains(keyword)) {
+            // 키워드 중복 방지하여 추가
+            if (keyword != null) {
                 sessionMap.get(sessionId).getKeywords().add(keyword);
             }
 
-            // 날짜별로 세션을 그룹화
-            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>())
-                    .add(sessionMap.get(sessionId));
+            // 날짜별로 세션을 그룹화 (중복 방지)
+            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>());
+
+            if (!groupedByDate.get(formattedDate).contains(sessionMap.get(sessionId))) {
+                groupedByDate.get(formattedDate).add(sessionMap.get(sessionId));
+            }
         }
+
+        // Set을 List로 변환하여 최종 응답에 맞게 설정
+        groupedByDate.values().forEach(sessions ->
+                sessions.replaceAll(session -> session.toBuilder()
+                        .keywords(new LinkedHashSet<>(session.getKeywords()))
+                        .build())
+        );
         return groupedByDate;
     }
 }
