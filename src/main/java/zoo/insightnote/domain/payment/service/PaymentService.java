@@ -87,7 +87,6 @@ public class PaymentService {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
-            // TODO: startReservation 뭔지 모르겠음
             Reservation sessionReservation = Reservation.builder()
                     .user(userInfo)
                     .session(sessionInfo)
