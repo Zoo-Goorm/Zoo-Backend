@@ -1,8 +1,6 @@
 package zoo.insightnote.domain.session.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 
 import java.time.LocalDateTime;
@@ -44,19 +42,26 @@ public class SessionResponseDto {
     @Getter
     @Builder(toBuilder = true)
     public static class SessionDetailedRes {
-        private Long id;
-        private String name;
-        private List<String> keywords;
-        private String speakerName;
-        private String speakerImageUrl;
-        private String shortDescription;
-        private Integer maxCapacity;
-        private Integer participantCount;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
         private String timeRange;
-        private SessionStatus status;
-        private String location;
-    }
+        private List<SessionDetail> sessions;
 
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SessionDetail {
+            private Long id;
+            private String name;
+            private String shortDescription;
+            private Integer maxCapacity;
+            private Integer participantCount;
+            private String location;
+            private String speakerName;
+            private String speakerImageUrl;
+            private LocalDateTime startTime;
+            private LocalDateTime endTime;
+            private SessionStatus status;
+            private Set<String> keywords;
+        }
+    }
 }

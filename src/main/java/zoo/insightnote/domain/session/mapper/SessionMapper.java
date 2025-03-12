@@ -45,8 +45,13 @@ public class SessionMapper {
     }
 
 
-    public static SessionResponseDto.SessionDetailedRes toDetailedResponse(Session session, String speakerImageUrl, int participantCount ,  List<String> keywords) {
-        return SessionResponseDto.SessionDetailedRes.builder()
+    public static SessionResponseDto.SessionDetailedRes.SessionDetail toSessionDetail(
+            Session session,
+            String speakerImageUrl,
+            int participantCount,
+            List<String> keywords) {
+
+        return SessionResponseDto.SessionDetailedRes.SessionDetail.builder()
                 .id(session.getId())
                 .name(session.getName())
                 .shortDescription(session.getShortDescription())
@@ -54,8 +59,9 @@ public class SessionMapper {
                 .endTime(session.getEndTime())
                 .speakerName(session.getSpeaker().getName())
                 .speakerImageUrl(speakerImageUrl)
-                .maxCapacity(participantCount)
-                .keywords(new ArrayList<>(new LinkedHashSet<>(keywords)))
+                .maxCapacity(session.getMaxCapacity())
+                .participantCount(participantCount)
+                .keywords(new LinkedHashSet<>(keywords)) // Set으로 중복 제거
                 .status(session.getStatus())
                 .location(session.getLocation())
                 .build();

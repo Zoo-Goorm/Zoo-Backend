@@ -112,19 +112,39 @@ public class SessionQueryRepository {
     }
 
     private Map<String, List<SessionResponseDto.SessionDetailedRes>> processResultsForSessionDetailedRes(List<Tuple> results) {
-        Map<String, List<SessionResponseDto.SessionDetailedRes>> groupedByDate = new LinkedHashMap<>();
+        Map<String, Map<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>>> tempGrouped = new LinkedHashMap<>();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M월 d일");
 
         for (Tuple row : results) {
-            LocalDateTime startTime = row.get(8, LocalDateTime.class);  // 두 번째 쿼리에서 startTime 인덱스는 8
+            LocalDateTime startTime = row.get(8, LocalDateTime.class);
+            LocalDateTime endTime = row.get(9, LocalDateTime.class);
             String formattedDate = startTime.format(dateFormatter);
 
-            groupedByDate
-                    .computeIfAbsent(formattedDate, k -> new ArrayList<>())
-                    .add(mapToSessionDetailedRes(row));
+            String timeRange = formatTimeRange(startTime, endTime);
+            SessionResponseDto.SessionDetailedRes.SessionDetail sessionDetail = mapToSessionDetail(row);
+
+            // 날짜별, timeRange별로 그룹화
+            tempGrouped
+                    .computeIfAbsent(formattedDate, k -> new LinkedHashMap<>())
+                    .computeIfAbsent(timeRange, k -> new ArrayList<>())
+                    .add(sessionDetail);
         }
 
-        return groupedByDate;
+        // 최종 결과로 변환 (timeRange로 묶기)
+        Map<String, List<SessionResponseDto.SessionDetailedRes>> finalGrouped = new LinkedHashMap<>();
+        for (Map.Entry<String, Map<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>>> dateEntry : tempGrouped.entrySet()) {
+            List<SessionResponseDto.SessionDetailedRes> timeRangeList = new ArrayList<>();
+            for (Map.Entry<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>> timeRangeEntry : dateEntry.getValue().entrySet()) {
+                SessionResponseDto.SessionDetailedRes detailedRes = SessionResponseDto.SessionDetailedRes.builder()
+                        .timeRange(timeRangeEntry.getKey())
+                        .sessions(timeRangeEntry.getValue())
+                        .build();
+                timeRangeList.add(detailedRes);
+            }
+            finalGrouped.put(dateEntry.getKey(), timeRangeList);
+        }
+
+        return finalGrouped;
     }
 
     private SessionResponseDto.SessionAllRes mapToSessionAllRes(Tuple row) {
@@ -144,13 +164,8 @@ public class SessionQueryRepository {
                 .build();
     }
 
-    private SessionResponseDto.SessionDetailedRes mapToSessionDetailedRes(Tuple row) {
-        LocalDateTime startTime = row.get(8, LocalDateTime.class);
-        LocalDateTime endTime = row.get(9, LocalDateTime.class);
-        String timeRange = formatTimeRange(startTime, endTime);
-        SessionStatus status = row.get(10, SessionStatus.class);
-
-        return SessionResponseDto.SessionDetailedRes.builder()
+    private SessionResponseDto.SessionDetailedRes.SessionDetail mapToSessionDetail(Tuple row) {
+        return SessionResponseDto.SessionDetailedRes.SessionDetail.builder()
                 .id(row.get(0, Long.class))
                 .name(row.get(1, String.class))
                 .shortDescription(row.get(2, String.class))
@@ -159,11 +174,10 @@ public class SessionQueryRepository {
                 .location(row.get(5, String.class))
                 .speakerName(row.get(6, String.class))
                 .speakerImageUrl(row.get(7, String.class))
-                .startTime(startTime)
-                .endTime(endTime)
-                .status(status)
-                .timeRange(timeRange)
-                .keywords(new ArrayList<>(convertToSet(row.get(11, String.class))))
+                .startTime(row.get(8, LocalDateTime.class))
+                .endTime(row.get(9, LocalDateTime.class))
+                .status(row.get(10, SessionStatus.class))
+                .keywords(convertToSet(row.get(11, String.class)))
                 .build();
     }
 
