@@ -36,27 +36,17 @@ public class PaymentService {
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        // ✅ Redis에서 tid 조회
         String tid = kakaoPayService.getTidKey(requestDto.getOrderId());
-        if (tid == null) {
-            log.error("❌ Redis에서 tid 조회 실패! (orderId={})",  requestDto.getOrderId());
-            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
-
-        String getSessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
-        if (getSessionIds == null) {
-            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
-            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
+        String sessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Long> sessionIds = objectMapper.readValue(getSessionIds, new TypeReference<List<Long>>() {});
+            List<Long> sessionIdList = objectMapper.readValue(sessionIds, new TypeReference<List<Long>>() {});
 
 
             KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-            saveSessionsInfo(response, sessionIds);
-            savePaymentInfo(response, sessionIds.get(0));
+            saveSessionsInfo(response, sessionIdList);
+            savePaymentInfo(response, sessionIdList.get(0));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

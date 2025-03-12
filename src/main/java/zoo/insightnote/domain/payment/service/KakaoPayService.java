@@ -45,13 +45,19 @@ public class KakaoPayService {
 
     public String getTidKey(Long orderId) {
         String tidKey = "payment:tid: " + orderId;
-        return redisTemplate.opsForValue().get(tidKey);
+
+        String tid = redisTemplate.opsForValue().get(tidKey);
+        if (tid == null) {
+            log.error("❌ Redis에서 tid 조회 실패! (orderId={})",  orderId);
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        return tid;
     }
 
     private void saveSessionIds(Long orderId, List<Long> sessionsId) {
         String sessionIdsKey = "payment:sessions: " + orderId;
         try {
-            // ✅ JSON으로 변환하여 Redis에 저장
             String jsonSessionIds = objectMapper.writeValueAsString(sessionsId);
             redisTemplate.opsForValue().set(sessionIdsKey, jsonSessionIds, PAYMENT_SESSION_KEYS_EXPIRATION, TimeUnit.SECONDS);
         } catch (JsonProcessingException e) {
@@ -62,7 +68,14 @@ public class KakaoPayService {
 
     public String getSessionIds(Long orderId) {
         String sessionIdsKey = "payment:sessions: " + orderId;
-        return redisTemplate.opsForValue().get(sessionIdsKey);
+        String sessionIds = redisTemplate.opsForValue().get(sessionIdsKey);
+
+        if (sessionIds == null) {
+            log.error("❌ Redis에서 sessionsId 조회 실패! (orderId={})", orderId);
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        return sessionIds;
     }
 
     // 결제 요청
