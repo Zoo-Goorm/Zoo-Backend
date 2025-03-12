@@ -81,7 +81,6 @@ public class SecurityConfig {
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
-                        .loginPage("/oauth2/authorization/google")
                         .successHandler(customSuccessHandler));
 
         //경로별 인가 작업
