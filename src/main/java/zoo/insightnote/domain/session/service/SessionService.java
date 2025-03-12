@@ -139,7 +139,7 @@ public class SessionService {
                     .startTime(startTime)
                     .endTime(endTime)
                     .timeRange(timeRange)
-                    .keywords(new ArrayList<>())
+                    .keywords(new LinkedHashSet<>())
                     .build());
 
             // 키워드 중복 방지하여 추가
@@ -201,7 +201,7 @@ public class SessionService {
                     .endTime(endTime)
                     .status((SessionStatus) row[10])
                     .timeRange(timeRange)
-                    .keywords(new ArrayList<>())
+                    .keywords(new LinkedHashSet<>())
                     .build());
 
             // 키워드 중복 방지하여 추가
