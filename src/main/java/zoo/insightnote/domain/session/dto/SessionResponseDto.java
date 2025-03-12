@@ -46,7 +46,7 @@ public class SessionResponseDto {
     public static class SessionDetailedRes {
         private Long id;
         private String name;
-        private Set<String> keywords;
+        private List<String> keywords;
         private String speakerName;
         private String speakerImageUrl;
         private String shortDescription;

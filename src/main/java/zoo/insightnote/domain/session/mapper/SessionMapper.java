@@ -6,6 +6,7 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class SessionMapper {
                 .speakerName(session.getSpeaker().getName())
                 .speakerImageUrl(speakerImageUrl)
                 .maxCapacity(participantCount)
-                .keywords(new LinkedHashSet<>(keywords))
+                .keywords(new ArrayList<>(new LinkedHashSet<>(keywords)))
                 .status(session.getStatus())
                 .location(session.getLocation())
                 .build();
