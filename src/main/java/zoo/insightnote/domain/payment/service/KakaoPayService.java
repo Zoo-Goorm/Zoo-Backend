@@ -30,6 +30,8 @@ public class KakaoPayService {
     private final RedisTemplate<String, String> redisTemplate;
     private final long PAYMENT_TID_EXPIRATION = 10 * 60; // 10분
     private final long PAYMENT_SESSION_KEYS_EXPIRATION = 5 * 60; // 5분
+    private final String PAYMENT_TID_KEY = "payment:tid: ";
+    private final String PAYMENT_SESSIONS_KEY = "payment:sessions: ";
 
     @Value("${kakao.api.cid}")
     private String cid;
@@ -39,12 +41,12 @@ public class KakaoPayService {
 
 
     private void saveTidKey(Long orderId, String tid) {
-        String tidKey = "payment:tid: " + orderId;
+        String tidKey = PAYMENT_TID_KEY + orderId;
         redisTemplate.opsForValue().set(tidKey, tid, PAYMENT_TID_EXPIRATION, TimeUnit.SECONDS);
     }
 
     public String getTidKey(Long orderId) {
-        String tidKey = "payment:tid: " + orderId;
+        String tidKey = PAYMENT_TID_KEY + orderId;
 
         String tid = redisTemplate.opsForValue().get(tidKey);
         if (tid == null) {
@@ -56,7 +58,7 @@ public class KakaoPayService {
     }
 
     private void saveSessionIds(Long orderId, List<Long> sessionsId) {
-        String sessionIdsKey = "payment:sessions: " + orderId;
+        String sessionIdsKey = PAYMENT_SESSIONS_KEY + orderId;
         try {
             String jsonSessionIds = objectMapper.writeValueAsString(sessionsId);
             redisTemplate.opsForValue().set(sessionIdsKey, jsonSessionIds, PAYMENT_SESSION_KEYS_EXPIRATION, TimeUnit.SECONDS);
@@ -67,7 +69,7 @@ public class KakaoPayService {
     }
 
     public String getSessionIds(Long orderId) {
-        String sessionIdsKey = "payment:sessions: " + orderId;
+        String sessionIdsKey = PAYMENT_SESSIONS_KEY + orderId;
         String sessionIds = redisTemplate.opsForValue().get(sessionIdsKey);
 
         if (sessionIds == null) {
