@@ -66,14 +66,14 @@ public class PaymentService {
     }
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId) {
-        User userInfo = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
+        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
         Session sessionInfo = findSessionById(sessionId);
 
         Payment payment = Payment.builder()
-                .user(userInfo)
+                .user(user)
                 .event(sessionInfo.getEvent())
-                .email(userInfo.getEmail())
-                .phoneNumber(userInfo.getPhoneNumber())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
                 .amount(responseDto.getAmount().getTotalAmount())
                 .paymentStatus(PaymentStatus.COMPLETED)
                 .build();
@@ -82,14 +82,14 @@ public class PaymentService {
     }
 
     private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds) {
-        User userInfo = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
+        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
 
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
             // TODO: startReservation 뭔지 모르겠음
             Reservation sessionReservation = Reservation.builder()
-                    .user(userInfo)
+                    .user(user)
                     .session(sessionInfo)
                     .checked(false)
                     .build();
