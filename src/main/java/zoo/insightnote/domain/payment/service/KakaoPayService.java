@@ -60,9 +60,17 @@ public class KakaoPayService {
         }
     }
 
-    public String getSessionIds(Long orderId) {
+    public List<Long> getSessionIds(Long orderId) {
         String sessionIdsKey = "payment:sessions: " + orderId;
-        return redisTemplate.opsForValue().get(sessionIdsKey);
+        String getSessionsIds = redisTemplate.opsForValue().get(sessionIdsKey);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(getSessionsIds, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 오류 (sessionIds 조회 실패)", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
     }
 
     // 결제 요청
