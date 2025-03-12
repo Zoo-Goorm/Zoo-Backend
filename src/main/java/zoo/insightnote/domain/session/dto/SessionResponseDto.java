@@ -7,6 +7,7 @@ import zoo.insightnote.domain.session.entity.SessionStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 
 public class SessionResponseDto {
@@ -28,11 +29,11 @@ public class SessionResponseDto {
     }
 
     @Getter
-    @Builder
+    @Builder(toBuilder = true)
     public static class SessionAllRes {
         private Long id;
         private String name;
-        private List<String> keywords;
+        private Set<String> keywords;
         private String shortDescription;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
@@ -41,11 +42,11 @@ public class SessionResponseDto {
     }
 
     @Getter
-    @Builder
+    @Builder(toBuilder = true)
     public static class SessionDetailedRes {
         private Long id;
         private String name;
-        private List<String> keywords;
+        private Set<String> keywords;
         private String speakerName;
         private String speakerImageUrl;
         private String shortDescription;
