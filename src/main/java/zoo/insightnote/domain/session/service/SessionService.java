@@ -109,71 +109,16 @@ public class SessionService {
     }
 
 
-
+    // 세션 목록 일반 페이지 (이미지 제외)
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
-        List<Object[]> results = sessionRepository.findAllSessions();
-
-        // 날짜별로 데이터를 그룹화할 Map
-        Map<String, List<SessionResponseDto.SessionAllRes>> groupedByDate = new LinkedHashMap<>();
-
-        // 세션 ID별로 데이터 매핑 (중복 데이터 방지)
-        Map<Long, SessionResponseDto.SessionAllRes> sessionMap = new HashMap<>();
-
-        for (Object[] row : results) {
-            Long sessionId = (Long) row[0];
-            String keyword = (String) row[2];
-            LocalDateTime startTime = (LocalDateTime) row[5];
-            LocalDateTime endTime = (LocalDateTime) row[6];
-
-            // 날짜 포맷 (예: 3월 10일)
-            String formattedDate = startTime.format(DateTimeFormatter.ofPattern("M월 d일"));
-
-            // 시간 범위 포맷 (예: 08:00~09:00)
-            String timeRange = startTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "~" + endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-
-            // 세션이 이미 존재하지 않으면 추가
-            sessionMap.computeIfAbsent(sessionId, id -> SessionResponseDto.SessionAllRes.builder()
-                    .id(sessionId)
-                    .name((String) row[1])
-                    .shortDescription((String) row[3])
-                    .location((String) row[4])
-                    .startTime(startTime)
-                    .endTime(endTime)
-                    .timeRange(timeRange)
-                    .keywords(new LinkedHashSet<>())
-                    .build());
-
-            // 키워드 중복 방지하여 추가
-            if (keyword != null) {
-                sessionMap.get(sessionId).getKeywords().add(keyword);
-            }
-
-            // 날짜별로 세션을 그룹화 (중복 방지)
-            groupedByDate.computeIfAbsent(formattedDate, k -> new ArrayList<>());
-            if (!groupedByDate.get(formattedDate).contains(sessionMap.get(sessionId))) {
-                groupedByDate.get(formattedDate).add(sessionMap.get(sessionId));
-            }
-        }
-
-        // Set을 List로 변환하여 최종 응답에 맞게 설정
-        groupedByDate.values().forEach(sessions ->
-                sessions.replaceAll(session -> session.toBuilder()
-                        .keywords(new LinkedHashSet<>(session.getKeywords()))
-                        .build())
-        );
-
-        return groupedByDate;
+        return sessionQueryRepository.findAllSessionsWithKeywords();
     }
 
 
-
-
-
-    // 2. 세션 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
+    // 2. 세션 목록 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
-        // QueryDSL을 통해 데이터 조회 및 그룹화된 결과를 그대로 반환
         return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
     }
 }
