@@ -1,13 +1,12 @@
 package zoo.insightnote.domain.payment.dto.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 
 import java.util.List;
 
@@ -29,4 +28,8 @@ public class PaymentRequestReadyDto {
 
     @NotEmpty
     private List<Long> sessionIds;
+
+    @NotNull
+    @Valid
+    private UserInfoDto userInfo;
 }
