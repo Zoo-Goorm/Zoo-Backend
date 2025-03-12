@@ -89,8 +89,8 @@ jobs:
             echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
             echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
-            echo "FRONT_URL=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
-            echo "FRONT_URL=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env          
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
+            echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env          
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
