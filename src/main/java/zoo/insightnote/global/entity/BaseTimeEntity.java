@@ -3,6 +3,8 @@ package zoo.insightnote.global.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.EntityListeners;
+
+import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
