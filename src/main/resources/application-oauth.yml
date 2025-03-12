@@ -7,7 +7,7 @@ spring:
             client-name: google
             client-id: ${GOOGLE_CLIENT}
             client-secret: ${GOOGLE_SECRET}
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
             authorization-grant-type: authorization_code
             scope:
               - profile
@@ -18,7 +18,7 @@ spring:
             client-id: ${KAKAO_CLIENT}
             client-secret: ${KAKAO_SECRET}
             client-authentication-method: client_secret_post
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: ${KAKAO_REDIRECT_URI}
             authorization-grant-type: authorization_code
             scope:
               - account_email
