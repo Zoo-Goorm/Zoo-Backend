@@ -55,4 +55,16 @@ public class User {
         this.email = email;
         this.name = name;
     }
+
+    public void update(String email, String name, String phoneNumber, String job, String interestCategory) {
+        if (isChanged(this.email, email)) this.email = email;
+        if (isChanged(this.name, name)) this.name = name;
+        if (isChanged(this.phoneNumber, phoneNumber)) this.phoneNumber = phoneNumber;
+        if (isChanged(this.job, job)) this.job = job;
+        if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
+    }
+
+    private boolean isChanged(Object currentValue, Object newValue) {
+        return newValue != null && !newValue.equals(currentValue);
+    }
 }

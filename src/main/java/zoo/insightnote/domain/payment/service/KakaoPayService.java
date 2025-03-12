@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.payment.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,10 +62,43 @@ public class KakaoPayService {
         }
     }
 
-    public String getSessionIds(Long orderId) {
+    public List<Long> getSessionIds(Long orderId) {
         String sessionIdsKey = "payment:sessions: " + orderId;
-        return redisTemplate.opsForValue().get(sessionIdsKey);
+        String getSessionsIds = redisTemplate.opsForValue().get(sessionIdsKey);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(getSessionsIds, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 오류 (sessionIds 조회 실패)", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
     }
+
+    public void saveUserInfo(Long orderId, UserInfoDto userInfo) {
+        String userInfoKey = "payment:userInfo: " + orderId;
+        try {
+            String jsonUserInfo = objectMapper.writeValueAsString(userInfo);
+            redisTemplate.opsForValue().set(userInfoKey, jsonUserInfo, PAYMENT_SESSION_KEYS_EXPIRATION, TimeUnit.SECONDS);
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 오류 (sessionIds 저장 실패)", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
+    }
+
+    public UserInfoDto getUserInfo(Long orderId) {
+        String userInfoKey = "payment:userInfo: " + orderId;
+        String getUserInfo = redisTemplate.opsForValue().get(userInfoKey);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(getUserInfo, UserInfoDto.class);
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 오류 (userInfo 조회 실패)", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
+    }
+
 
     // 결제 요청
     public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto) {
@@ -84,6 +119,7 @@ public class KakaoPayService {
 
             saveTidKey(orderId, tid);
             saveSessionIds(orderId, requestDto.getSessionIds());
+            saveUserInfo(orderId, requestDto.getUserInfo());
 
             return response;
         } catch (Exception e) {
