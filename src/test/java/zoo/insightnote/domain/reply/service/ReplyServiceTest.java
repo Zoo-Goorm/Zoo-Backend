@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import zoo.insightnote.domain.comment.entity.Comment;
 import zoo.insightnote.domain.comment.service.CommentService;
 import zoo.insightnote.domain.reply.dto.ReplyRequest.Create;
@@ -56,7 +57,7 @@ class ReplyServiceTest {
     void beforeEach() {
 
         parentAuthor = User.builder()
-                .id(1L)
+                .username("hello")
                 .build();
 
         parentComment = Comment.builder()
@@ -66,7 +67,7 @@ class ReplyServiceTest {
                 .build();
 
         author = User.builder()
-                .id(2L)
+                .username("hello")
                 .build();
 
 
@@ -145,6 +146,7 @@ class ReplyServiceTest {
         // given
         Update request = new Update("수정된 대댓글 내용");
 
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(userRepository.findById(any())).thenReturn(Optional.of(author));
         when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
 
@@ -160,8 +162,9 @@ class ReplyServiceTest {
     void 사용자는_대댓글_작성자가_아니면_수정할_수_없다() {
         // given
         Update request = new Update("수정된 대댓글 내용");
-        User anotherUser = User.builder().id(3L).build();
+        User anotherUser = User.builder().name("hello").build();
 
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
         when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
 
@@ -175,6 +178,7 @@ class ReplyServiceTest {
     @DisplayName("테스트 성공 : 사용자가 대댓글을 정상적으로 삭제할 수 있다.")
     void 사용자는_대댓글을_정상적으로_삭제할_수_있다() {
         // given
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(userRepository.findById(any())).thenReturn(Optional.of(author));
         when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
 
@@ -189,8 +193,8 @@ class ReplyServiceTest {
     @DisplayName("테스트 실패 : 사용자가 대댓글 작성자가 아니면 삭제할 수 없다.")
     void 사용자는_대댓글_작성자가_아니면_삭제할_수_없다() {
         // given
-        User anotherUser = User.builder().id(3L).build();
-
+        User anotherUser = User.builder().name("hello").build();
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(userRepository.findById(any())).thenReturn(Optional.of(anotherUser));
         when(replyRepository.findById(any())).thenReturn(Optional.of(reply));
 
@@ -219,9 +223,5 @@ class ReplyServiceTest {
                 .hasMessage(ErrorCode.DELETED_COMMENT_CANNOT_HAVE_REPLY.getErrorMessage());
 
     }
-
-
-
-
 
 }
