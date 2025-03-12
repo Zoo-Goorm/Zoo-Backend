@@ -2,6 +2,7 @@ package zoo.insightnote.domain.comment.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import zoo.insightnote.domain.comment.dto.CommentRequest;
 import zoo.insightnote.domain.comment.dto.CommentRequest.Create;
 import zoo.insightnote.domain.comment.dto.CommentResponse;
@@ -56,7 +58,7 @@ class CommentServiceTest {
                 .build();
 
         author = User.builder()
-                .id(1L)
+                .username("hi")
                 .build();
 
         comment = Comment.builder()
@@ -70,18 +72,27 @@ class CommentServiceTest {
     @Test
     @DisplayName("테스트 성공 : 유효한 요청인 경우 인사이트 노트에 댓글을 작성할 수 있다.")
     void 사용자는_댓글을_작성할_수_있다() {
+
         // given
         CommentRequest.Create request = new Create("작성하신 노트 잘보았습니다!");
 
-        // when
-        when(insightRepository.findById(any(Long.class))).thenReturn(Optional.of(insight));
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(author));
+        ReflectionTestUtils.setField(insight, "id", 100L);
+        ReflectionTestUtils.setField(author, "id", 1L);
+        ReflectionTestUtils.setField(comment, "id", 200L);
+        ReflectionTestUtils.setField(comment, "content", request.content());
+        ReflectionTestUtils.setField(comment, "user", author);
+        ReflectionTestUtils.setField(comment, "insight", insight);
+
+        // when (Mock 설정)
+        when(insightRepository.findById(anyLong())).thenReturn(Optional.of(insight));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(author));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
-        CommentResponse.Default response = (CommentResponse.Default) commentService.createComment(insight.getId(),
-                author.getId(), request);
+        // 실행
+        CommentResponse.Default response =
+                (CommentResponse.Default) commentService.createComment(insight.getId(), author.getId(), request);
 
-        // then
+        // then (검증)
         assertThat(response.content()).isEqualTo("작성하신 노트 잘보았습니다!");
     }
 
@@ -107,6 +118,7 @@ class CommentServiceTest {
         CommentRequest.Create request = new Create("작성하신 노트 잘보았습니다!");
 
         // when
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(insightRepository.findById(any(Long.class))).thenReturn(Optional.of(insight));
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
@@ -141,6 +153,7 @@ class CommentServiceTest {
         String updatedContent = "수정된 댓글 내용";
         CommentRequest.Update request = new CommentRequest.Update(updatedContent);
 
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
 
         //when
@@ -159,6 +172,7 @@ class CommentServiceTest {
         String updatedContent = "수정된 댓글 내용";
         CommentRequest.Update request = new CommentRequest.Update(updatedContent);
 
+        ReflectionTestUtils.setField(author, "id", 1L);
         when(commentRepository.findById(any())).thenReturn(Optional.of(comment));
 
         //when && then
