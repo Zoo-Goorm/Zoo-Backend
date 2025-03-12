@@ -1,12 +1,11 @@
 package zoo.insightnote.domain.payment.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
@@ -36,33 +35,31 @@ public class PaymentService {
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        // ✅ Redis에서 tid 조회
         String tid = kakaoPayService.getTidKey(requestDto.getOrderId());
         if (tid == null) {
             log.error("❌ Redis에서 tid 조회 실패! (orderId={})",  requestDto.getOrderId());
             throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
         }
 
-        String getSessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
-        if (getSessionIds == null) {
+        List<Long> sessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
+        if (sessionIds == null) {
             log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
             throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
         }
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<Long> sessionIds = objectMapper.readValue(getSessionIds, new TypeReference<List<Long>>() {});
-
-
-            KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-            saveSessionsInfo(response, sessionIds);
-            savePaymentInfo(response, sessionIds.get(0));
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("❌ JSON 변환 오류 (sessionIds 파싱 실패)", e);
-            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        UserInfoDto userInfo = kakaoPayService.getUserInfo(requestDto.getOrderId());
+        if (userInfo == null) {
+            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
         }
+
+        KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
+        saveSessionsInfo(response, sessionIds);
+        savePaymentInfo(response, sessionIds.get(0));
+        updateUserInfo(response, userInfo);
+
+        return ResponseEntity.ok(response);
+
     }
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId) {
@@ -87,7 +84,6 @@ public class PaymentService {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
-            // TODO: startReservation 뭔지 모르겠음
             Reservation sessionReservation = Reservation.builder()
                     .user(user)
                     .session(sessionInfo)
@@ -98,10 +94,26 @@ public class PaymentService {
         }
     }
 
+    private void updateUserInfo(KakaoPayApproveResponseDto responseDto, UserInfoDto userInfo) {
+        User user = findUserByEmail(userInfo.getEmail());
+        user.update(
+                userInfo.getEmail(),
+                userInfo.getName(),
+                userInfo.getPhoneNumber(),
+                userInfo.getJob(),
+                userInfo.getInterestCategory()
+        );
+    }
+
     // TODO : 유저 도메인 개발 완료시 삭제
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(null, "User 사용자를 찾을 수 없습니다."));
+    }
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(null, "Email 사용자를 찾을 수 없습니다."));
     }
 
     // TODO : 유저 도메인 개발 완료시 삭제
