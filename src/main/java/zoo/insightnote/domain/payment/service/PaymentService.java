@@ -30,14 +30,15 @@ public class PaymentService {
 
     private final KakaoPayService kakaoPayService;
     private final PaymentRepository paymentRepository;
+    private final RedisService redisService;
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final ReservationRepository reservationRepository;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        String tid = kakaoPayService.getTidKey(requestDto.getOrderId());
-        String sessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
+        String tid = redisService.getTidKey(requestDto.getOrderId());
+        String sessionIds = redisService.getSessionIds(requestDto.getOrderId());
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
