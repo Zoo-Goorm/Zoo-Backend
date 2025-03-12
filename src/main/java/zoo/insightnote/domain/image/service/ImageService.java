@@ -26,8 +26,9 @@ public class ImageService {
         }
 
         List<Image> imageEntities = images.stream()
+                .filter(image -> image.fileName() != null && image.fileUrl() != null) // 필터링 추가
                 .map(image -> Image.of(image.fileName(), image.fileUrl(), entityId, entityType))
-                .collect(Collectors.toList());
+                .toList();
 
         imageRepository.saveAll(imageEntities);
     }

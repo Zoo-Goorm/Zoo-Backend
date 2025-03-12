@@ -7,8 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.session.dto.SessionRequest;
-import zoo.insightnote.domain.session.dto.SessionResponse;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.SessionResponseDto;
+
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "SESSION", description = "세션 관련 API")
 @RequestMapping("/api/v1/sessions")
@@ -21,8 +24,8 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping
-    ResponseEntity<SessionResponse.Default> createSession(
-            @RequestBody SessionRequest.Create request
+    ResponseEntity<SessionResponseDto.SessionRes> createSession(
+            @RequestBody SessionRequestDto.Create request
     );
 
     @Operation(summary = "세션 수정", description = "기존 세션 정보를 수정합니다.")
@@ -32,9 +35,9 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PutMapping("/{sessionId}")
-    ResponseEntity<SessionResponse.Default> updateSession(
+    ResponseEntity<SessionResponseDto.SessionRes> updateSession(
             @Parameter(description = "수정할 세션 ID") @PathVariable Long sessionId,
-            @RequestBody SessionRequest.Update request
+            @RequestBody SessionRequestDto.Update request
     );
 
     @Operation(summary = "세션 삭제", description = "특정 ID의 세션을 삭제합니다.")
@@ -55,7 +58,28 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/{sessionId}")
-    ResponseEntity<SessionResponse.Default> getSessionById(
+    ResponseEntity<SessionResponseDto.SessionRes> getSessionById(
             @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
     );
+
+    @Operation(
+            summary = "세션 전체 조회 (이미지 제외, 인원수 제외)",
+            description = "모든 세션 정보를 조회하되, 연사 이미지와 인원수는 제외하고 키워드만 포함합니다. "
+                    + "응답은 날짜별로 세션을 그룹화하여 제공합니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "세션 전체 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping
+    ResponseEntity<Map<String, List<SessionResponseDto.SessionAllRes>>> getAllSessions();
+
+    @Operation(summary = "세션 상세 조회", description = "연사 이미지, 인원수, 키워드 포함 세션 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "세션 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/detailed")
+    ResponseEntity<Map<String, List<SessionResponseDto.SessionDetailedRes>>> getAllSessionsWithDetails();
+
 }

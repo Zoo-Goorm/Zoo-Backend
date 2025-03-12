@@ -12,8 +12,8 @@ import zoo.insightnote.domain.event.service.EventService;
 import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.image.service.ImageService;
-import zoo.insightnote.domain.session.dto.SessionRequest;
-import zoo.insightnote.domain.session.dto.SessionResponse;
+import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -73,7 +73,7 @@ class SessionServiceTest {
             " / 현재 구현은 안되어 있지만 이미지와 S에 대한 테스트도 추가를 해야 할 것 같다")
     void createSession_Success() {
         //  Given (Mock 설정)
-        SessionRequest.Create request = new SessionRequest.Create(
+        SessionRequestDto.Create request = new SessionRequestDto.Create(
                 event.getId(),
                 speaker.getId(),
                 session.getEventDay(),
@@ -94,7 +94,7 @@ class SessionServiceTest {
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
         //  When
-        SessionResponse.Default response = sessionService.createSession(request);
+        SessionResponseDto.SessionRes response = sessionService.createSession(request);
 
         //  Then
         assertNotNull(response);
@@ -108,7 +108,7 @@ class SessionServiceTest {
             "/ 현재 구현은 안되어 있지만 이미지와 S에 대한 테스트도 추가를 해야 할 것 같다")
     void updateSession_Success() {
         //  Given
-        SessionRequest.Update request = new SessionRequest.Update(
+        SessionRequestDto.Update request = new SessionRequestDto.Update(
                 "세션1-2",
                 "짧은 설명 수정",
                 "긴 설명 수정",
@@ -124,7 +124,7 @@ class SessionServiceTest {
         when(sessionRepository.findById(session.getId())).thenReturn(Optional.of(session));
 
         //  When
-        SessionResponse.Default response = sessionService.updateSession(session.getId(), request);
+        SessionResponseDto.SessionRes response = sessionService.updateSession(session.getId(), request);
 
         //  Then
         assertNotNull(response);
