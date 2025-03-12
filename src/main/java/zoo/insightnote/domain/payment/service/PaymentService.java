@@ -81,8 +81,8 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(KakaoPayApproveResponseDto response, List<Long> sessionIds) {
-        User userInfo = findUserById(Long.valueOf(response.getPartner_user_id()));
+    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds) {
+        User userInfo = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
 
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
