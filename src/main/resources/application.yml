@@ -17,12 +17,17 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
 
+  sql:
+    init:
+      mode: always
+
   jpa:
     show-sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       default_batch_fetch_size: 100
+    defer-datasource-initialization: true
 
   cloud:
     aws:
