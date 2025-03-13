@@ -40,7 +40,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
 
-        log.info("ddddddddddddddd");
+        log.info("frontURL : {}", frontUrl);
 
         response.addCookie(createCookie("Authorization", token));
         response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
