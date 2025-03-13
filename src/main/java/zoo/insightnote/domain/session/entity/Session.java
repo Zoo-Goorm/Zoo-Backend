@@ -2,6 +2,7 @@ package zoo.insightnote.domain.session.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.*;
@@ -29,7 +30,7 @@ public class Session {
     private Speaker speaker;  // 연사 ID (FK)
 
     @Column(nullable = false)
-    private Integer eventDay;
+    private LocalDate eventDay;
 
     private String name;
 
