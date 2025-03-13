@@ -33,17 +33,25 @@ public class SessionMapper {
     }
 
 
-    public static SessionResponseDto.SessionAllRes toAllResponse(Session session, List<String> keywords) {
-        return SessionResponseDto.SessionAllRes.builder()
+    public static SessionResponseDto.SessionAllRes toAllResponse(Session session, List<String> keywords, String timeRange) {
+        // 1. SessionDetail 생성
+        SessionResponseDto.SessionAllRes.SessionDetail sessionDetail = SessionResponseDto.SessionAllRes.SessionDetail.builder()
                 .id(session.getId())
                 .name(session.getName())
                 .shortDescription(session.getShortDescription())
+                .location(session.getLocation())
                 .startTime(session.getStartTime())
                 .endTime(session.getEndTime())
-                .location(session.getLocation())
+                .timeRange(timeRange)
+                .keywords(new LinkedHashSet<>(keywords)) // Set으로 중복 제거
+                .build();
+
+        // 2. SessionAllRes 생성
+        return SessionResponseDto.SessionAllRes.builder()
+                .timeRange(timeRange)
+                .sessions(List.of(sessionDetail))
                 .build();
     }
-
 
     public static SessionResponseDto.SessionDetailedRes.SessionDetail toSessionDetail(
             Session session,

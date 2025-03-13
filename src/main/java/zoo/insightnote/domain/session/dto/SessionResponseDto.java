@@ -29,14 +29,23 @@ public class SessionResponseDto {
     @Getter
     @Builder(toBuilder = true)
     public static class SessionAllRes {
-        private Long id;
-        private String name;
-        private Set<String> keywords;
-        private String shortDescription;
-        private LocalDateTime startTime;
-        private LocalDateTime endTime;
         private String timeRange;
-        private String location;
+        private List<SessionDetail> sessions;
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SessionDetail {
+            private Long id;
+            private String name;
+            private String shortDescription;
+            private String location;
+            private LocalDateTime startTime;
+            private LocalDateTime endTime;
+            private String timeRange;
+            private Set<String> keywords;
+        }
     }
 
     @Getter
