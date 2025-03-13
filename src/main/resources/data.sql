@@ -1,4 +1,4 @@
-INSERT INTO keyword (id, name)
+INSERT IGNORE INTO keyword (id, name)
 VALUES
     (1, '핵심 기술'),
     (2, '심화 기술'),
@@ -7,7 +7,7 @@ VALUES
     (5, '비즈니스'),
     (6, '미래 전망');
 
-INSERT INTO event (
+INSERT IGNORE INTO event (
     id, name, description, location, start_time, end_time
 ) VALUES
 (1, 'Right AIgent: Smart Agent, Smarter Future',
@@ -17,7 +17,7 @@ INSERT INTO event (
 
 
 -- 연사 데이터 (Speaker)
-INSERT INTO speaker (id, name, email, phone_number) VALUES
+INSERT IGNORE INTO speaker (id, name, email, phone_number) VALUES
 (1, '페드로 도밍고스', 'pedro@example.com', '010-1111-1111'),
 (2, '데이비드 실버', 'david@example.com', '010-2222-2222'),
 (3, '야닉 킬처', 'yannic@example.com', '010-3333-3333'),
@@ -35,7 +35,7 @@ INSERT INTO speaker (id, name, email, phone_number) VALUES
 (15, '윤성로', 'seongro.yoon@example.com', '010-1515-1515');
 
 -- 세션 데이터 (Session)
-INSERT INTO session (
+INSERT IGNORE INTO session (
     id, event_id, speaker_id, event_day, name, short_description, long_description,
     max_capacity, participant_count, start_time, end_time, status, video_link, location
 ) VALUES
@@ -174,7 +174,7 @@ INSERT INTO session (
 
 --day 2
 -- 연사 데이터 (Speaker)
-INSERT INTO speaker (id, name, email, phone_number) VALUES
+INSERT IGNORE INTO speaker (id, name, email, phone_number) VALUES
 (16, '김연희', 'yeonhee.kim@kaist.ac.kr', '010-7777-7777'),
 (17, '이경미', 'kyungmi.lee@example.com', '010-8888-8888'),
 (18, '박성수', 'sungsoo.park@example.com', '010-9999-9999'),
@@ -193,7 +193,7 @@ INSERT INTO speaker (id, name, email, phone_number) VALUES
 
 
 -- 세션 데이터 (Session)
-INSERT INTO session (
+INSERT IGNORE INTO session (
     id, event_id, speaker_id, event_day, name, short_description, long_description,
     max_capacity, participant_count, start_time, end_time, status, video_link, location
 ) VALUES
@@ -277,7 +277,7 @@ INSERT INTO session (
 
 
 
-INSERT INTO session_keyword (session_id, keyword_id) VALUES
+INSERT IGNORE INTO session_keyword (session_id, keyword_id) VALUES
 -- 세션 1: AI 에이전트: 현재를 넘어서 미래로 (글로벌, 미래 전망)
 (1, 4),
 (1, 6),
