@@ -59,9 +59,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setDomain(".synapsex.online");
+        //cookie.setDomain("synapsex.online");
         cookie.setAttribute("SameSite", "None");
         return cookie;
     }
