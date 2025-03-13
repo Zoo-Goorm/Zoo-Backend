@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // cookie.setSecure(true); // https를 사용하는 경우에 주석 해제
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setAttribute("SameSite", "Lax");
+        // cookie.setAttribute("SameSite", "Lax");
         return cookie;
     }
 }
