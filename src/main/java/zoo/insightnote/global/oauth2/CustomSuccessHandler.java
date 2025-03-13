@@ -44,7 +44,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        //cookie.setDomain("");
+        cookie.setDomain("synapsex.online");
         cookie.setMaxAge(60*60*60);
         cookie.setSecure(true); // https를 사용하는 경우에 주석 해제
         cookie.setPath("/");
