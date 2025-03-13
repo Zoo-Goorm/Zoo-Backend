@@ -35,24 +35,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         // CORS 설정
+// CORS 설정
         http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
+                CorsConfiguration configuration = new CorsConfiguration();
 
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                // 배포된 프론트엔드 URL 추가
+                configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
 
-                        CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Collections.singletonList("*"));
+                configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+                configuration.setAllowCredentials(true);
+                configuration.setMaxAge(3600L);
 
-                        configuration.setAllowedOrigins(Collections.singletonList(frontUrl));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
+                return configuration;
+        }));
 
-                        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-                        return configuration;
-                    }
-                }));
 
         //csrf disable
         http
