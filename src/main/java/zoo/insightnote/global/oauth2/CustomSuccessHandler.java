@@ -47,8 +47,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setMaxAge(60*60*60);
         cookie.setSecure(true); // https를 사용하는 경우에 주석 해제
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setHttpOnly(false); // javascript에서 접근 가능하게 하려면 false로 설정
+        // cookie.setAttribute("SameSite", "None");
         return cookie;
     }
 }

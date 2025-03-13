@@ -18,12 +18,6 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
                 .allowedOrigins(frontUrl)
-                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("http://localhost:8080")
-                .allowedOrigins("https://43.202.186.65")
-                .allowedOrigins("http://43.202.186.65")
-                .allowedOrigins("https://goorm.ddns.net")
-                .allowedOrigins("http://goorm.ddns.net")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization", "Set-Cookie")
