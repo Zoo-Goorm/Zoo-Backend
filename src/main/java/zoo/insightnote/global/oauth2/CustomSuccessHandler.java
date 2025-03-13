@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import zoo.insightnote.global.jwt.JWTUtil;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Value("${FRONT_URL}")
@@ -37,6 +39,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
+
+        log.info("ddddddddddddddd");
 
         response.addCookie(createCookie("Authorization", token));
         response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
