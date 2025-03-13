@@ -39,6 +39,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
 
         response.addCookie(createCookie("Authorization", token));
+
+        response.setHeader("Set-Cookie",
+                "Authorization=" + token + "; Path=/; HttpOnly; Max-Age=" + (60*60*60) + "; SameSite=None");
+
         response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
@@ -47,8 +51,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setMaxAge(60*60*60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        // cookie.setSecure(false);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setSecure(false);
+        // cookie.setAttribute("SameSite", "Lax");
         return cookie;
     }
 }
