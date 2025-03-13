@@ -40,9 +40,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.addCookie(createCookie("Authorization", token));
 
-        response.setHeader("Set-Cookie",
-                "Authorization=" + token + "; Path=/; HttpOnly; Max-Age=" + (60*60*60) + "; SameSite=None");
-
         response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
