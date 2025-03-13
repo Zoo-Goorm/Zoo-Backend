@@ -24,15 +24,14 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/actuator")) {
+        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
+                "/actuator")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String authorization = getAuthorization(request);
-        checkAuthorization(request, response, filterChain, authorization);
-
-        String token = authorization;
+        String token = getTokenFromRequest(request);
+        checkAuthorization(request, response, filterChain, token);
         checkToken(request, response, filterChain, token);
 
         UserDto userDto = UserDto.builder()
@@ -48,28 +47,37 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getAuthorization(HttpServletRequest request) {
-        String authorization = null;
+    private String getTokenFromRequest(HttpServletRequest request) {
+        String headerToken = request.getHeader("Authorization");
+        if (headerToken != null && headerToken.startsWith("Bearer ")) {
+            return headerToken.substring(7); // "Bearer " 이후의 토큰 반환
+        }
+
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("Authorization")) {
-                authorization = cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    return cookie.getValue();
+                }
             }
         }
-        return authorization;
+
+        return null;
     }
 
     private void checkToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
-                           String token) throws IOException, ServletException {
+                            String token) throws IOException, ServletException {
         if (jwtUtil.isExpired(token)) {
-            throw new AuthenticationException("token expired") {};
+            throw new AuthenticationException("token expired") {
+            };
         }
     }
 
     private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
-                                  String authorization) throws IOException, ServletException {
+                                    String authorization) throws IOException, ServletException {
         if (authorization == null) {
-            throw new AuthenticationException("token null") {};
+            throw new AuthenticationException("token null") {
+            };
         }
     }
 }
