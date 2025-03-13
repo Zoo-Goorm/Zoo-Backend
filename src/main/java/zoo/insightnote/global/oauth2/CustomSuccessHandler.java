@@ -44,7 +44,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-
         if (frontUrl.contains("localhost")) {
             cookie.setMaxAge(60 * 60 * 60);
             cookie.setPath("/");
@@ -59,7 +58,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             cookie.setSecure(true);
             cookie.setAttribute("SameSite", "None");
         }
-
         return cookie;
     }
 }
