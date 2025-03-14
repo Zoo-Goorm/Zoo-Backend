@@ -18,7 +18,7 @@ import java.util.*;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ReservationQueryRepository {
+public class ReservationCustomQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<Tuple> findUserReservationInfo(Long userId) {
