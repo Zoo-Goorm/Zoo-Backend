@@ -25,6 +25,6 @@ public class Speaker {
 
     private String phoneNumber;
 
-
+    private String position;
 
 }
