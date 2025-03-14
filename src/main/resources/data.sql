@@ -1,4 +1,4 @@
-INSERT IGNORE NTO keyword (id, name)
+INSERT IGNORE INTO keyword (id, name)
 VALUES
     (1, '핵심 기술'),
     (2, '심화 기술'),
