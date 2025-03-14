@@ -174,7 +174,7 @@ INSERT IGNORE INTO session (
 
 --day 2
 -- 연사 데이터 (Speaker)
-INSERT INTO IGNORE speaker (id, name, email, phone_number) VALUES
+INSERT IGNORE INTO speaker (id, name, email, phone_number) VALUES
 (16, '김연희', 'yeonhee.kim@kaist.ac.kr', '010-7777-7777'),
 (17, '이경미', 'kyungmi.lee@example.com', '010-8888-8888'),
 (18, '박성수', 'sungsoo.park@example.com', '010-9999-9999'),
