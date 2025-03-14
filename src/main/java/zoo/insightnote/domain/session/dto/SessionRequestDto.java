@@ -6,6 +6,7 @@ import lombok.Getter;
 import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class SessionRequestDto {
     public static class Create {
         private Long eventId;
         private Long speakerId;
-        private Integer eventDay;
+        private LocalDate eventDay;
         private String name;
         private String shortDescription;
         private String longDescription;
