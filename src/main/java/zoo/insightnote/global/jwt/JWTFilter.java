@@ -23,9 +23,12 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // filterChain.doFilter(request, response); // 인증 없이 계속 진행
+
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
-                "/actuator")) {
+                "/actuator") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")) {
             filterChain.doFilter(request, response);
             return;
         }
