@@ -27,7 +27,7 @@ jobs:
       - name : Gradle Setup
         uses: gradle/gradle-build-action@v2
         with:
-          cache-disabled: true
+          cache-disabled: false
           gradle-home-cache-includes: |
             caches
             wrapper
