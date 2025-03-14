@@ -24,6 +24,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name : Gradle Setup
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-disabled: true
+          gradle-home-cache-includes: |
+            caches
+            wrapper
+
       - name: Build With Gradle
         run: |
           chmod +x gradlew
