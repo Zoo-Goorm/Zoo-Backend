@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -161,13 +162,27 @@ public class SessionQueryRepository {
         Map<String, List<SessionResponseDto.SessionDetailedRes>> finalGrouped = new LinkedHashMap<>();
         for (Map.Entry<String, Map<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>>> dateEntry : tempGrouped.entrySet()) {
             List<SessionResponseDto.SessionDetailedRes> timeRangeList = new ArrayList<>();
+
             for (Map.Entry<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>> timeRangeEntry : dateEntry.getValue().entrySet()) {
+
+                List<SessionResponseDto.SessionDetailedRes.SessionDetail> sortedSessions = timeRangeEntry.getValue().stream()
+                        .collect(Collectors.partitioningBy(session ->
+                                session.getMaxCapacity() != null &&
+                                        session.getParticipantCount() != null &&
+                                        session.getMaxCapacity().equals(session.getParticipantCount())
+                        ))
+                        .values().stream()
+                        .flatMap(List::stream)
+                        .toList();
+
                 SessionResponseDto.SessionDetailedRes detailedRes = SessionResponseDto.SessionDetailedRes.builder()
                         .timeRange(timeRangeEntry.getKey())
-                        .sessions(timeRangeEntry.getValue())
+                        .sessions(sortedSessions)
                         .build();
+
                 timeRangeList.add(detailedRes);
             }
+
             finalGrouped.put(dateEntry.getKey(), timeRangeList);
         }
 
