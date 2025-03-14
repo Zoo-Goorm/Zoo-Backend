@@ -60,14 +60,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=min,compression=zstd
+      - name: Build Docker
+        run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/my-app .
+
+      - name: Push Docker
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
 
   deploy:
     needs: build
