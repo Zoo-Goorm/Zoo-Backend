@@ -162,9 +162,19 @@ public class SessionQueryRepository {
         for (Map.Entry<String, Map<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>>> dateEntry : tempGrouped.entrySet()) {
             List<SessionResponseDto.SessionDetailedRes> timeRangeList = new ArrayList<>();
             for (Map.Entry<String, List<SessionResponseDto.SessionDetailedRes.SessionDetail>> timeRangeEntry : dateEntry.getValue().entrySet()) {
+
+                List<SessionResponseDto.SessionDetailedRes.SessionDetail> sortedSessions = timeRangeEntry.getValue().stream()
+                        .sorted((s1, s2) -> {
+                            boolean s1Full = s1.getMaxCapacity() != null && s1.getParticipantCount() != null && s1.getMaxCapacity().equals(s1.getParticipantCount());
+                            boolean s2Full = s2.getMaxCapacity() != null && s2.getParticipantCount() != null && s2.getMaxCapacity().equals(s2.getParticipantCount());
+                            if (s1Full == s2Full) return 0;
+                            return s1Full ? 1 : -1; // 만석인 세션을 뒤로 배치
+                        })
+                        .toList();
+
                 SessionResponseDto.SessionDetailedRes detailedRes = SessionResponseDto.SessionDetailedRes.builder()
                         .timeRange(timeRangeEntry.getKey())
-                        .sessions(timeRangeEntry.getValue())
+                        .sessions(sortedSessions)
                         .build();
                 timeRangeList.add(detailedRes);
             }
