@@ -6,8 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Map;
+import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 
 @Tag(name = "Reservation", description = "세션 예약 관련 API")
 @RequestMapping("/api/v1/reservation")
@@ -23,5 +22,5 @@ public interface ReservationController {
             }
     )
     @GetMapping("/ticket/{userId}")
-    Map<String, Object> getUserTicketInfo(Long userId);
+    UserTicketInfoResponseDto getUserTicketInfo(Long userId);
 }
