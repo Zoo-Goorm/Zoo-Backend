@@ -40,30 +40,30 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
 
-        response.addCookie(createCookie("Authorization", token));
+        //response.addCookie(createCookie("Authorization", token));
 
-//        ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", token)
-//                .httpOnly(true)   // XSS 공격 방지
-//                .secure(true)     // HTTPS 환경에서만 쿠키 전송
-//                .sameSite("None") // CORS 환경에서 쿠키 허용
-//                .path("/")        // 모든 경로에서 접근 가능
-//                .maxAge(60 * 60 * 10) // 10시간 유지
-//                .build();
-//
-//        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", token)
+                .httpOnly(true)   // XSS 공격 방지
+                .secure(true)     // HTTPS 환경에서만 쿠키 전송
+                .sameSite("None") // CORS 환경에서 쿠키 허용
+                .path("/")        // 모든 경로에서 접근 가능
+                .maxAge(60 * 60 * 10) // 10시간 유지
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
         response.sendRedirect("https://localhost:3000/"); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
-        // cookie.setDomain("synapsex.online");
-        //cookie.setAttribute("SameSite", "None");
-
-        return cookie;
-    }
+//    private Cookie createCookie(String key, String value) {
+//        Cookie cookie = new Cookie(key, value);
+//        cookie.setMaxAge(60*60*60);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(false);
+//        cookie.setSecure(true);
+//        // cookie.setDomain("synapsex.online");
+//        cookie.setAttribute("SameSite", "None");
+//
+//        return cookie;
+//    }
 }
