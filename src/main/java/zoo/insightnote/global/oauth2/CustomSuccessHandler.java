@@ -52,24 +52,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //
 //        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
-        response.sendRedirect("https://www.synapsex.online/session-schedule"); // 추후 프론트 배포 서버로 변경 해야됨.
+        response.sendRedirect("http://localhost:3000"); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setHttpOnly(false);
+        // cookie.setSecure(true);
         //cookie.setDomain("synapsex.online");
-        cookie.setAttribute("SameSite", "None");
+        // cookie.setAttribute("SameSite", "None");
 
-        // 배포 환경인지 확인 후 Secure 설정
-        if (frontUrl.startsWith("https")) {
-            cookie.setSecure(true);
-        } else {
-            cookie.setSecure(false);
-        }
         return cookie;
     }
 }
