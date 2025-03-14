@@ -23,12 +23,11 @@ import java.util.Map;
 public class ReservationQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public Map<String, Object> findUserTicketInfo(Long userId) {
+    public List<Tuple> findUserReservationInfo(Long userId) {
         QReservation reservation = QReservation.reservation;
         QSession session = QSession.session;
-        QEvent event = QEvent.event;
 
-        List<Tuple> reservationSessions = queryFactory
+        return queryFactory
                 .select(
                         session.id,
                         session.startTime,
@@ -39,13 +38,19 @@ public class ReservationQueryRepository {
                 .join(reservation.session, session)
                 .where(reservation.user.id.eq(userId))
                 .fetch();
+    }
 
-        List<String> eventDates = queryFactory
+    public List<Tuple> findEventInfo() {
+        QEvent event = QEvent.event;
+
+        return queryFactory
                 .select(
-                        Expressions.stringTemplate("DATE_FORMAT({0}, '%m월 %d일')", event.startTime)
+                        Expressions.stringTemplate("DATE_FORMAT({0}, '%c월 %e일')", event.startTime),
+                        Expressions.stringTemplate("DATE_FORMAT({0}, '%c월 %e일')", event.endTime)
                 )
                 .from(event)
                 .fetch();
+    }
 
         Map<String, List<Map<String, Object>>> registeredSessions = new LinkedHashMap<>();
 
