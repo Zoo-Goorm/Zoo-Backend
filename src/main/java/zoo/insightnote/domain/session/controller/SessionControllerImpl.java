@@ -61,5 +61,4 @@ public class SessionControllerImpl implements SessionController {
         Map<String, List<SessionResponseDto.SessionDetailedRes>> response = sessionService.getAllSessionsWithDetails();
         return ResponseEntity.ok(response);
     }
-
 }

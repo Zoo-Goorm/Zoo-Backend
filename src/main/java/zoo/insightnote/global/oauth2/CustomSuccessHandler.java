@@ -63,6 +63,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         cookie.setSecure(true);
         //cookie.setDomain("synapsex.online");
         cookie.setAttribute("SameSite", "None");
+
+        // 배포 환경인지 확인 후 Secure 설정
+        if (frontUrl.startsWith("https")) {
+            cookie.setSecure(true);
+        } else {
+            cookie.setSecure(false);
+        }
         return cookie;
     }
 }
