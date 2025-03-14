@@ -51,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .username(username)
                     .name(user.getName())
                     .email(user.getEmail())
-                    .role("ROLE_USER")
+                    .role(USER)
                     .build();
             return new CustomOAuth2User(userDto);
         }
@@ -62,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .username(username)
                 .name(existData.getName())
                 .email(existData.getEmail())
-                .role("ROLE_USER")
+                .role(USER)
                 .build();
         return new CustomOAuth2User(userDto);
     }

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import zoo.insightnote.domain.user.dto.CustomOAuth2User;
 import zoo.insightnote.domain.user.dto.UserDto;
+import zoo.insightnote.domain.user.entity.Role;
 
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
@@ -23,8 +24,6 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
-        // filterChain.doFilter(request, response); // 인증 없이 계속 진행
 
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
@@ -39,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         UserDto userDto = UserDto.builder()
                 .username(jwtUtil.getUsername(token))
-                .role(jwtUtil.getRole(token))
+                .role(Role.valueOf(jwtUtil.getRole(token)))
                 .build();
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
 
@@ -59,6 +58,7 @@ public class JWTFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
+                System.out.println(cookie.getName());
                 if (cookie.getName().equals("Authorization")) {
                     return cookie.getValue();
                 }

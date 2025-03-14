@@ -1,5 +1,6 @@
 package zoo.insightnote.global.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         // CORS 설정 적용
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+        http.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                CorsConfiguration configuration = new CorsConfiguration();
+
+                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowCredentials(true);
+                configuration.setAllowedHeaders(Collections.singletonList("*"));
+                configuration.setMaxAge(3600L);
+                configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+
+                return configuration;
+            }
+        }));
 
         // CSRF 비활성화
         http.csrf(csrf -> csrf.disable());
@@ -52,36 +69,35 @@ public class SecurityConfig {
         http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         // OAuth2 로그인 설정
-        http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
-                        .userService(customOAuth2UserService))
+        http.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
+                        (userInfoEndpointConfig) -> userInfoEndpointConfig.userService(customOAuth2UserService))
                 .successHandler(customSuccessHandler));
 
         // 경로별 인가 작업
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token", "/actuator/**", "/api/v1/sessions/**", "api/v1/speakers/**").permitAll()
-                .anyRequest().authenticated()
-        );
+        http.authorizeHttpRequests(
+                auth -> auth.requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
+                                "/actuator/**", "/api/v1/sessions/**", "api/v1/speakers/**").permitAll().anyRequest()
+                        .authenticated());
 
         // 세션 설정 : STATELESS
-        http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://www.synapsex.online"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setExposedHeaders(List.of("Set-Cookie"));
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.setAllowedOrigins(List.of("https://localhost:3000", "http://localhost:3000", "https://www.synapsex.online"));
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowCredentials(true);
+//        configuration.setAllowedHeaders(Collections.singletonList("*"));
+//        configuration.setMaxAge(3600L);
+//        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }

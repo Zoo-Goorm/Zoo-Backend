@@ -52,16 +52,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //
 //        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
-        response.sendRedirect("https://localhost:3000"); // 추후 프론트 배포 서버로 변경 해야됨.
+        response.sendRedirect("https://localhost:3000/"); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        //cookie.setDomain("synapsex.online");
+        cookie.setDomain("synapsex.online");
         cookie.setAttribute("SameSite", "None");
 
         return cookie;
