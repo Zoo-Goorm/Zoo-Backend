@@ -6,6 +6,7 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -32,20 +33,33 @@ public class SessionMapper {
     }
 
 
-    public static SessionResponseDto.SessionAllRes toAllResponse(Session session, List<String> keywords) {
-        return SessionResponseDto.SessionAllRes.builder()
+    public static SessionResponseDto.SessionAllRes toAllResponse(Session session, List<String> keywords, String timeRange) {
+        // 1. SessionDetail 생성
+        SessionResponseDto.SessionAllRes.SessionDetail sessionDetail = SessionResponseDto.SessionAllRes.SessionDetail.builder()
                 .id(session.getId())
                 .name(session.getName())
                 .shortDescription(session.getShortDescription())
+                .location(session.getLocation())
                 .startTime(session.getStartTime())
                 .endTime(session.getEndTime())
-                .location(session.getLocation())
+                .timeRange(timeRange)
+                .keywords(new LinkedHashSet<>(keywords)) // Set으로 중복 제거
+                .build();
+
+        // 2. SessionAllRes 생성
+        return SessionResponseDto.SessionAllRes.builder()
+                .timeRange(timeRange)
+                .sessions(List.of(sessionDetail))
                 .build();
     }
 
+    public static SessionResponseDto.SessionDetailedRes.SessionDetail toSessionDetail(
+            Session session,
+            String speakerImageUrl,
+            int participantCount,
+            List<String> keywords) {
 
-    public static SessionResponseDto.SessionDetailedRes toDetailedResponse(Session session, String speakerImageUrl, int participantCount ,  List<String> keywords) {
-        return SessionResponseDto.SessionDetailedRes.builder()
+        return SessionResponseDto.SessionDetailedRes.SessionDetail.builder()
                 .id(session.getId())
                 .name(session.getName())
                 .shortDescription(session.getShortDescription())
@@ -53,8 +67,9 @@ public class SessionMapper {
                 .endTime(session.getEndTime())
                 .speakerName(session.getSpeaker().getName())
                 .speakerImageUrl(speakerImageUrl)
-                .maxCapacity(participantCount)
-                .keywords(new LinkedHashSet<>(keywords))
+                .maxCapacity(session.getMaxCapacity())
+                .participantCount(participantCount)
+                .keywords(new LinkedHashSet<>(keywords)) // Set으로 중복 제거
                 .status(session.getStatus())
                 .location(session.getLocation())
                 .build();

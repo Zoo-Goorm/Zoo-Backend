@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -39,24 +41,29 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
+
+//        ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", token)
+//                .httpOnly(true)   // XSS 공격 방지
+//                .secure(true)     // HTTPS 환경에서만 쿠키 전송
+//                .sameSite("None") // CORS 환경에서 쿠키 허용
+//                .path("/")        // 모든 경로에서 접근 가능
+//                .maxAge(60 * 60 * 10) // 10시간 유지
+//                .build();
+//
+//        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
+        response.sendRedirect("https://localhost:3000"); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        //cookie.setDomain("");
         cookie.setMaxAge(60*60*60);
-        //cookie.setSecure(true); // https를 사용하는 경우에 주석 해제
         cookie.setPath("/");
-        cookie.setHttpOnly(true); // javascript에서 접근 가능하게 하려면 false로 설정
+        cookie.setHttpOnly(false);
+        cookie.setSecure(true);
+        //cookie.setDomain("synapsex.online");
         cookie.setAttribute("SameSite", "None");
 
-        // 배포 환경인지 확인 후 Secure 설정
-        if (frontUrl.startsWith("https")) {
-            cookie.setSecure(true);
-        } else {
-            cookie.setSecure(false);
-        }
         return cookie;
     }
 }
