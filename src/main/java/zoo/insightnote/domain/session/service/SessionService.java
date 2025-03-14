@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.session.service;
 
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,8 @@ import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
-import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
-import zoo.insightnote.domain.session.repository.SessionQueryRepository;
+import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.service.SessionKeywordService;
 import zoo.insightnote.domain.speaker.entity.Speaker;
@@ -23,16 +23,15 @@ import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SessionService {
 
     private final SessionRepository sessionRepository;
-    private final SessionQueryRepository sessionQueryRepository;
+    private final SessionCustomQueryRepository sessionQueryRepository;
     private final EventService eventService;
     private final SpeakerService speakerService;
     private final ImageService imageService;
@@ -97,18 +96,6 @@ public class SessionService {
         sessionRepository.delete(session);
     }
 
-    // 세션 단일 조회
-    @Transactional(readOnly = true)
-    public SessionResponseDto.SessionRes getSessionById(Long sessionId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
-
-        List<String> keywords = sessionKeywordService.getKeywordsBySession(session);
-
-        return SessionMapper.toResponse(session, keywords);
-    }
-
-
     // 세션 목록 일반 페이지 (이미지 제외)
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
@@ -120,5 +107,18 @@ public class SessionService {
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
         return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
+    }
+
+
+
+    @Transactional(readOnly = true)
+    public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {
+        SessionResponseDto.SessionSpeakerDetailQueryDto result = sessionQueryRepository.findSessionAndSpeakerDetail(sessionId);
+
+        if (result == null) {
+            throw new CustomException(ErrorCode.SESSION_NOT_FOUND); // 커스텀 예외로 처리
+        }
+
+        return SessionMapper.toSessionSpeakerDetailRes(result);
     }
 }
