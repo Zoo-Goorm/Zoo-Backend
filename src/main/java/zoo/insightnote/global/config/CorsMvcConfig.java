@@ -11,9 +11,6 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     @Value("${FRONT_URL}")
     private String frontUrl;
 
-    // 배포된 프론트엔드 주소 추가해야됨
-    private String deployedFrontUrl;
-
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
