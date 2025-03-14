@@ -24,9 +24,9 @@ public class KeywordService {
                 .orElseGet(() -> keywordRepository.save(Keyword.create(keywordName)));
     }
 
-    public List<KeywordResponseDto> getAllKeywords () {
+    public List<String> getAllKeywordNames() {
         return keywordRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map(KeywordMapper::toResponse)
-                .collect((Collectors.toList()));
+                .map(Keyword::getName) // name 필드만 추출
+                .collect(Collectors.toList());
     }
 }
