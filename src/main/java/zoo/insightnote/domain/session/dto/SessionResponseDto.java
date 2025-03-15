@@ -87,7 +87,7 @@ public class SessionResponseDto {
         private String speakerName;
         private List<String> keywords;
         private List<String> careers;
-
+        private String imageUrl;
     }
 
     @Data
@@ -103,5 +103,6 @@ public class SessionResponseDto {
         private String speakerName;
         private String keywords;
         private String careers;
+        private String imageUrl;
     }
 }

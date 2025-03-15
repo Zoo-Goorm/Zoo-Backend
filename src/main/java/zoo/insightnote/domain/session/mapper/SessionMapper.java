@@ -9,6 +9,7 @@ import zoo.insightnote.domain.speaker.entity.Speaker;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SessionMapper {
 
@@ -78,16 +79,6 @@ public class SessionMapper {
 
     public static SessionResponseDto.SessionSpeakerDetailRes toSessionSpeakerDetailRes(SessionResponseDto.SessionSpeakerDetailQueryDto result) {
 
-//        해당 주석은 중복 이슈를 팀원간 공유를 하고 삭제하거나 수정할 부분입니다
-//        List<String> keywords = Optional.ofNullable(result.getKeywords())
-//                .map(k -> List.of(k.split(",")))
-//                .orElse(Collections.emptyList());
-//
-//        List<String> careers = Optional.ofNullable(result.getCareers())
-//                .map(c -> List.of(c.split(",")))
-//                .orElse(Collections.emptyList());
-
-        // keywords 처리 (빈 문자열 제거)
         List<String> keywords = Optional.ofNullable(result.getKeywords())
                 .map(k -> Arrays.stream(k.split(","))
                         .filter(s -> !s.isBlank())  // 빈 문자열 제거
@@ -95,15 +86,16 @@ public class SessionMapper {
                         .toList())
                 .orElse(Collections.emptyList());
 
-        System.out.println(result.getCareers());
         List<String> careers = Optional.ofNullable(result.getCareers())
-                .map(c -> Arrays.stream(c.split("\\|\\|"))
-                        .map(String::trim)                          // 공백 제거
-                        .map(s -> s.startsWith(",") ? s.substring(1).trim() : s) // 쉼표로 시작하면 제거
-                        .filter(s -> !s.isBlank())                   // 빈 문자열 제거
-                        .collect(Collectors.toCollection(LinkedHashSet::new))) // 중복 제거 및 순서 유지
-                .map(ArrayList::new)                                 // Set을 List로 변환
-                .orElseGet(ArrayList::new);                          // 빈 리스트 처리
+                .map(c -> c.replace(", ", "##SEP##"))
+                .map(c -> Arrays.stream(c.split(","))
+                        .map(s -> s.replace("##SEP##", ", "))
+                        .map(String::trim)
+                        .filter(s -> !s.isBlank())
+                        .distinct()
+                        .toList())
+                .orElseGet(ArrayList::new);
+
 
         return SessionResponseDto.SessionSpeakerDetailRes.builder()
                 .sessionName(result.getSessionName())
@@ -114,6 +106,7 @@ public class SessionMapper {
                 .speakerName(result.getSpeakerName())
                 .keywords(keywords)
                 .careers(careers)
+                .imageUrl(result.getImageUrl())
                 .build();
     }
 }
