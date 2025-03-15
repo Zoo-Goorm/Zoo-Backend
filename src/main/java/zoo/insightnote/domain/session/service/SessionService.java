@@ -57,7 +57,7 @@ public class SessionService {
                 .toList();
         sessionKeywordService.saveSessionKeywords(savedSession, keywords);
 
-        return SessionMapper.toResponse(session, request.getKeywords());
+        return SessionMapper.  toResponse(session, request.getKeywords());
     }
 
 
@@ -109,12 +109,12 @@ public class SessionService {
         return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
     }
 
-
-
     @Transactional(readOnly = true)
     public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {
         SessionResponseDto.SessionSpeakerDetailQueryDto result = sessionQueryRepository.findSessionAndSpeakerDetail(sessionId);
 
+        System.out.println("4444444444");
+        System.out.println(result.getImageUrl());
         if (result == null) {
             throw new CustomException(ErrorCode.SESSION_NOT_FOUND); // 커스텀 예외로 처리
         }

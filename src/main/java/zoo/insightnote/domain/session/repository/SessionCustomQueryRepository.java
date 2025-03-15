@@ -21,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static zoo.insightnote.domain.image.entity.QImage.image;
+
 @Repository
 @RequiredArgsConstructor
 public class SessionCustomQueryRepository {
@@ -236,6 +238,7 @@ public class SessionCustomQueryRepository {
         QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
         QKeyword keyword = QKeyword.keyword;
         QCareer career = QCareer.career;
+        QImage image = QImage.image;
 
         return queryFactory
                 .select(Projections.constructor(
@@ -246,16 +249,22 @@ public class SessionCustomQueryRepository {
                         session.maxCapacity,
                         session.participantCount,
                         speaker.name,
-                        Expressions.stringTemplate("group_concat({0}, {1})", keyword.name, Expressions.constant(",")),  // 쉼표 구분자
-                        Expressions.stringTemplate("group_concat({0}, {1})", career.description, Expressions.constant("||")) // '||' 구분자
+//                        Expressions.stringTemplate("group_concat({0}, {1})", keyword.name, Expressions.constant(",")),  // 쉼표 구분자
+//                        Expressions.stringTemplate("group_concat({0}, {1})", career.description, Expressions.constant("||")), // '||' 구분자
+
+                        Expressions.stringTemplate("group_concat(distinct {0})", keyword.name, Expressions.constant(",")),  // 쉼표 구분자
+                        Expressions.stringTemplate("group_concat(distinct {0})", career.description), // '||' 구분자
+                        Expressions.stringTemplate("MAX({0})", image.fileUrl)
                 ))
                 .from(session)
                 .join(session.speaker, speaker)
                 .leftJoin(sessionKeyword).on(sessionKeyword.session.eq(session))
                 .leftJoin(sessionKeyword.keyword, keyword)
                 .leftJoin(career).on(career.speaker.eq(speaker))
+                .leftJoin(image).on(image.entityId.eq(speaker.id).and(image.entityType.eq(EntityType.SPEAKER)))
                 .where(session.id.eq(sessionId))
-                .groupBy(session.id)
                 .fetchOne();
     }
+
+
 }
