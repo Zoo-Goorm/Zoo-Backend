@@ -1,14 +1,14 @@
 package zoo.insightnote.domain.session.mapper;
 
+import com.querydsl.core.Tuple;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SessionMapper {
 
@@ -76,5 +76,44 @@ public class SessionMapper {
     }
 
 
+    public static SessionResponseDto.SessionSpeakerDetailRes toSessionSpeakerDetailRes(SessionResponseDto.SessionSpeakerDetailQueryDto result) {
 
+//        해당 주석은 중복 이슈를 팀원간 공유를 하고 삭제하거나 수정할 부분입니다
+//        List<String> keywords = Optional.ofNullable(result.getKeywords())
+//                .map(k -> List.of(k.split(",")))
+//                .orElse(Collections.emptyList());
+//
+//        List<String> careers = Optional.ofNullable(result.getCareers())
+//                .map(c -> List.of(c.split(",")))
+//                .orElse(Collections.emptyList());
+
+        // keywords 처리 (빈 문자열 제거)
+        List<String> keywords = Optional.ofNullable(result.getKeywords())
+                .map(k -> Arrays.stream(k.split(","))
+                        .filter(s -> !s.isBlank())  // 빈 문자열 제거
+                        .distinct()                // 중복 제거
+                        .toList())
+                .orElse(Collections.emptyList());
+
+        System.out.println(result.getCareers());
+        List<String> careers = Optional.ofNullable(result.getCareers())
+                .map(c -> Arrays.stream(c.split("\\|\\|"))
+                        .map(String::trim)                          // 공백 제거
+                        .map(s -> s.startsWith(",") ? s.substring(1).trim() : s) // 쉼표로 시작하면 제거
+                        .filter(s -> !s.isBlank())                   // 빈 문자열 제거
+                        .collect(Collectors.toCollection(LinkedHashSet::new))) // 중복 제거 및 순서 유지
+                .map(ArrayList::new)                                 // Set을 List로 변환
+                .orElseGet(ArrayList::new);                          // 빈 리스트 처리
+
+        return SessionResponseDto.SessionSpeakerDetailRes.builder()
+                .sessionName(result.getSessionName())
+                .longDescription(result.getLongDescription())
+                .location(result.getLocation())
+                .maxCapacity(result.getMaxCapacity())
+                .participantCount(result.getParticipantCount())
+                .speakerName(result.getSpeakerName())
+                .keywords(keywords)
+                .careers(careers)
+                .build();
+    }
 }

@@ -1,11 +1,13 @@
 package zoo.insightnote.domain.session.repository;
 
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import zoo.insightnote.domain.career.entity.QCareer;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.QSession;
@@ -17,12 +19,11 @@ import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class SessionQueryRepository {
+public class SessionCustomQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -226,5 +227,35 @@ public class SessionQueryRepository {
     private String formatTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         return startTime.format(timeFormatter) + "~" + endTime.format(timeFormatter);
+    }
+
+    // 모달 페이지 전용 쿼리 (세션 정보 클릭시)
+    public SessionResponseDto.SessionSpeakerDetailQueryDto findSessionAndSpeakerDetail(Long sessionId) {
+        QSession session = QSession.session;
+        QSpeaker speaker = QSpeaker.speaker;
+        QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
+        QKeyword keyword = QKeyword.keyword;
+        QCareer career = QCareer.career;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        SessionResponseDto.SessionSpeakerDetailQueryDto.class,
+                        session.name,
+                        session.longDescription,
+                        session.location,
+                        session.maxCapacity,
+                        session.participantCount,
+                        speaker.name,
+                        Expressions.stringTemplate("group_concat({0}, {1})", keyword.name, Expressions.constant(",")),  // 쉼표 구분자
+                        Expressions.stringTemplate("group_concat({0}, {1})", career.description, Expressions.constant("||")) // '||' 구분자
+                ))
+                .from(session)
+                .join(session.speaker, speaker)
+                .leftJoin(sessionKeyword).on(sessionKeyword.session.eq(session))
+                .leftJoin(sessionKeyword.keyword, keyword)
+                .leftJoin(career).on(career.speaker.eq(speaker))
+                .where(session.id.eq(sessionId))
+                .groupBy(session.id)
+                .fetchOne();
     }
 }

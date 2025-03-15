@@ -73,4 +73,35 @@ public class SessionResponseDto {
             private Set<String> keywords;
         }
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SessionSpeakerDetailRes {
+        private String sessionName;
+        private String longDescription;
+        private String location;
+        private Integer maxCapacity;
+        private Integer participantCount;
+        private String speakerName;
+        private List<String> keywords;
+        private List<String> careers;
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SessionSpeakerDetailQueryDto {
+        private String sessionName;
+        private String longDescription;
+        private String location;
+        private Integer maxCapacity;
+        private Integer participantCount;
+        private String speakerName;
+        private String keywords;
+        private String careers;
+    }
 }

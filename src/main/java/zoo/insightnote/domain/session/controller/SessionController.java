@@ -51,17 +51,6 @@ public interface SessionController {
             @Parameter(description = "삭제할 세션 ID") @PathVariable Long sessionId
     );
 
-    @Operation(summary = "특정 세션 조회", description = "ID를 이용해 특정 세션 정보를 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "세션 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
-    })
-    @GetMapping("/{sessionId}")
-    ResponseEntity<SessionResponseDto.SessionRes> getSessionById(
-            @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
-    );
-
     @Operation(
             summary = "세션 전체 조회 (이미지 제외, 인원수 제외)",
             description = "모든 세션 정보를 조회하되, 연사 이미지와 인원수는 제외하고 키워드만 포함합니다. "
@@ -82,4 +71,14 @@ public interface SessionController {
     @GetMapping("/detailed")
     ResponseEntity<Map<String, List<SessionResponseDto.SessionDetailedRes>>> getAllSessionsWithDetails();
 
+    @Operation(summary = "세션 단일 상세 조회", description = "특정 세션 ID로 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "세션 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/{sessionId}")
+    ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(
+            @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
+    );
 }

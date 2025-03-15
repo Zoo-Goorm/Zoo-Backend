@@ -13,13 +13,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/keywords")
-public class KeywordController {
+public class KeywordControllerImpl {
 
     private final KeywordService keywordService;
 
     @GetMapping
-    public ResponseEntity<List<KeywordResponseDto>> getAllkeywords() {
-        List<KeywordResponseDto> keywords = keywordService.getAllKeywords();
+    public ResponseEntity<List<String>> getAllkeywords() {
+        List<String> keywords = keywordService.getAllKeywordNames();
         return ResponseEntity.ok(keywords);
     }
 }
