@@ -37,7 +37,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        String role = auth.getAuthority().replace("ROLE_", "");
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
 
         //response.addCookie(createCookie("Authorization", token));
