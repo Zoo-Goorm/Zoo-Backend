@@ -35,5 +35,4 @@ public class Reservation {
     private Session session;
 
     private Boolean checked;
-    private LocalDateTime startReservation;
 }
