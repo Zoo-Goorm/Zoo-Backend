@@ -47,7 +47,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .secure(false)     // HTTPS 환경에서만 쿠키 전송
                 .sameSite("Lax") // CORS 환경에서 쿠키 허용
                 .path("/")        // 모든 경로에서 접근 가능
-                //.domain("synapsex.online") // 도메인 설정
+                .domain("localhost") // 도메인 설정
                 .maxAge(60 * 60 * 10) // 10시간 유지
                 .build();
 
