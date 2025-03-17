@@ -57,7 +57,7 @@ public class SessionService {
                 .toList();
         sessionKeywordService.saveSessionKeywords(savedSession, keywords);
 
-        return SessionMapper.toResponse(session, request.getKeywords());
+        return SessionMapper.  toResponse(session, request.getKeywords());
     }
 
 
@@ -108,8 +108,6 @@ public class SessionService {
     public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
         return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
     }
-
-
 
     @Transactional(readOnly = true)
     public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {
