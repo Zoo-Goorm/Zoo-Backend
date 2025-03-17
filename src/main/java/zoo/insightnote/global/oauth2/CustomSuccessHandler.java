@@ -47,14 +47,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .secure(true)     // HTTPS 환경에서만 쿠키 전송
                 .sameSite("None") // CORS 환경에서 쿠키 허용
                 .path("/")        // 모든 경로에서 접근 가능
-                .domain("synapsex.online") // 도메인 설정
+                //.domain("synapsex.online") // 도메인 설정
                 .maxAge(60 * 60 * 10) // 10시간 유지
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
-        response.sendRedirect("https://www.synapsex.online/session-schedule");
-        // response.sendRedirect("https://localhost:3000/session-schedule"); // 추후 프론트 배포 서버로 변경 해야됨.
+        // response.sendRedirect("https://www.synapsex.online/session-schedule");
+        response.sendRedirect("https://localhost:3000/session-schedule"); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 
 //    private Cookie createCookie(String key, String value) {
