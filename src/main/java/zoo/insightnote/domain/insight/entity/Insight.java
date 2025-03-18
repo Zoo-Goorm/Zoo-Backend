@@ -43,14 +43,27 @@ public class Insight extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isAnonymous;
 
+    @Column(nullable = false)
+    private Boolean isDraft;
+
     @Builder
-    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous) {
+    public Insight(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft) {
+        this.session = session;
+        this.user = user;
+        this.memo = memo;
+        this.isPublic = isPublic != null ? isPublic : true;
+        this.isAnonymous = isAnonymous != null ? isAnonymous : true;
+        this.isDraft = isDraft != null ? isDraft : false;
+    }
+
+    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft) {
         return Insight.builder()
                 .session(session)
                 .user(user)
                 .memo(memo)
-                .isPublic(isPublic != null ? isPublic : true)
-                .isAnonymous(isAnonymous != null ? isAnonymous : false)
+                .isPublic(isPublic)
+                .isAnonymous(isAnonymous)
+                .isDraft(isDraft)
                 .build();
     }
 

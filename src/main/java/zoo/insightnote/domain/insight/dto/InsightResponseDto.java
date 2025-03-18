@@ -16,6 +16,8 @@ public class InsightResponseDto {
         private Long sessionId;
         private String memo;
         private Boolean isPublic;
+        private Boolean isAnonymous;
+        private Boolean isDraft;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
     }

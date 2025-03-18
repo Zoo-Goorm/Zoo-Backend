@@ -16,6 +16,7 @@ public class InsightRequestDto {
         private String memo;
         private Boolean isPublic;
         private Boolean isAnonymous;
+        private Boolean isDraft;
         private List<ImageRequest.UploadImage> images;
     }
 
@@ -25,6 +26,7 @@ public class InsightRequestDto {
         private String memo;
         private Boolean isPublic;
         private Boolean isAnonymous;
+        private Boolean isDraft;
         private List<ImageRequest.UploadImage> images;
     }
 }

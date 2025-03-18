@@ -14,7 +14,8 @@ public class InsightMapper {
                 user,
                 request.getMemo(),
                 request.getIsPublic(),
-                request.getIsAnonymous()
+                request.getIsAnonymous(),
+                request.getIsDraft()
         );
     }
 
@@ -24,6 +25,8 @@ public class InsightMapper {
                 .sessionId(insight.getSession().getId())
                 .memo(insight.getMemo())
                 .isPublic(insight.getIsPublic())
+                .isAnonymous(insight.getIsAnonymous())
+                .isDraft(insight.getIsDraft())
                 .createdAt(insight.getCreateAt())
                 .updatedAt(insight.getUpdatedAt())
                 .build();
