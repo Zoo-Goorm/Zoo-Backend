@@ -27,11 +27,14 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+
         String requestURI = request.getRequestURI();
+
+        log.info("requestURI = {}", requestURI);
 
         if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
                 "/actuator") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
-                || requestURI.startsWith("/api/v1/keywords") || requestURI.startsWith("/api/v1/user") || requestURI.startsWith("/login")) {
+                || requestURI.startsWith("/api/v1/keywords") || requestURI.startsWith("/api/v1/user") || requestURI.startsWith("/login") || requestURI.startsWith("/favicon")) {
             filterChain.doFilter(request, response);
             return;
         }
