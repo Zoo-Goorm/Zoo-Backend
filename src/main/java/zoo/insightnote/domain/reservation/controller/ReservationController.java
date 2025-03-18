@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 
 @Tag(name = "Reservation", description = "세션 예약 관련 API")
@@ -38,4 +38,17 @@ public interface ReservationController {
     )
     @PostMapping("/{sessionId}/{userId}")
     ResponseEntity<Void> addSession(@PathVariable Long sessionId, @PathVariable Long userId);
+
+    @Operation(
+            summary = "세션 취소",
+            description = "사용자가 세션을 취소할 수 있습니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "세션 취소 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류"),
+            }
+    )
+    @DeleteMapping("/{sessionId}/{userId}")
+    ResponseEntity<Void> cancelSession(@PathVariable Long sessionId, @PathVariable Long userId);
 }

@@ -1,10 +1,8 @@
 package zoo.insightnote.domain.reservation.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 import zoo.insightnote.domain.reservation.service.ReservationService;
 
@@ -24,6 +22,13 @@ public class ReservationControllerImpl implements ReservationController{
     @PostMapping("/{sessionId}/{userId}")
     public ResponseEntity<Void> addSession(@PathVariable Long sessionId, @PathVariable Long userId) {
         reservationService.addSession(sessionId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
+    @DeleteMapping("/{sessionId}/{userId}")
+    public ResponseEntity<Void> cancelSession(@PathVariable Long sessionId, @PathVariable Long userId) {
+        reservationService.cancelSession(sessionId, userId);
         return ResponseEntity.noContent().build();
     }
 }
