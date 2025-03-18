@@ -56,9 +56,10 @@ public class PaymentService {
         }
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-        saveSessionsInfo(response, sessionIds, requestDto.getUsername());
-        savePaymentInfo(response, sessionIds.get(0), requestDto.getUsername());
-        updateUserInfo(response, userInfo);
+
+        saveReservationInfo(response, sessionIds, requestDto.getUsername());
+        savePaymentInfo(sessionIds.get(0), requestDto.getUsername());
+        updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
 
@@ -66,7 +67,6 @@ public class PaymentService {
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
         User user = userService.findByUsername(username);
-
         Session sessionInfo = findSessionById(sessionId);
 
         Payment payment = Payment.builder()
@@ -81,23 +81,23 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds, String username) {
+    private void saveReservationInfo(List<Long> sessionIds, String username) {
         User user = userService.findByUsername(username);
-
+  
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
-            Reservation sessionReservation = Reservation.builder()
-                    .user(user)
-                    .session(sessionInfo)
-                    .checked(false)
-                    .build();
+            Reservation savedReservation = Reservation.create(
+                    user,
+                    sessionInfo,
+                    false
+            );
 
-            reservationRepository.save(sessionReservation);
+            reservationRepository.save(savedReservation);
         }
     }
 
-    private void updateUserInfo(KakaoPayApproveResponseDto responseDto, UserInfoDto userInfo) {
+    private void updateUserInfo(UserInfoDto userInfo) {
         User user = userService.findUserByEmail(userInfo.getEmail());
         user.update(
                 userInfo.getEmail(),
@@ -108,7 +108,6 @@ public class PaymentService {
         );
     }
 
-    // TODO : 유저 도메인 개발 완료시 삭제
     private Session findSessionById(Long eventId) {
         return sessionRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
