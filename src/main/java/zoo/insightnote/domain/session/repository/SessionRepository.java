@@ -24,7 +24,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     FROM Session s
     WHERE s.id = :sessionId
 """)
-    Object[] findTargetSessionTime(@Param("sessionId") Long sessionId);
+    List<Object[]> findTargetSessionTime(@Param("sessionId") Long sessionId);
 
 
 }
