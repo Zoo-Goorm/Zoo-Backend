@@ -50,7 +50,8 @@ public class SecurityConfig {
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
                 configuration.setMaxAge(3600L);
-                configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+                //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+                configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
 
                 return configuration;
             }
@@ -76,7 +77,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http.authorizeHttpRequests(
                 auth -> auth.requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
-                                "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**").permitAll().anyRequest()
+                                "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**", "/api/v1/user/**").permitAll().anyRequest()
                         .authenticated());
 
         // 세션 설정 : STATELESS
