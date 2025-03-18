@@ -23,4 +23,5 @@ public interface ReservationController {
     )
     @GetMapping("/ticket/{userId}")
     UserTicketInfoResponseDto getUserTicketInfo(Long userId);
+    ResponseEntity<UserTicketInfoResponseDto> getUserTicketInfo(Long userId);
 }

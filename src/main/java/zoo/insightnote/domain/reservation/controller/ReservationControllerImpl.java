@@ -15,8 +15,8 @@ public class ReservationControllerImpl implements ReservationController{
     private final ReservationService reservationService;
 
     @GetMapping("/ticket/{userId}")
-    public UserTicketInfoResponseDto getUserTicketInfo(@PathVariable Long userId) {
+    public ResponseEntity<UserTicketInfoResponseDto> getUserTicketInfo(@PathVariable Long userId) {
         UserTicketInfoResponseDto userTicketInfo = reservationService.getUserTicketInfo(userId);
-        return userTicketInfo;
+        return ResponseEntity.ok(userTicketInfo);
     }
 }
