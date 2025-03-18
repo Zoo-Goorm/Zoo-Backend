@@ -109,7 +109,6 @@ public class PaymentService {
         );
     }
 
-    // TODO : 유저 도메인 개발 완료시 삭제
     private Session findSessionById(Long eventId) {
         return sessionRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
