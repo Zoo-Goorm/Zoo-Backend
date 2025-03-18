@@ -54,9 +54,10 @@ public class PaymentService {
         }
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-        saveSessionsInfo(response, sessionIds);
+        User user = findUserById(Long.valueOf(response.getPartner_user_id()));
+        saveReservationInfo(user, sessionIds);
         savePaymentInfo(response, sessionIds.get(0));
-        updateUserInfo(response, userInfo);
+        updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
 
@@ -78,23 +79,21 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds) {
-        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
-
+    private void saveReservationInfo(User user, List<Long> sessionIds) {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
-            Reservation sessionReservation = Reservation.builder()
-                    .user(user)
-                    .session(sessionInfo)
-                    .checked(false)
-                    .build();
+            Reservation savedReservation = Reservation.create(
+                    user,
+                    sessionInfo,
+                    false
+            );
 
-            reservationRepository.save(sessionReservation);
+            reservationRepository.save(savedReservation);
         }
     }
 
-    private void updateUserInfo(KakaoPayApproveResponseDto responseDto, UserInfoDto userInfo) {
+    private void updateUserInfo(UserInfoDto userInfo) {
         User user = findUserByEmail(userInfo.getEmail());
         user.update(
                 userInfo.getEmail(),
@@ -108,7 +107,7 @@ public class PaymentService {
     // TODO : 유저 도메인 개발 완료시 삭제
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "User 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     private User findUserByEmail(String email) {
