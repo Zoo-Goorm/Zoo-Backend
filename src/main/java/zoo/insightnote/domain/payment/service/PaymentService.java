@@ -107,7 +107,7 @@ public class PaymentService {
     // TODO : 유저 도메인 개발 완료시 삭제
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "User 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     private User findUserByEmail(String email) {
