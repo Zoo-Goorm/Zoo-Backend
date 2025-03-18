@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,6 +17,7 @@ import zoo.insightnote.domain.user.dto.CustomOAuth2User;
 import zoo.insightnote.domain.user.dto.UserDto;
 import zoo.insightnote.domain.user.entity.Role;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -26,9 +28,10 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
+
         if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
                 "/actuator") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
-                || requestURI.startsWith("/api/v1/keywords") || requestURI.startsWith("/api/v1/user")) {
+                || requestURI.startsWith("/api/v1/keywords") || requestURI.startsWith("/api/v1/user") || requestURI.startsWith("/login")) {
             filterChain.doFilter(request, response);
             return;
         }
