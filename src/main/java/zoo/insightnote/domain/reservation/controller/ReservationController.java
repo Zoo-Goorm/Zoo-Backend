@@ -51,4 +51,17 @@ public interface ReservationController {
     )
     @DeleteMapping("/{sessionId}/{userId}")
     ResponseEntity<Void> cancelSession(@PathVariable Long sessionId, @PathVariable Long userId);
+
+    @Operation(
+            summary = "세션 취소 후 신청",
+            description = "사용자가 동일 시간대 세션이 있는 상태에서 세션을 신청하는 경우 기존의 세션 취소 후, 새 세션 신청을 할 수 있습니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "세션 취소 후 신청 성공"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류"),
+            }
+    )
+    @PostMapping("/{cancelSessionId}/{addSessionId}/{userId}")
+    ResponseEntity<Void> cancelAndAddSession(@PathVariable Long cancelSessionId, @PathVariable Long addSessionId, @PathVariable Long userId);
 }

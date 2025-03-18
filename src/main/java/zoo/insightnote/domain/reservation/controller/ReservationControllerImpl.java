@@ -31,4 +31,12 @@ public class ReservationControllerImpl implements ReservationController{
         reservationService.cancelSession(sessionId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
+    @PostMapping("/{cancelSessionId}/{addSessionId}/{userId}")
+    public ResponseEntity<Void> cancelAndAddSession(@PathVariable Long cancelSessionId, @PathVariable Long addSessionId, @PathVariable Long userId) {
+        reservationService.cancelSession(cancelSessionId, userId);
+        reservationService.addSession(addSessionId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }
