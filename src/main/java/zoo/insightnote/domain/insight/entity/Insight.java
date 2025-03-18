@@ -84,4 +84,8 @@ public class Insight extends BaseTimeEntity {
             this.isAnonymous = newIsAnonymous;
         }
     }
+
+    public void finalizeDraft() {
+        this.isDraft = false;
+    }
 }

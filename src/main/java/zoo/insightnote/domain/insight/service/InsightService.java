@@ -42,10 +42,24 @@ public class InsightService {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        Insight insight = InsightMapper.toEntity(request, session, user);
-        Insight savedInsight = insightRepository.save(insight);
 
-        imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
+        Optional<Insight> existingInsight = insightRepository.findBySessionAndUser(session, user);
+        Insight savedInsight;
+
+        if (existingInsight.isPresent()) {
+            Insight insight = existingInsight.get();
+            insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous());
+
+            if (insight.getIsDraft()) {
+                insight.finalizeDraft();
+            }
+            savedInsight = insight;
+            imageService.updateImages(new ImageRequest.UploadImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages()));
+        } else {
+            Insight insight = InsightMapper.toEntity(request, session, user);
+            savedInsight = insightRepository.save(insight);
+            imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
+        }
 
         return InsightMapper.toResponse(savedInsight);
     }
@@ -57,11 +71,7 @@ public class InsightService {
 
         insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous());
 
-        imageService.updateImages(new ImageRequest.UploadImages(
-                insight.getId(),
-                EntityType.INSIGHT,
-                request.getImages()
-        ));
+        imageService.updateImages(new ImageRequest.UploadImages(insight.getId(), EntityType.INSIGHT, request.getImages()));
 
         return InsightMapper.toResponse(insight);
     }

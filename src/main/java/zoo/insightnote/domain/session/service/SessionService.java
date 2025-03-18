@@ -74,11 +74,7 @@ public class SessionService {
                 .toList();
         sessionKeywordService.updateSessionKeywords(session, newKeywords);
 
-        imageService.updateImages(new ImageRequest.UploadImages(
-                session.getId(),
-                EntityType.SESSION,
-                request.getImages()
-        ));
+        imageService.updateImages(new ImageRequest.UploadImages(session.getId(), EntityType.SESSION, request.getImages()));
 
         return SessionMapper.toResponse(session, request.getKeywords());
     }
