@@ -3,6 +3,8 @@ package zoo.insightnote.domain.reservation.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationCustomQueryRepository;
@@ -70,5 +72,11 @@ public class ReservationService {
         Reservation reservedSession = reservationRepository.findReservedSession(userId, sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
         reservationRepository.delete(reservedSession);
+    }
+
+    @Transactional
+    public void cancelAndAddSession(Long cancelSessionId, Long addSessionId, Long userId) {
+        cancelSession(cancelSessionId, userId);
+        addSession(addSessionId, userId);
     }
 }
