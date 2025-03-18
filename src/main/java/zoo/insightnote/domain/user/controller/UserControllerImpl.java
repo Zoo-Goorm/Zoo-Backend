@@ -7,10 +7,16 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
 @RestController
@@ -19,9 +25,23 @@ import zoo.insightnote.global.jwt.JWTUtil;
 public class UserControllerImpl implements UserController {
 
     private final JWTUtil jwtUtil;
+    private final UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userDetails.getUsername());
+    }
+
+//    @GetMapping("/me")
+//    public ResponseEntity<?> getMyInfo() {
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        return ResponseEntity.ok(username);
+//    }
 
     @GetMapping("/auth/token")
-    public ResponseEntity<?> convertTokenToHeader(@CookieValue(value = "Authorization", required = false) String token) {
+    public ResponseEntity<?> convertTokenToHeader(
+            @CookieValue(value = "Authorization", required = false) String token) {
+
         if (token == null || jwtUtil.isExpired(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token expired or not found");
         }

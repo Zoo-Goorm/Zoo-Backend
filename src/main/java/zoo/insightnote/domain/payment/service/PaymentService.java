@@ -17,6 +17,7 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -32,6 +33,7 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final ReservationRepository reservationRepository;
+    private final UserService userService;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -54,17 +56,18 @@ public class PaymentService {
         }
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-        User user = findUserById(Long.valueOf(response.getPartner_user_id()));
-        saveReservationInfo(user, sessionIds);
-        savePaymentInfo(response, sessionIds.get(0));
+
+        String userName = userInfo.getName();
+        savePaymentInfo(response, sessionIds.get(0), userName);
+        saveSessionsInfo(sessionIds, userName);
         updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
 
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId) {
-        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
+    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
+        User user = userService.findByUsername(username);
         Session sessionInfo = findSessionById(sessionId);
 
         Payment payment = Payment.builder()
@@ -79,7 +82,9 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveReservationInfo(User user, List<Long> sessionIds) {
+    private void saveSessionsInfo(List<Long> sessionIds, String username) {
+        User user = userService.findByUsername(username);
+
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
@@ -94,7 +99,7 @@ public class PaymentService {
     }
 
     private void updateUserInfo(UserInfoDto userInfo) {
-        User user = findUserByEmail(userInfo.getEmail());
+        User user = userService.findUserByEmail(userInfo.getEmail());
         user.update(
                 userInfo.getEmail(),
                 userInfo.getName(),
@@ -104,18 +109,6 @@ public class PaymentService {
         );
     }
 
-    // TODO : 유저 도메인 개발 완료시 삭제
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    private User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(null, "Email 사용자를 찾을 수 없습니다."));
-    }
-
-    // TODO : 유저 도메인 개발 완료시 삭제
     private Session findSessionById(Long eventId) {
         return sessionRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
