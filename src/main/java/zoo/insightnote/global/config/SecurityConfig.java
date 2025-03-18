@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
+import zoo.insightnote.domain.user.service.CustomUserDetailsService;
 import zoo.insightnote.global.jwt.JWTFilter;
 import zoo.insightnote.global.jwt.JWTUtil;
 import zoo.insightnote.global.oauth2.CustomSuccessHandler;
@@ -33,6 +34,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,7 +69,7 @@ public class SecurityConfig {
         http.httpBasic(httpBasic -> httpBasic.disable());
 
         // JWT 필터 추가
-        http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         // OAuth2 로그인 설정
         http.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
