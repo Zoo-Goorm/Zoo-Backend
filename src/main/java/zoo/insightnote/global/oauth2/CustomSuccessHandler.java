@@ -51,7 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", token)
                 .httpOnly(false)   // XSS 공격 방지
-                .secure(!isLocal)     // HTTPS 환경에서만 쿠키 전송
+                .secure(true)     // HTTPS 환경에서만 쿠키 전송
                 .sameSite(isLocal ? "Lax" : "None") // CORS 환경에서 쿠키 허용
                 .path("/")        // 모든 경로에서 접근 가능
                 .domain(isLocal ? null : "synapsex.online") // 도메인 설정
