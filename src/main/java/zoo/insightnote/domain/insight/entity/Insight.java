@@ -46,17 +46,21 @@ public class Insight extends BaseTimeEntity {
     @Column(nullable = false)
     private Boolean isDraft;
 
+    @Column(nullable = true)
+    private String voteTitle;
+
     @Builder
-    public Insight(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft) {
+    public Insight(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft, String voteTitle) {
         this.session = session;
         this.user = user;
         this.memo = memo;
         this.isPublic = isPublic != null ? isPublic : true;
         this.isAnonymous = isAnonymous != null ? isAnonymous : true;
         this.isDraft = isDraft != null ? isDraft : false;
+        this.voteTitle = voteTitle;
     }
 
-    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft) {
+    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft, String voteTitle) {
         return Insight.builder()
                 .session(session)
                 .user(user)
@@ -64,6 +68,7 @@ public class Insight extends BaseTimeEntity {
                 .isPublic(isPublic)
                 .isAnonymous(isAnonymous)
                 .isDraft(isDraft)
+                .voteTitle(voteTitle)
                 .build();
     }
 
@@ -73,7 +78,7 @@ public class Insight extends BaseTimeEntity {
     }
 
     // 업데이트 로직 (익명 여부 포함)
-    public void updateIfChanged(String newMemo, Boolean newIsPublic, Boolean newIsAnonymous) {
+    public void updateIfChanged(String newMemo, Boolean newIsPublic, Boolean newIsAnonymous, Boolean newIsDraft, String newVoteTitle) {
         if (newMemo != null && !newMemo.equals(this.memo)) {
             this.memo = newMemo;
         }
@@ -83,9 +88,16 @@ public class Insight extends BaseTimeEntity {
         if (newIsAnonymous != null && !newIsAnonymous.equals(this.isAnonymous)) {
             this.isAnonymous = newIsAnonymous;
         }
+        if (newIsDraft != null && !newIsDraft.equals(this.isDraft)) {
+            this.isDraft = newIsDraft;
+        }
+        if (newVoteTitle != null && !newVoteTitle.equals(this.voteTitle)) {
+            this.voteTitle = newVoteTitle;
+        }
     }
 
     public void finalizeDraft() {
         this.isDraft = false;
     }
+
 }

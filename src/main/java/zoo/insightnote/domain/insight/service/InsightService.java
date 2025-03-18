@@ -26,7 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InsightService {
 
-
     private final InsightRepository insightRepository;
     private final SessionRepository sessionRepository;
     private final ImageService imageService;
@@ -34,7 +33,7 @@ public class InsightService {
     private final InsightLikeRepository insightLikeRepository;
 
     @Transactional
-    public InsightResponseDto.InsightRes createInsight(InsightRequestDto.CreateDto request) {
+    public InsightResponseDto.InsightRes saveOrUpdateInsight(InsightRequestDto.CreateDto request) {
 
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -42,22 +41,27 @@ public class InsightService {
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-
         Optional<Insight> existingInsight = insightRepository.findBySessionAndUser(session, user);
         Insight savedInsight;
 
         if (existingInsight.isPresent()) {
+            // 기존에 저장된 인사이트가 있으면 업데이트
             Insight insight = existingInsight.get();
-            insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous());
+            insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(), request.getIsDraft(), request.getVoteTitle());
 
-            if (insight.getIsDraft()) {
+            // 정식 저장이면 finalizeDraft() 호출
+            if (!request.getIsDraft()) {
                 insight.finalizeDraft();
             }
+
+
             savedInsight = insight;
             imageService.updateImages(new ImageRequest.UploadImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages()));
         } else {
-            Insight insight = InsightMapper.toEntity(request, session, user);
+            // 기존 데이터가 없으면 새롭게 생성
+            Insight insight = InsightMapper.toEntity(request, session, user, request.getIsDraft());
             savedInsight = insightRepository.save(insight);
+
             imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
         }
 
@@ -69,7 +73,7 @@ public class InsightService {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
-        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous());
+        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(),request.getIsDraft(), request.getVoteTitle());
 
         imageService.updateImages(new ImageRequest.UploadImages(insight.getId(), EntityType.INSIGHT, request.getImages()));
 
@@ -90,7 +94,7 @@ public class InsightService {
         return InsightMapper.toResponse(insight);
     }
 
-
+    @Transactional
     public int toggleLike(Long userId, Long insightId) {
 
         User user = userRepository.findById(userId)
@@ -99,6 +103,9 @@ public class InsightService {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
+        if (insight.getUser().equals(user)) {
+            throw new CustomException(ErrorCode.CANNOT_LIKE_OWN_INSIGHT);
+        }
         // 이미 좋아요가 있는지 확인
         Optional<InsightLike> existingLike = insightLikeRepository.findByUserAndInsight(user, insight);
 
@@ -107,11 +114,7 @@ public class InsightService {
             insightLikeRepository.delete(existingLike.get());
             return -1;
         } else {
-            InsightLike newLike = InsightLike.builder()
-                    .user(user)
-                    .insight(insight)
-                    .build();
-
+            InsightLike newLike = InsightLike.create(user, insight);
             insightLikeRepository.save(newLike);
             return 1;
         }

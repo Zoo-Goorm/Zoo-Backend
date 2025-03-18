@@ -8,14 +8,15 @@ import zoo.insightnote.domain.user.entity.User;
 
 public class InsightMapper {
 
-    public static Insight toEntity(InsightRequestDto.CreateDto request, Session session, User user) {
+    public static Insight toEntity(InsightRequestDto.CreateDto request, Session session, User user, Boolean isDraft) {
         return Insight.create(
                 session,
                 user,
                 request.getMemo(),
                 request.getIsPublic(),
                 request.getIsAnonymous(),
-                request.getIsDraft()
+                isDraft,
+                request.getVoteTitle()
         );
     }
 

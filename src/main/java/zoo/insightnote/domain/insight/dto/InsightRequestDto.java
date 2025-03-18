@@ -17,6 +17,7 @@ public class InsightRequestDto {
         private Boolean isPublic;
         private Boolean isAnonymous;
         private Boolean isDraft;
+        private String voteTitle;
         private List<ImageRequest.UploadImage> images;
     }
 
@@ -27,6 +28,7 @@ public class InsightRequestDto {
         private Boolean isPublic;
         private Boolean isAnonymous;
         private Boolean isDraft;
+        private String voteTitle;
         private List<ImageRequest.UploadImage> images;
     }
 }

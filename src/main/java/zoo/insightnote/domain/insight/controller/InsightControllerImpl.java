@@ -18,7 +18,8 @@ public class InsightControllerImpl implements InsightController{
     @PostMapping
     public ResponseEntity<InsightResponseDto.InsightRes> createInsight(
             @RequestBody InsightRequestDto.CreateDto request) {
-        InsightResponseDto.InsightRes insight = insightService.createInsight(request);
+
+        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
         return ResponseEntity.ok(insight);
     }
 

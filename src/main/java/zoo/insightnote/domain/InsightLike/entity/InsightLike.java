@@ -23,11 +23,12 @@ public class InsightLike {
     @JoinColumn(name = "insight_id", nullable = false)
     private Insight insight;
 
-    @Builder
-    public static InsightLike of(User user, Insight insight) {
-        return InsightLike.builder()
-                .user(user)
-                .insight(insight)
-                .build();
+    private InsightLike(User user, Insight insight) {
+        this.user = user;
+        this.insight = insight;
+    }
+
+    public static InsightLike create(User user, Insight insight) {
+        return new InsightLike(user, insight);
     }
 }
