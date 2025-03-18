@@ -98,7 +98,7 @@ public class PaymentService {
     }
 
     private void updateUserInfo(KakaoPayApproveResponseDto responseDto, UserInfoDto userInfo) {
-        User user = findUserByEmail(userInfo.getEmail());
+        User user = userService.findUserByEmail(userInfo.getEmail());
         user.update(
                 userInfo.getEmail(),
                 userInfo.getName(),
@@ -106,17 +106,6 @@ public class PaymentService {
                 userInfo.getJob(),
                 userInfo.getInterestCategory()
         );
-    }
-
-    // TODO : 유저 도메인 개발 완료시 삭제
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(null, "User 사용자를 찾을 수 없습니다."));
-    }
-
-    private User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(null, "Email 사용자를 찾을 수 없습니다."));
     }
 
     // TODO : 유저 도메인 개발 완료시 삭제
