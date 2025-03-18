@@ -14,12 +14,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.session.entity.Session;
+import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Insight extends BaseTimeEntity {
 
@@ -31,27 +30,45 @@ public class Insight extends BaseTimeEntity {
     @JoinColumn(name = "session_id")
     private Session session;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(columnDefinition = "TEXT")
     private String memo;
 
     @Column(nullable = false)
     private Boolean isPublic;
 
-    public static Insight create(Session session, String memo, Boolean isPublic) {
+    @Column(nullable = false)
+    private Boolean isAnonymous;
+
+    @Builder
+    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous) {
         return Insight.builder()
                 .session(session)
+                .user(user)
                 .memo(memo)
                 .isPublic(isPublic != null ? isPublic : true)
+                .isAnonymous(isAnonymous != null ? isAnonymous : false)
                 .build();
     }
 
-    public void updateIfChanged(String newMemo, Boolean newIsPublic) {
+    //  익명 여부에 따라 이름 반환
+    public String getDisplayName() {
+        return isAnonymous ? user.getNickname() : user.getName();
+    }
+
+    // 업데이트 로직 (익명 여부 포함)
+    public void updateIfChanged(String newMemo, Boolean newIsPublic, Boolean newIsAnonymous) {
         if (newMemo != null && !newMemo.equals(this.memo)) {
             this.memo = newMemo;
         }
         if (newIsPublic != null && !newIsPublic.equals(this.isPublic)) {
             this.isPublic = newIsPublic;
         }
-
+        if (newIsAnonymous != null && !newIsAnonymous.equals(this.isAnonymous)) {
+            this.isAnonymous = newIsAnonymous;
+        }
     }
 }

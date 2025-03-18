@@ -35,10 +35,14 @@ public class InsightService {
 
     @Transactional
     public InsightResponseDto.InsightRes createInsight(InsightRequestDto.CreateDto request) {
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        Insight insight = InsightMapper.toEntity(request, session);
+        Insight insight = InsightMapper.toEntity(request, session, user);
         Insight savedInsight = insightRepository.save(insight);
 
         imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
@@ -51,7 +55,7 @@ public class InsightService {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
-        insight.updateIfChanged(request.getMemo(), request.getIsPublic());
+        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous());
 
         imageService.updateImages(new ImageRequest.UploadImages(
                 insight.getId(),
