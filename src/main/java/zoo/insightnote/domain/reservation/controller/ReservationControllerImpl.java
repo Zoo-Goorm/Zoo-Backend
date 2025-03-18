@@ -19,4 +19,11 @@ public class ReservationControllerImpl implements ReservationController{
         UserTicketInfoResponseDto userTicketInfo = reservationService.getUserTicketInfo(userId);
         return ResponseEntity.ok(userTicketInfo);
     }
+
+    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
+    @PostMapping("/{sessionId}/{userId}")
+    public ResponseEntity<Void> addSession(@PathVariable Long sessionId, @PathVariable Long userId) {
+        reservationService.addSession(sessionId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }
