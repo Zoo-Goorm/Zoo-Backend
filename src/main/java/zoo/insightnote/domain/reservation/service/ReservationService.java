@@ -66,4 +66,9 @@ public class ReservationService {
         reservationRepository.save(savedReservation);
     }
 
+    public void cancelSession(Long sessionId, Long userId) {
+        Reservation reservedSession = reservationRepository.findReservedSession(userId, sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        reservationRepository.delete(reservedSession);
+    }
 }
