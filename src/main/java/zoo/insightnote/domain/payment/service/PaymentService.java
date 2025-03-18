@@ -63,6 +63,7 @@ public class PaymentService {
         updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
+
     }
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
@@ -87,13 +88,13 @@ public class PaymentService {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
-            Reservation sessionReservation = Reservation.builder()
-                    .user(user)
-                    .session(sessionInfo)
-                    .checked(false)
-                    .build();
+            Reservation savedReservation = Reservation.create(
+                    user,
+                    sessionInfo,
+                    false
+            );
 
-            reservationRepository.save(sessionReservation);
+            reservationRepository.save(savedReservation);
         }
     }
 

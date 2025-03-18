@@ -10,6 +10,22 @@ import zoo.insightnote.domain.session.entity.Session;
 import java.util.List;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
+    // 기존 예약 세션 시간 조회
+    @Query("""
+    SELECT s.startTime, s.endTime
+    FROM Session s
+    WHERE s.id IN :sessionIds
+""")
+    List<Object[]> findReservedSessionTimes(@Param("sessionIds") List<Long> sessionIds);
+
+    // 신청하려는 세션 시간 조회
+    @Query("""
+    SELECT s.startTime, s.endTime
+    FROM Session s
+    WHERE s.id = :sessionId
+""")
+    List<Object[]> findTargetSessionTime(@Param("sessionId") Long sessionId);
+
 
 }
 
