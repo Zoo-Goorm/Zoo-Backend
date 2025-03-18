@@ -26,9 +26,9 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")){
-            //|| requestURI.startsWith("/actuator") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
-            //    || requestURI.startsWith("/api/v1/keywords")) {
+        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/actuator")
+            || requestURI.startsWith("/favicon.ico") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
+                || requestURI.startsWith("/api/v1/keywords")) {
             filterChain.doFilter(request, response);
             return;
         }
