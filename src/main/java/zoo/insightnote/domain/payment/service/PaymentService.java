@@ -54,9 +54,10 @@ public class PaymentService {
         }
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-        saveSessionsInfo(response, sessionIds);
+        User user = findUserById(Long.valueOf(response.getPartner_user_id()));
+        saveSessionsInfo(user, sessionIds);
         savePaymentInfo(response, sessionIds.get(0));
-        updateUserInfo(response, userInfo);
+        updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
 
@@ -78,9 +79,7 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds) {
-        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
-
+    private void saveSessionsInfo(User user, List<Long> sessionIds) {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
 
@@ -94,7 +93,7 @@ public class PaymentService {
         }
     }
 
-    private void updateUserInfo(KakaoPayApproveResponseDto responseDto, UserInfoDto userInfo) {
+    private void updateUserInfo(UserInfoDto userInfo) {
         User user = findUserByEmail(userInfo.getEmail());
         user.update(
                 userInfo.getEmail(),
