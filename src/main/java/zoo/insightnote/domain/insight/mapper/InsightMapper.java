@@ -5,17 +5,21 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.voteOption.entity.VoteOption;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class InsightMapper {
 
-    public static Insight toEntity(InsightRequestDto.CreateDto request, Session session, User user, Boolean isDraft) {
+    public static Insight toEntity(InsightRequestDto.CreateDto request, Session session, User user) {
         return Insight.create(
                 session,
                 user,
                 request.getMemo(),
                 request.getIsPublic(),
                 request.getIsAnonymous(),
-                isDraft,
+                request.getIsDraft(),
                 request.getVoteTitle()
         );
     }

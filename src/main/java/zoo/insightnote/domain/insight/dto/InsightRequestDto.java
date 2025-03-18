@@ -18,6 +18,7 @@ public class InsightRequestDto {
         private Boolean isAnonymous;
         private Boolean isDraft;
         private String voteTitle;
+        private List<String> voteOptions;
         private List<ImageRequest.UploadImage> images;
     }
 
