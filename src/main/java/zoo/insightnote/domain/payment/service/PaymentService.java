@@ -17,6 +17,7 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -32,6 +33,7 @@ public class PaymentService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final ReservationRepository reservationRepository;
+    private final UserService userService;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -54,16 +56,17 @@ public class PaymentService {
         }
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
-        saveSessionsInfo(response, sessionIds);
-        savePaymentInfo(response, sessionIds.get(0));
+        saveSessionsInfo(response, sessionIds, requestDto.getUsername());
+        savePaymentInfo(response, sessionIds.get(0), requestDto.getUsername());
         updateUserInfo(response, userInfo);
 
         return ResponseEntity.ok(response);
 
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId) {
-        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
+    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
+        User user = userService.findByUsername(username);
+
         Session sessionInfo = findSessionById(sessionId);
 
         Payment payment = Payment.builder()
@@ -78,8 +81,8 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds) {
-        User user = findUserById(Long.valueOf(responseDto.getPartner_user_id()));
+    private void saveSessionsInfo(KakaoPayApproveResponseDto responseDto, List<Long> sessionIds, String username) {
+        User user = userService.findByUsername(username);
 
         for (Long sessionId : sessionIds) {
             Session sessionInfo = findSessionById(sessionId);
