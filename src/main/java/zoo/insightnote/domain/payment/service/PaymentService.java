@@ -68,7 +68,7 @@ public class PaymentService {
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
         User user = userService.findByUsername(username);
-        Session sessionInfo = sessionService.findSessionById(sessionId);
+        Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.builder()
                 .user(user)
@@ -86,7 +86,7 @@ public class PaymentService {
         User user = userService.findByUsername(username);
 
         for (Long sessionId : sessionIds) {
-            Session sessionInfo = sessionService.findSessionById(sessionId);
+            Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
             Reservation savedReservation = Reservation.create(
                     user,

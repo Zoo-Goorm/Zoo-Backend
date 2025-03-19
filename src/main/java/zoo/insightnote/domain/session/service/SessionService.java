@@ -1,6 +1,5 @@
 package zoo.insightnote.domain.session.service;
 
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +23,6 @@ import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,8 +118,14 @@ public class SessionService {
         return SessionMapper.toSessionSpeakerDetailRes(result);
     }
 
-    public Session findSessionById(Long eventId) {
-        return sessionRepository.findById(eventId)
-                .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
+    public Session findSessionByEventId(Long eventId) {
+        return sessionRepository.findByEventId(eventId)
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
     }
+
+    public Session findSessionBySessionId(Long sessionId) {
+        return sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+    }
+
 }
