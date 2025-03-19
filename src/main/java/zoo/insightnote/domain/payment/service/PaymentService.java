@@ -15,6 +15,7 @@ import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
+import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
@@ -29,11 +30,10 @@ import java.util.List;
 public class PaymentService {
 
     private final KakaoPayService kakaoPayService;
-    private final PaymentRepository paymentRepository;
-    private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
-    private final ReservationRepository reservationRepository;
     private final UserService userService;
+    private final SessionService sessionService;
+    private final PaymentRepository paymentRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -57,18 +57,17 @@ public class PaymentService {
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
 
-        String userName = userInfo.getName();
-        savePaymentInfo(response, sessionIds.get(0), userName);
-        saveSessionsInfo(sessionIds, userName);
+        User user = userService.findByUsername(requestDto.getUsername());
+        savePaymentInfo(response, sessionIds.get(0), user);
+        saveReservationsInfo(sessionIds, user);
         updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
 
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, String username) {
-        User user = userService.findByUsername(username);
-        Session sessionInfo = findSessionById(sessionId);
+    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user) {
+        Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.builder()
                 .user(user)
@@ -82,11 +81,9 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(List<Long> sessionIds, String username) {
-        User user = userService.findByUsername(username);
-
+    private void saveReservationsInfo(List<Long> sessionIds, User user) {
         for (Long sessionId : sessionIds) {
-            Session sessionInfo = findSessionById(sessionId);
+            Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
             Reservation savedReservation = Reservation.create(
                     user,
@@ -107,10 +104,5 @@ public class PaymentService {
                 userInfo.getJob(),
                 userInfo.getInterestCategory()
         );
-    }
-
-    private Session findSessionById(Long eventId) {
-        return sessionRepository.findById(eventId)
-                .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
     }
 }

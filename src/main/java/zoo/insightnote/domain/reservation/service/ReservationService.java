@@ -4,15 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationCustomQueryRepository;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
+import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -24,18 +24,19 @@ import java.util.List;
 @Slf4j
 public class ReservationService {
     private final ReservationCustomQueryRepository reservationQueryRepository;
-    private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final ReservationRepository reservationRepository;
+    private final UserService userService;
+    private final SessionService sessionService;
 
-    public UserTicketInfoResponseDto getUserTicketInfo(Long userId) {
-        UserTicketInfoResponseDto userTicketInfo = reservationQueryRepository.processUserTicketInfo(userId);
+    public UserTicketInfoResponseDto getUserTicketInfo(String username) {
+        UserTicketInfoResponseDto userTicketInfo = reservationQueryRepository.processUserTicketInfo(username);
         return userTicketInfo;
     }
 
-    public void addSession(Long sessionId, Long userId) {
+    public void addSession(Long sessionId, String username) {
         // 유저가 예약한 세션의 리스트
-        List<Long> sessionIds = reservationRepository.findSessionIdsByUserId(userId);
+        List<Long> sessionIds = reservationRepository.findSessionIdsByUserId(username);
 
         // 이미 신청한 세션인지 확인
         if (sessionIds.contains(sessionId)) {
@@ -59,24 +60,22 @@ public class ReservationService {
             }
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        User user = userService.findByUsername(username);
+        Session session = sessionService.findSessionBySessionId(sessionId);
 
         Reservation savedReservation = Reservation.create(user, session, false);
         reservationRepository.save(savedReservation);
     }
 
-    public void cancelSession(Long sessionId, Long userId) {
-        Reservation reservedSession = reservationRepository.findReservedSession(userId, sessionId)
+    public void cancelSession(Long sessionId, String username) {
+        Reservation reservedSession = reservationRepository.findReservedSession(username, sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
         reservationRepository.delete(reservedSession);
     }
 
     @Transactional
-    public void cancelAndAddSession(Long cancelSessionId, Long addSessionId, Long userId) {
-        cancelSession(cancelSessionId, userId);
-        addSession(addSessionId, userId);
+    public void cancelAndAddSession(Long cancelSessionId, Long addSessionId, String username) {
+        cancelSession(cancelSessionId, username);
+        addSession(addSessionId, username);
     }
 }
