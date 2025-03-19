@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
@@ -22,5 +24,6 @@ public interface PaymentController {
     @Operation(summary = "결제 승인 API", description = "카카오페이 API 측에서 결제를 승인합니다.")
     @ApiResponse(responseCode = "200", description = "결제 승인 성공", content = @Content(schema = @Schema(implementation = KakaoPayApproveResponseDto.class)))
     @GetMapping("/approve")
-    ResponseEntity<KakaoPayApproveResponseDto> approvePayment(@RequestParam Long orderId, @RequestParam Long userId, @RequestParam String pgToken);
+    ResponseEntity<KakaoPayApproveResponseDto> approvePayment(@RequestParam Long orderId, @RequestParam Long userId,
+                                                              @RequestParam String pgToken, @AuthenticationPrincipal UserDetails userDetails);
 }

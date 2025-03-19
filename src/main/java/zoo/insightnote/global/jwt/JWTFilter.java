@@ -11,23 +11,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import zoo.insightnote.domain.user.dto.CustomOAuth2User;
-import zoo.insightnote.domain.user.dto.UserDto;
-import zoo.insightnote.domain.user.entity.Role;
+import zoo.insightnote.domain.user.service.CustomUserDetailsService;
 
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith(
-                "/actuator") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
+        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/actuator")
+            || requestURI.startsWith("/favicon.ico") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
                 || requestURI.startsWith("/api/v1/keywords")) {
             filterChain.doFilter(request, response);
             return;
@@ -37,14 +37,10 @@ public class JWTFilter extends OncePerRequestFilter {
         checkAuthorization(request, response, filterChain, token);
         checkToken(request, response, filterChain, token);
 
-        UserDto userDto = UserDto.builder()
-                .username(jwtUtil.getUsername(token))
-                .role(Role.valueOf(jwtUtil.getRole(token)))
-                .build();
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null,
-                customOAuth2User.getAuthorities());
+        String username = jwtUtil.getUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
+                userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

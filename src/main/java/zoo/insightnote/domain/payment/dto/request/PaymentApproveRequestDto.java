@@ -9,4 +9,5 @@ public class PaymentApproveRequestDto {
     private Long orderId;
     private Long userId;
     private String pgToken;
+    private String username;
 }
