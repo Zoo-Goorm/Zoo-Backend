@@ -22,7 +22,6 @@ public class ReservationControllerImpl implements ReservationController{
         return ResponseEntity.ok(userTicketInfo);
     }
 
-    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
     @PostMapping("/{sessionId}")
     public ResponseEntity<Void> addSession(
             @PathVariable Long sessionId,
@@ -32,7 +31,6 @@ public class ReservationControllerImpl implements ReservationController{
         return ResponseEntity.noContent().build();
     }
 
-    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> cancelSession(
             @PathVariable Long sessionId,
@@ -42,7 +40,6 @@ public class ReservationControllerImpl implements ReservationController{
         return ResponseEntity.noContent().build();
     }
 
-    // TODO: 유저아이디 토큰에서 가져오기 적용 후 수정
     @PostMapping("/{cancelSessionId}/{addSessionId}")
     public ResponseEntity<Void> cancelAndAddSession(
             @PathVariable Long cancelSessionId,
