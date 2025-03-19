@@ -101,6 +101,7 @@ public class KakaoPayService {
 
 
     // 결제 요청
+    // TODO: 이메일 인증 완료 시에만 결제 넘어갈 수 있도록
     public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto) {
         Long orderId = createOrderId();
 
