@@ -12,6 +12,7 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
+import zoo.insightnote.domain.insight.repository.InsightQueryRepository;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -22,6 +23,7 @@ import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,10 +34,10 @@ import java.util.stream.Collectors;
 public class InsightService {
 
     private final InsightRepository insightRepository;
+    private final InsightLikeRepository insightLikeRepository;
     private final SessionRepository sessionRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
-    private final InsightLikeRepository insightLikeRepository;
     private final VoteOptionRepository voteOptionRepository;
 
     @Transactional
@@ -157,5 +159,25 @@ public class InsightService {
             return 1;
         }
     }
+
+    // 인기순위 상위 3개 가져오기
+    @Transactional(readOnly = true)
+    public List<Insight> getTop3PopularInsights() {
+        return insightRepository.findTopInsights();
+    }
+
+    // 인사이트 목록 9개 기준 (시간순 정렬)
+    // 무한 스크롤 (페이징)
+    @Transactional(readOnly = true)
+    public List<Insight> getInsightsByEventDay(LocalDate eventDay, int page) {
+        int pageSize = 9;
+        int offset = page * pageSize;
+        return insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
+    }
+
+    // 인사이트 상세 페이지
+
+
+
 
 }

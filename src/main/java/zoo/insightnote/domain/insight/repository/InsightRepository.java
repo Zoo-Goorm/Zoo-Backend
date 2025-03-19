@@ -7,6 +7,7 @@ import zoo.insightnote.domain.user.entity.User;
 
 import java.util.Optional;
 
-public interface InsightRepository extends JpaRepository<Insight, Long> {
+
+public interface InsightRepository extends JpaRepository<Insight, Long>, InsightQueryRepository {
     Optional<Insight> findBySessionAndUser(Session session, User user);
 }
