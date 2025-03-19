@@ -102,6 +102,9 @@ public class PaymentService {
                 userInfo.getPhoneNumber(),
                 userInfo.getJob(),
                 userInfo.getInterestCategory()
+                userInfo.getJob(),              // 직업
+                userInfo.getOccupation(),       // 직군
+                userInfo.getInterestCategory(),
         );
     }
 }

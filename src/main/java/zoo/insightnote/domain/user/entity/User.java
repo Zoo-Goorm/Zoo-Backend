@@ -56,10 +56,11 @@ public class User {
         this.name = name;
     }
 
-    public void update(String name, String phoneNumber, String job, String interestCategory) {
+    public void update(String name, String phoneNumber, String job, String occupation, String interestCategory, Boolean isOnline) {
         if (isChanged(this.name, name)) this.name = name;
         if (isChanged(this.phoneNumber, phoneNumber)) this.phoneNumber = phoneNumber;
         if (isChanged(this.job, job)) this.job = job;
+        if (isChanged(this.occupation, occupation)) this.occupation = occupation;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
     }
 
