@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-    //유저
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저가 존재하지 않습니다."),
   
     // 행사
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 이벤트가 존재하지 않습니다."),
