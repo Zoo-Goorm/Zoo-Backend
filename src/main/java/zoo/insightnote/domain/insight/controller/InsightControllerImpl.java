@@ -18,7 +18,8 @@ public class InsightControllerImpl implements InsightController{
     @PostMapping
     public ResponseEntity<InsightResponseDto.InsightRes> createInsight(
             @RequestBody InsightRequestDto.CreateDto request) {
-        InsightResponseDto.InsightRes insight = insightService.createInsight(request);
+
+        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
         return ResponseEntity.ok(insight);
     }
 
@@ -44,4 +45,14 @@ public class InsightControllerImpl implements InsightController{
         InsightResponseDto.InsightRes insight = insightService.getInsightById(insightId);
         return ResponseEntity.ok(insight);
     }
+
+    //  좋아요 등록/취소 API
+    @PostMapping("/{insightId}/like")
+    public ResponseEntity<String> toggleLike(@PathVariable Long insightId,
+                                             @RequestParam Long userId) {
+        int result = insightService.toggleLike(userId, insightId);
+        String message = result == 1 ? "좋아요가 등록되었습니다." : "좋아요가 취소되었습니다.";
+        return ResponseEntity.ok(message);
+    }
+
 }
