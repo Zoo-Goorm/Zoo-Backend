@@ -37,6 +37,8 @@ public class User {
 
     private String interestCategory;
 
+    private Boolean isOnline;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -62,6 +64,8 @@ public class User {
         if (isChanged(this.job, job)) this.job = job;
         if (isChanged(this.occupation, occupation)) this.occupation = occupation;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
+        if (isChanged(this.isOnline, isOnline)) this.isOnline = isOnline;
+
     }
 
     private boolean isChanged(Object currentValue, Object newValue) {

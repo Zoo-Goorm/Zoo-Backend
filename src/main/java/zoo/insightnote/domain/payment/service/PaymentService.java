@@ -14,10 +14,8 @@ import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
 import zoo.insightnote.domain.session.entity.Session;
-import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -100,11 +98,10 @@ public class PaymentService {
         user.update(
                 userInfo.getName(),
                 userInfo.getPhoneNumber(),
-                userInfo.getJob(),
-                userInfo.getInterestCategory()
                 userInfo.getJob(),              // 직업
                 userInfo.getOccupation(),       // 직군
                 userInfo.getInterestCategory(),
+                userInfo.isOnline()
         );
     }
 }
