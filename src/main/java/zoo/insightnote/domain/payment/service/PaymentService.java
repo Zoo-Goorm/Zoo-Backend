@@ -98,7 +98,6 @@ public class PaymentService {
     private void updateUserInfo(UserInfoDto userInfo) {
         User user = userService.findUserByEmail(userInfo.getEmail());
         user.update(
-                userInfo.getEmail(),
                 userInfo.getName(),
                 userInfo.getPhoneNumber(),
                 userInfo.getJob(),

@@ -56,8 +56,7 @@ public class User {
         this.name = name;
     }
 
-    public void update(String email, String name, String phoneNumber, String job, String interestCategory) {
-        if (isChanged(this.email, email)) this.email = email;
+    public void update(String name, String phoneNumber, String job, String interestCategory) {
         if (isChanged(this.name, name)) this.name = name;
         if (isChanged(this.phoneNumber, phoneNumber)) this.phoneNumber = phoneNumber;
         if (isChanged(this.job, job)) this.job = job;
