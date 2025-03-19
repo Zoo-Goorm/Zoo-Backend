@@ -119,4 +119,9 @@ public class SessionService {
 
         return SessionMapper.toSessionSpeakerDetailRes(result);
     }
+
+    public Session findSessionById(Long eventId) {
+        return sessionRepository.findById(eventId)
+                .orElseThrow(() -> new CustomException(null, "event 사용자를 찾을 수 없습니다."));
+    }
 }
