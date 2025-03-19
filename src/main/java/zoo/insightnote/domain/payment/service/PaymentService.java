@@ -59,7 +59,7 @@ public class PaymentService {
 
         String userName = userInfo.getName();
         savePaymentInfo(response, sessionIds.get(0), userName);
-        saveSessionsInfo(sessionIds, userName);
+        saveReservationsInfo(sessionIds, userName);
         updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
@@ -82,7 +82,7 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    private void saveSessionsInfo(List<Long> sessionIds, String username) {
+    private void saveReservationsInfo(List<Long> sessionIds, String username) {
         User user = userService.findByUsername(username);
 
         for (Long sessionId : sessionIds) {
