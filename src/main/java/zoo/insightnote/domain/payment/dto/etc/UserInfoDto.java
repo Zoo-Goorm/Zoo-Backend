@@ -16,7 +16,10 @@ public class UserInfoDto {
     private String phoneNumber;
 
     @NotBlank
-    private String job;
+    private String job;         // 직업
+
+    @NotBlank
+    private String occupation;  // 직군
 
     @NotBlank
     private String interestCategory;
