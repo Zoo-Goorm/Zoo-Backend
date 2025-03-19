@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 
@@ -21,8 +23,8 @@ public interface ReservationController {
                     @ApiResponse(responseCode = "500", description = "서버 오류")
             }
     )
-    @GetMapping("/ticket/{userId}")
-    ResponseEntity<UserTicketInfoResponseDto> getUserTicketInfo(Long userId);
+    @GetMapping("/ticket")
+    ResponseEntity<UserTicketInfoResponseDto> getUserTicketInfo(@AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(
             summary = "세션 추가",
@@ -36,8 +38,8 @@ public interface ReservationController {
                     @ApiResponse(responseCode = "500", description = "서버 오류"),
             }
     )
-    @PostMapping("/{sessionId}/{userId}")
-    ResponseEntity<Void> addSession(@PathVariable Long sessionId, @PathVariable Long userId);
+    @PostMapping("/{sessionId}")
+    ResponseEntity<Void> addSession(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(
             summary = "세션 취소",
@@ -50,7 +52,7 @@ public interface ReservationController {
             }
     )
     @DeleteMapping("/{sessionId}/{userId}")
-    ResponseEntity<Void> cancelSession(@PathVariable Long sessionId, @PathVariable Long userId);
+    ResponseEntity<Void> cancelSession(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(
             summary = "세션 취소 후 신청",
@@ -63,5 +65,5 @@ public interface ReservationController {
             }
     )
     @PostMapping("/{cancelSessionId}/{addSessionId}/{userId}")
-    ResponseEntity<Void> cancelAndAddSession(@PathVariable Long cancelSessionId, @PathVariable Long addSessionId, @PathVariable Long userId);
+    ResponseEntity<Void> cancelAndAddSession(@PathVariable Long cancelSessionId, @PathVariable Long addSessionId, @AuthenticationPrincipal UserDetails userDetails);
 }
