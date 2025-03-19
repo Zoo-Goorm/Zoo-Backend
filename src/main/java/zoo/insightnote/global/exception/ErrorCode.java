@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
+
   
     // 행사
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 이벤트가 존재하지 않습니다."),
@@ -15,6 +16,7 @@ public enum ErrorCode {
 
     // 인사이트 노트
     INSIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 인사이트를 찾을 수 없습니다."),
+    CANNOT_LIKE_OWN_INSIGHT(HttpStatus.BAD_REQUEST, "자신의 인사이트에는 좋아요를 누를 수 없습니다."),
 
     // 연사
     SPEAKER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 연사가 존재하지 않습니다."),

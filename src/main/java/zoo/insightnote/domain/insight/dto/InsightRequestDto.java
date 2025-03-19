@@ -12,8 +12,13 @@ public class InsightRequestDto {
     @AllArgsConstructor
     public static class CreateDto {
         private Long sessionId;
+        private Long userId;
         private String memo;
         private Boolean isPublic;
+        private Boolean isAnonymous;
+        private Boolean isDraft;
+        private String voteTitle;
+        private List<String> voteOptions;
         private List<ImageRequest.UploadImage> images;
     }
 
@@ -22,6 +27,9 @@ public class InsightRequestDto {
     public static class UpdateDto {
         private String memo;
         private Boolean isPublic;
+        private Boolean isAnonymous;
+        private Boolean isDraft;
+        private String voteTitle;
         private List<ImageRequest.UploadImage> images;
     }
 }
