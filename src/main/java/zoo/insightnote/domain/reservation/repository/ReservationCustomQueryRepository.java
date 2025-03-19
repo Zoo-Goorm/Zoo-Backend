@@ -21,7 +21,7 @@ import java.util.*;
 public class ReservationCustomQueryRepository {
     private final JPAQueryFactory queryFactory;
 
-    public List<Tuple> findUserReservationInfo(Long userId) {
+    public List<Tuple> findUserReservationInfo(String username) {
         QReservation reservation = QReservation.reservation;
         QSession session = QSession.session;
 
@@ -34,7 +34,7 @@ public class ReservationCustomQueryRepository {
                 )
                 .from(reservation)
                 .join(reservation.session, session)
-                .where(reservation.user.id.eq(userId))
+                .where(reservation.user.username.eq(username))
                 .fetch();
     }
 
@@ -50,11 +50,11 @@ public class ReservationCustomQueryRepository {
                 .fetch();
     }
 
-    public UserTicketInfoResponseDto processUserTicketInfo(Long userId) {
+    public UserTicketInfoResponseDto processUserTicketInfo(String username) {
         QSession session = QSession.session;
 
         // 1️⃣ 유저가 신청한 세션 정보 조회
-        List<Tuple> reservationSessions = findUserReservationInfo(userId);
+        List<Tuple> reservationSessions = findUserReservationInfo(username);
         List<Tuple> eventSessions = findEventInfo();
 
         // 2️⃣ 날짜별 세션 정보 저장
