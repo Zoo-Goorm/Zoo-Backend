@@ -22,4 +22,16 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    public PaymentUserInfoResponseDto getPaymentUserInfo(String username) {
+        User User = findByUsername(username);
+
+        PaymentUserInfoResponseDto response = PaymentUserInfoResponseDto.builder()
+                .userId(User.getId())
+                .email(User.getEmail())
+                .name(User.getName())
+                .build();
+
+        return response;
+    }
 }
