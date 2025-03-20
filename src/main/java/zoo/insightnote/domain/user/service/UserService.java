@@ -25,12 +25,12 @@ public class UserService {
     }
 
     public PaymentUserInfoResponseDto getPaymentUserInfo(String username) {
-        User User = findByUsername(username);
+        User user = findByUsername(username);
 
         PaymentUserInfoResponseDto response = PaymentUserInfoResponseDto.builder()
-                .userId(User.getId())
-                .email(User.getEmail())
-                .name(User.getName())
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
                 .build();
 
         return response;
