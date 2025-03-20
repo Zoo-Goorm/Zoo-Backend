@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
-import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.service.InsightService;
 
 import java.time.LocalDate;

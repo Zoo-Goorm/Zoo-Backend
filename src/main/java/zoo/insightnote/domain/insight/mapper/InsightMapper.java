@@ -53,6 +53,8 @@ public class InsightMapper {
                         .interestCategory(splitToList(insightDto.getInterestCategory()))
                         .linkUrls(splitToList(insightDto.getIntroductionLinks()))
                         .build())
+                .voteTitle(insightDto.getVoteTitle())
+                .voteOptions(insightDto.getVoteOptions())
                 .build();
     }
 

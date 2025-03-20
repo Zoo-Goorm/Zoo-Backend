@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.insight.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,10 +16,13 @@ import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import zoo.insightnote.domain.user.entity.QUser;
 import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
+import zoo.insightnote.domain.voteOption.entity.QVoteOption;
+import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
@@ -121,8 +125,27 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QKeyword keyword = QKeyword.keyword;
         QUserIntroductionLink introductionLink = QUserIntroductionLink.userIntroductionLink;
         QInsightLike insightLike = QInsightLike.insightLike;
+        QVoteOption voteOption = QVoteOption.voteOption;
+        QVoteResponse voteResponse = QVoteResponse.voteResponse;
 
-        return Optional.ofNullable(queryFactory
+        // 1. 투표 옵션과 투표 수 조회
+        List<Tuple> voteResults = queryFactory
+                .select(voteOption.id, voteOption.optionText, voteResponse.id.count())
+                .from(voteOption)
+                .leftJoin(voteResponse).on(voteResponse.voteOption.eq(voteOption))
+                .where(voteOption.insight.id.eq(insightId))
+                .groupBy(voteOption.id)
+                .fetch();
+
+        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
+                .map(tuple -> new InsightResponseDto.VoteOptionDto(
+                        tuple.get(voteOption.id),
+                        tuple.get(voteOption.optionText),
+                        tuple.get(voteResponse.id.count()).intValue()))
+                .collect(Collectors.toList());
+
+        // 2. 인사이트 상세 정보 조회
+        InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.InsightDetailQueryDto.class,
                         insight.id,
@@ -151,6 +174,13 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .where(insight.id.eq(insightId))
                 .groupBy(insight.id, session.id, user.id)
-                .fetchOne());
+                .fetchOne();
+
+        // 3. 조회된 결과가 있다면 투표 정보 추가 후 반환
+        return Optional.ofNullable(insightDetail)
+                .map(detail -> {
+                    detail.setVoteOptions(voteOptions);
+                    return detail;
+                });
     }
 }
