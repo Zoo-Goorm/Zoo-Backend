@@ -12,20 +12,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zoo.insightnote.domain.user.dto.request.JoinDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
 
     private final JWTUtil jwtUtil;
     private final UserService userService;
+
+    @PostMapping("/join")
+    public String joinProcess(@RequestBody JoinDto joinDto) {
+        userService.joinProcess(joinDto);
+        return "ok";
+    }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
