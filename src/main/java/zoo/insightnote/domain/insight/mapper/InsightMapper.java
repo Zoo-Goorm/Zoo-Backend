@@ -57,10 +57,10 @@ public class InsightMapper {
     }
 
 
-    public static InsightResponseDto.InsightListPageRes toListPageResponse (
+    public static InsightResponseDto.InsightList toListPageResponse (
             InsightResponseDto.InsightListQueryDto insightDto
     ) {
-        return InsightResponseDto.InsightListPageRes.builder()
+        return InsightResponseDto.InsightList.builder()
                 .id(insightDto.getId())
                 .memo(insightDto.getMemo())
                 .isPublic(insightDto.getIsPublic())
@@ -75,7 +75,7 @@ public class InsightMapper {
                 .build();
     }
 
-    public static List<InsightResponseDto.InsightListPageRes> toListPageResponse(
+    public static List<InsightResponseDto.InsightList> toListPageResponse(
             List<InsightResponseDto.InsightListQueryDto> insightDtos
     ) {
         return insightDtos.stream()

@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 public class InsightResponseDto {
@@ -96,36 +94,12 @@ public class InsightResponseDto {
         private Long likeCount;
         private String latestImageUrl;
         private String interestCategory;
-//
-//        public InsightListRes(
-//                Long id, String memo, Boolean isPublic, Boolean isAnonymous,
-//                LocalDateTime createdAt, LocalDateTime updatedAt,
-//                Long sessionId, String sessionName, Long likeCount,
-//                String latestImageUrl, String interestCategory) {
-//
-//            this.id = id;
-//            this.memo = memo;
-//            this.isPublic = isPublic;
-//            this.isAnonymous = isAnonymous;
-//            this.createdAt = createdAt;
-//            this.updatedAt = updatedAt;
-//            this.sessionId = sessionId;
-//            this.sessionName = sessionName;
-//            this.likeCount = likeCount;
-//            this.latestImageUrl = latestImageUrl;
-//            this.interestCategory = splitToList(interestCategory);
-//        }
-//
-//        private List<String> splitToList(String value) {
-//            if (value == null || value.isEmpty()) return List.of();
-//            return Arrays.asList(value.split("\\s*,\\s*")); // 쉼표 + 공백 제거하여 리스트 변환
-//        }
     }
 
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class InsightListPageRes {
+    public static class InsightList {
         private Long id;
         private String memo;
         private Boolean isPublic;
@@ -138,4 +112,17 @@ public class InsightResponseDto {
         private String latestImageUrl;
         private List<String> interestCategory;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class InsightListPageRes {
+        private boolean hasNext;  // 다음 페이지 존재 여부
+        private long totalElements;  // 전체 데이터 개수
+        private int totalPages;  // 전체 페이지 개수
+        private int pageNumber;  // 현재 페이지 번호
+        private int pageSize;  // 페이지 크기
+        private List<InsightResponseDto.InsightList> content;  // 실제 데이터
+    }
+
 }

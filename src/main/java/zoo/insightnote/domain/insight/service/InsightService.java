@@ -1,6 +1,9 @@
 package zoo.insightnote.domain.insight.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
@@ -175,19 +178,26 @@ public class InsightService {
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
     @Transactional(readOnly = true)
-    public List<InsightResponseDto.InsightListPageRes> getInsightsByEventDay(LocalDate eventDay, int page) {
-        int pageSize = 9;
-        int offset = page * pageSize;
+    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, int page) {
+        int pageSize = 9;  // 한 페이지당 9개씩 가져옴
+        Pageable pageable = PageRequest.of(page, pageSize);
 
-        List<InsightResponseDto.InsightListQueryDto> insightDtos = insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
+        Page<InsightResponseDto.InsightListQueryDto> insightPage = insightRepository.findInsightsByEventDay(eventDay, pageable);
 
-        if (insightDtos.isEmpty()) {
+        if (insightPage.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
         }
 
-        return InsightMapper.toListPageResponse(insightDtos);
-//        return insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
+        return InsightResponseDto.InsightListPageRes.builder()
+                .hasNext(insightPage.hasNext())
+                .totalElements(insightPage.getTotalElements())
+                .totalPages(insightPage.getTotalPages())
+                .content(InsightMapper.toListPageResponse(insightPage.getContent()))  // 매퍼 활용
+                .pageNumber(page)
+                .pageSize(pageSize)
+                .build();
     }
+
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
