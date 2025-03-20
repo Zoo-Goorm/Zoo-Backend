@@ -69,6 +69,6 @@ public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-        System.out.println("fail");
+        response.setStatus(401);
     }
 }
