@@ -44,7 +44,10 @@ public enum ErrorCode {
     DUPLICATE_SESSION_TIME(HttpStatus.BAD_REQUEST,"세션 시간이 중복되어 신청할 수 없습니다."),
 
     // User
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User 사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User 사용자를 찾을 수 없습니다."),
+
+    // QR
+    QR_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "QR 코드 생성에 실패했습니다.");
 
 
     private final HttpStatus errorCode;
