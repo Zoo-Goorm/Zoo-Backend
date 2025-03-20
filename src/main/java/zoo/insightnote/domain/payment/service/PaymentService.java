@@ -72,6 +72,7 @@ public class PaymentService {
                 .event(sessionInfo.getEvent())
                 .amount(responseDto.getAmount().getTotalAmount())
                 .paymentStatus(PaymentStatus.COMPLETED)
+                .checkedEvent(Boolean.FALSE)
                 .build();
 
         paymentRepository.save(payment);

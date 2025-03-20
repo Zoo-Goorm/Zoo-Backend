@@ -35,6 +35,7 @@ public class Payment extends BaseTimeEntity {
     private Event event;
 
     private int amount;
+    private Boolean checkedEvent;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
