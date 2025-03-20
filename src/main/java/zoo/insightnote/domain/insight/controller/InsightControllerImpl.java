@@ -27,14 +27,14 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(insight);
     }
 
-    @Override
-    @PutMapping("/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightRes> updateInsight(
-            @PathVariable Long insightId,
-            @RequestBody InsightRequestDto.UpdateDto request) {
-        InsightResponseDto.InsightRes updatedInsight = insightService.updateInsight(insightId, request);
-        return ResponseEntity.ok(updatedInsight);
-    }
+//    @Override
+//    @PutMapping("/{insightId}")
+//    public ResponseEntity<InsightResponseDto.InsightRes> updateInsight(
+//            @PathVariable Long insightId,
+//            @RequestBody InsightRequestDto.UpdateDto request) {
+//        InsightResponseDto.InsightRes updatedInsight = insightService.updateInsight(insightId, request);
+//        return ResponseEntity.ok(updatedInsight);
+//    }
 
     @Override
     @DeleteMapping("/{insightId}")
@@ -43,12 +43,12 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.noContent().build();
     }
 
-    @Override
-    @GetMapping("/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightRes> getInsightById(@PathVariable Long insightId) {
-        InsightResponseDto.InsightRes insight = insightService.getInsightById(insightId);
-        return ResponseEntity.ok(insight);
-    }
+//    @Override
+//    @GetMapping("/{insightId}")
+//    public ResponseEntity<InsightResponseDto.InsightRes> getInsightById(@PathVariable Long insightId) {
+//        InsightResponseDto.InsightRes insight = insightService.getInsightById(insightId);
+//        return ResponseEntity.ok(insight);
+//    }
 
     //  좋아요 등록/취소 API
     @PostMapping("/{insightId}/like")
@@ -80,10 +80,11 @@ public class InsightControllerImpl implements InsightController{
     }
 
     // 인사이트 상세 페이지
-
-
-
-
+    @GetMapping("/{insightId}")
+    public ResponseEntity<InsightResponseDto.InsightDetailRes> getInsightDetail(@PathVariable Long insightId) {
+        InsightResponseDto.InsightDetailRes insightDetail = insightService.getInsightDetail(insightId);
+        return ResponseEntity.ok(insightDetail);
+    }
 
 
 

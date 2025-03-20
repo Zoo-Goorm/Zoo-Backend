@@ -16,14 +16,18 @@ import zoo.insightnote.domain.insight.repository.InsightQueryRepository;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
+import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.userIntroductionLink.entity.UserIntroductionLink;
+import zoo.insightnote.domain.userIntroductionLink.repository.UserIntroductionLinkRepository;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +43,8 @@ public class InsightService {
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final VoteOptionRepository voteOptionRepository;
+    private final UserIntroductionLinkRepository userIntroductionLinkRepository;
+    private final SessionKeywordRepository sessionKeywordRepository;
 
     @Transactional
     public InsightResponseDto.InsightRes saveOrUpdateInsight(InsightRequestDto.CreateDto request) {
@@ -176,7 +182,15 @@ public class InsightService {
     }
 
     // 인사이트 상세 페이지
+    @Transactional(readOnly = true)
+    public InsightResponseDto.InsightDetailRes getInsightDetail(Long insightId) {
 
+        InsightResponseDto.InsightWithDetailsQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+
+
+        return InsightMapper.toDetailResponse(insightDto);
+    }
 
 
 

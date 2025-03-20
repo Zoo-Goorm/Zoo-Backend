@@ -5,8 +5,10 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.userIntroductionLink.entity.UserIntroductionLink;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,5 +37,27 @@ public class InsightMapper {
                 .createdAt(insight.getCreateAt())
                 .updatedAt(insight.getUpdatedAt())
                 .build();
+    }
+
+    public static InsightResponseDto.InsightDetailRes toDetailResponse(
+            InsightResponseDto.InsightWithDetailsQueryDto insightDto
+    ) {
+        return InsightResponseDto.InsightDetailRes.builder()
+                .id(insightDto.getId())
+                .name(insightDto.getSessionName())
+                .shortDescription(insightDto.getSessionShortDescription())
+                .keywords(splitToList(insightDto.getKeywords()))  // 변환
+                .memo(insightDto.getMemo())
+                .profile(InsightResponseDto.InsightDetailRes.UserProfileDto.builder()
+                        .name(insightDto.getUserName())
+                        .email(insightDto.getEmail())
+                        .interestCategory(splitToList(insightDto.getInterestCategory()))  // 변환
+                        .linkUrls(splitToList(insightDto.getIntroductionLinks()))  // 변환
+                        .build())
+                .build();
+    }
+
+    private static List<String> splitToList(String str) {
+        return (str != null && !str.isBlank()) ? Arrays.asList(str.split("\\s*,\\s*")) : List.of();
     }
 }

@@ -1,14 +1,22 @@
 package zoo.insightnote.domain.insight.repository;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
+import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.entity.QInsight;
+import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
+import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
+import zoo.insightnote.domain.user.entity.QUser;
+import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
@@ -49,4 +57,46 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .limit(limit)
                 .fetch();
     }
+
+    @Override
+    public Optional<InsightResponseDto.InsightWithDetailsQueryDto> findByIdWithSessionAndUser(Long insightId) {
+        QInsight insight = QInsight.insight;
+        QSession session = QSession.session;
+        QUser user = QUser.user;
+        QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
+        QKeyword keyword = QKeyword.keyword;
+        QUserIntroductionLink introductionLink = QUserIntroductionLink.userIntroductionLink;
+
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(
+                        InsightResponseDto.InsightWithDetailsQueryDto.class,
+                        insight.id,
+                        insight.memo,
+                        insight.voteTitle,
+                        insight.isPublic,
+                        insight.isAnonymous,
+                        insight.isDraft,
+                        session.id,
+                        session.name,
+                        session.shortDescription,
+                        user.id,
+                        user.name,
+                        user.email,
+                        user.interestCategory,
+                        // Group_Concat 사용 (키워드 리스트를 쉼표(,)로 구분하여 하나의 문자열로 변환)
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", keyword.name),
+                        // Group_Concat 사용 (소개 링크 리스트를 쉼표(,)로 구분하여 하나의 문자열로 변환)
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl)
+                ))
+                .from(insight)
+                .join(insight.session, session)
+                .join(insight.user, user)
+                .leftJoin(sessionKeyword).on(sessionKeyword.session.eq(session))
+                .leftJoin(sessionKeyword.keyword, keyword)
+                .leftJoin(introductionLink).on(introductionLink.user.eq(user))
+                .where(insight.id.eq(insightId))
+                .groupBy(insight.id, session.id, user.id)
+                .fetchOne());
+    }
+
 }
