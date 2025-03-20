@@ -63,6 +63,11 @@ dependencies {
 
     // monitoring
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // QR 생성
+    implementation 'com.google.zxing:core:3.5.1'
+    implementation 'com.google.zxing:javase:3.5.1'
+
 }
 
 tasks.named('test') {
