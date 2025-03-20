@@ -72,17 +72,17 @@ public class InsightControllerImpl implements InsightController{
     // 무한 스크롤 (페이징)
 
     @GetMapping("/list")
-    public ResponseEntity<List<InsightResponseDto.InsightByEventDayRes>> getInsightsByEventDay(
+    public ResponseEntity<List<InsightResponseDto.InsightListPageRes>> getInsightsByEventDay(
             @RequestParam("eventDay") LocalDate eventDay,
             @RequestParam(value = "page", defaultValue = "0") int page) {
-        List<InsightResponseDto.InsightByEventDayRes> insights = insightService.getInsightsByEventDay(eventDay, page);
+        List<InsightResponseDto.InsightListPageRes> insights = insightService.getInsightsByEventDay(eventDay, page);
         return ResponseEntity.ok(insights);
     }
 
     // 인사이트 상세 페이지
     @GetMapping("/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightDetailRes> getInsightDetail(@PathVariable Long insightId) {
-        InsightResponseDto.InsightDetailRes insightDetail = insightService.getInsightDetail(insightId);
+    public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(@PathVariable Long insightId) {
+        InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId);
         return ResponseEntity.ok(insightDetail);
     }
 

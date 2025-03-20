@@ -12,7 +12,7 @@ public interface InsightQueryRepository {
 
     List<InsightResponseDto.InsightTopRes> findTopInsights();
 
-    List<InsightResponseDto.InsightByEventDayRes> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit);
+    List<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit);
 
-    Optional<InsightResponseDto.InsightWithDetailsQueryDto> findByIdWithSessionAndUser(Long insightId);
+    Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId);
 }

@@ -2,14 +2,10 @@ package zoo.insightnote.domain.insight.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
-import zoo.insightnote.domain.image.entity.EntityType;
-import zoo.insightnote.domain.image.entity.QImage;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
-import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
@@ -20,8 +16,6 @@ import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static zoo.insightnote.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
@@ -42,13 +36,13 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.isAnonymous,
                         insight.createAt,
                         insight.updatedAt,
-                        insightLike.id.count(), // 좋아요 개수
-                        Expressions.stringTemplate(  // 최신 이미지 URL 가져오기
+                        insightLike.id.count(),
+                        Expressions.stringTemplate(
                                 "(SELECT i.fileUrl FROM Image i " +
                                         "WHERE i.entityId = {0} AND i.entityType = 'INSIGHT' " +
                                         "ORDER BY i.createAt DESC LIMIT 1)",
                                 insight.id
-                        ).as("imageUrl") // 서브쿼리 활용하여 최신 이미지 1개 가져오기
+                        ).as("imageUrl")
                 ))
                 .from(insight)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
@@ -59,7 +53,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public List<InsightResponseDto.InsightByEventDayRes> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit) {
+    public List<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QInsightLike insightLike = QInsightLike.insightLike;
@@ -68,7 +62,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         return queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightByEventDayRes.class,
+                        InsightResponseDto.InsightListQueryDto.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -86,6 +80,14 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                         "ORDER BY i.createAt DESC, i.id DESC LIMIT 1)",
                                 insight.id
                         ).as("imageUrl"),
+//                        아래 해당 코드는 왜 서브쿼리 오류가 나는지 원인을 못찾음 : Subquery returns more than 1 row
+//                        JPAExpressions.select(image.fileUrl)
+//                                .from(image)
+//                                .where(image.entityId.eq(insight.id)
+//                                        .and(image.entityType.eq(EntityType.INSIGHT)))
+//                                .orderBy(image.createAt.desc(), image.id.desc()) // 최신순 정렬
+//                                .limit(1),
+
 
                         user.interestCategory
                 ))
@@ -105,7 +107,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Optional<InsightResponseDto.InsightWithDetailsQueryDto> findByIdWithSessionAndUser(Long insightId) {
+    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QUser user = QUser.user;
@@ -116,7 +118,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         return Optional.ofNullable(queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightWithDetailsQueryDto.class,
+                        InsightResponseDto.InsightDetailQueryDto.class,
                         insight.id,
                         insight.memo,
                         insight.voteTitle,
@@ -145,5 +147,4 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .groupBy(insight.id, session.id, user.id)
                 .fetchOne());
     }
-
 }

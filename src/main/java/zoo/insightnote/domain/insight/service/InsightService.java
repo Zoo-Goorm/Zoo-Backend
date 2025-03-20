@@ -175,22 +175,28 @@ public class InsightService {
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
     @Transactional(readOnly = true)
-    public List<InsightResponseDto.InsightByEventDayRes> getInsightsByEventDay(LocalDate eventDay, int page) {
+    public List<InsightResponseDto.InsightListPageRes> getInsightsByEventDay(LocalDate eventDay, int page) {
         int pageSize = 9;
         int offset = page * pageSize;
 
-        return insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
+        List<InsightResponseDto.InsightListQueryDto> insightDtos = insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
+
+        if (insightDtos.isEmpty()) {
+            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+        }
+
+        return InsightMapper.toListPageResponse(insightDtos);
+//        return insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
     }
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightDetailRes getInsightDetail(Long insightId) {
+    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId) {
 
-        InsightResponseDto.InsightWithDetailsQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
+        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
-
-        return InsightMapper.toDetailResponse(insightDto);
+        return InsightMapper.toDetailPageResponse(insightDto);
     }
 
 
