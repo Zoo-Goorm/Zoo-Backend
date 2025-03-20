@@ -66,6 +66,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
         QKeyword keyword = QKeyword.keyword;
         QUserIntroductionLink introductionLink = QUserIntroductionLink.userIntroductionLink;
+        QInsightLike insightLike = QInsightLike.insightLike;
 
         return Optional.ofNullable(queryFactory
                 .select(Projections.constructor(
@@ -83,10 +84,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         user.name,
                         user.email,
                         user.interestCategory,
-                        // Group_Concat 사용 (키워드 리스트를 쉼표(,)로 구분하여 하나의 문자열로 변환)
                         Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", keyword.name),
-                        // Group_Concat 사용 (소개 링크 리스트를 쉼표(,)로 구분하여 하나의 문자열로 변환)
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl)
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl),
+                        insightLike.id.countDistinct()
                 ))
                 .from(insight)
                 .join(insight.session, session)
@@ -94,6 +94,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .leftJoin(sessionKeyword).on(sessionKeyword.session.eq(session))
                 .leftJoin(sessionKeyword.keyword, keyword)
                 .leftJoin(introductionLink).on(introductionLink.user.eq(user))
+                .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .where(insight.id.eq(insightId))
                 .groupBy(insight.id, session.id, user.id)
                 .fetchOne());

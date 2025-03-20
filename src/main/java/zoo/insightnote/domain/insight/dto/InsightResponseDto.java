@@ -33,6 +33,7 @@ public class InsightResponseDto {
         private List<String> keywords;
         private String memo;
         private UserProfileDto profile;
+        private Long likeCount;
 
         @Getter
         @Builder
@@ -61,13 +62,14 @@ public class InsightResponseDto {
         private final String interestCategory;
         private final String keywords;
         private final String introductionLinks;
+        private final Long likeCount;
 
-        @Builder
         public InsightWithDetailsQueryDto(
                 Long id, String memo, String voteTitle, Boolean isPublic, Boolean isAnonymous, Boolean isDraft,
                 Long sessionId, String sessionName, String sessionShortDescription,
                 Long userId, String userName, String email, String interestCategory,
-                String keywords, String introductionLinks
+                String keywords, String introductionLinks,
+                Long likeCount
         ) {
             this.id = id;
             this.memo = memo;
@@ -84,6 +86,7 @@ public class InsightResponseDto {
             this.interestCategory = interestCategory;
             this.keywords = keywords;
             this.introductionLinks = introductionLinks;
+            this.likeCount = likeCount;
         }
     }
 }
