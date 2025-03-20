@@ -91,7 +91,7 @@ public class SecurityConfig {
 
         // JWT 필터 추가
         http
-                .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager()),
+                .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager(), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), GuestLoginFilter.class);
 

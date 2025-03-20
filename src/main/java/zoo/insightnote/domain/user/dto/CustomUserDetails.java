@@ -1,11 +1,13 @@
-package zoo.insightnote.domain.user.entity;
+package zoo.insightnote.domain.user.dto;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import zoo.insightnote.domain.user.entity.User;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
@@ -14,7 +16,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+        Collection<GrantedAuthority> collection = new ArrayList<>();
+        collection.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        return collection;
     }
 
     @Override
@@ -29,6 +33,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getName() {
         return user.getName();
+    }
+
+    public String getEmail() {
+        return user.getEmail();
     }
 
     @Override
