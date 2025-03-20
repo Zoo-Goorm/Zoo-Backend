@@ -63,19 +63,19 @@ public class InsightControllerImpl implements InsightController{
 
     // 인기순위 상위 3개 가져오기
     @GetMapping("/top")
-    public ResponseEntity<List<Insight>> getTop3Insights() {
-        List<Insight> insights = insightService.getTop3PopularInsights();
-        return ResponseEntity.ok(insights);
+    public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights() {
+        List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights();
+        return ResponseEntity.ok(topInsights);
     }
 
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
 
     @GetMapping("/list")
-    public ResponseEntity<List<Insight>> getInsightsByEventDay(
+    public ResponseEntity<List<InsightResponseDto.InsightByEventDayRes>> getInsightsByEventDay(
             @RequestParam("eventDay") LocalDate eventDay,
             @RequestParam(value = "page", defaultValue = "0") int page) {
-        List<Insight> insights = insightService.getInsightsByEventDay(eventDay, page);
+        List<InsightResponseDto.InsightByEventDayRes> insights = insightService.getInsightsByEventDay(eventDay, page);
         return ResponseEntity.ok(insights);
     }
 

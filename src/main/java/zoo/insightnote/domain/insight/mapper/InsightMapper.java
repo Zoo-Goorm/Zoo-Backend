@@ -58,6 +58,26 @@ public class InsightMapper {
                 .build();
     }
 
+
+    public static InsightResponseDto.InsightByEventDayRes toResponse(
+            InsightResponseDto.InsightByEventDayRes insightDto
+    ) {
+        return InsightResponseDto.InsightByEventDayRes.builder()
+                .id(insightDto.getId())
+                .memo(insightDto.getMemo())
+                .isPublic(insightDto.getIsPublic())
+                .isAnonymous(insightDto.getIsAnonymous())
+                .createdAt(insightDto.getCreatedAt())
+                .updatedAt(insightDto.getUpdatedAt())
+                .sessionId(insightDto.getSessionId())
+                .sessionName(insightDto.getSessionName())
+                .likeCount(insightDto.getLikeCount())
+                .latestImageUrl(insightDto.getLatestImageUrl())
+                .interestCategory(insightDto.getInterestCategory())
+                .build();
+    }
+
+
     private static List<String> splitToList(String str) {
         return (str != null && !str.isBlank()) ? Arrays.asList(str.split("\\s*,\\s*")) : List.of();
     }

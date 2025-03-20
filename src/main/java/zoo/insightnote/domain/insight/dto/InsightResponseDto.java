@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +88,64 @@ public class InsightResponseDto {
             this.keywords = keywords;
             this.introductionLinks = introductionLinks;
             this.likeCount = likeCount;
+        }
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class InsightTopRes {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private String imageUrl;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class InsightByEventDayRes {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long sessionId;
+        private String sessionName;
+        private Long likeCount;
+        private String latestImageUrl;
+        private List<String> interestCategory;
+
+        // 문자열을 쉼표 기준으로 분리하는 생성자 추가
+        public InsightByEventDayRes(
+                Long id, String memo, Boolean isPublic, Boolean isAnonymous,
+                LocalDateTime createdAt, LocalDateTime updatedAt,
+                Long sessionId, String sessionName, Long likeCount,
+                String latestImageUrl, String interestCategory) {
+
+            this.id = id;
+            this.memo = memo;
+            this.isPublic = isPublic;
+            this.isAnonymous = isAnonymous;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.sessionId = sessionId;
+            this.sessionName = sessionName;
+            this.likeCount = likeCount;
+            this.latestImageUrl = latestImageUrl;
+            this.interestCategory = splitToList(interestCategory);
+        }
+
+        // 문자열을 쉼표(`,`) 기준으로 List<String>으로 변환하는 메서드
+        private List<String> splitToList(String value) {
+            if (value == null || value.isEmpty()) return List.of();
+            return Arrays.asList(value.split("\\s*,\\s*")); // 쉼표 + 공백 제거하여 리스트 변환
         }
     }
 }

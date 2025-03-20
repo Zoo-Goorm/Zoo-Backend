@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface InsightQueryRepository {
 
-    List<Insight> findTopInsights();
+    List<InsightResponseDto.InsightTopRes> findTopInsights();
 
-    List<Insight> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit);
+    List<InsightResponseDto.InsightByEventDayRes> findInsightsByEventDay(LocalDate eventDay, Integer offset, Integer limit);
 
     Optional<InsightResponseDto.InsightWithDetailsQueryDto> findByIdWithSessionAndUser(Long insightId);
 }

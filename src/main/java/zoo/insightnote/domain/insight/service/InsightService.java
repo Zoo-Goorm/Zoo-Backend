@@ -168,16 +168,17 @@ public class InsightService {
 
     // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
-    public List<Insight> getTop3PopularInsights() {
+    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights() {
         return insightRepository.findTopInsights();
     }
 
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
     @Transactional(readOnly = true)
-    public List<Insight> getInsightsByEventDay(LocalDate eventDay, int page) {
+    public List<InsightResponseDto.InsightByEventDayRes> getInsightsByEventDay(LocalDate eventDay, int page) {
         int pageSize = 9;
         int offset = page * pageSize;
+
         return insightRepository.findInsightsByEventDay(eventDay, offset, pageSize);
     }
 
