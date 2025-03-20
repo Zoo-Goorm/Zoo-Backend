@@ -2,6 +2,7 @@ package zoo.insightnote.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
