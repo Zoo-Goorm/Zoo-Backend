@@ -8,17 +8,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
 import zoo.insightnote.domain.user.service.CustomUserDetailsService;
+import zoo.insightnote.global.jwt.GuestAuthenticationProvider;
+import zoo.insightnote.global.jwt.GuestLoginFilter;
 import zoo.insightnote.global.jwt.JWTFilter;
 import zoo.insightnote.global.jwt.JWTUtil;
 import zoo.insightnote.global.oauth2.CustomSuccessHandler;
@@ -35,6 +39,21 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationManager customAuthenticationManager() throws Exception {
+        List<AuthenticationProvider> providers = List.of(
+                new GuestAuthenticationProvider(userDetailsService)
+                // 다른 Provider들 추가 가능
+        );
+        return new ProviderManager(providers);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,7 +66,9 @@ public class SecurityConfig {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online"));
+                configuration.setAllowedOrigins(
+                        List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online",
+                                "http://www.synapsex.online"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -69,7 +90,11 @@ public class SecurityConfig {
         http.httpBasic(httpBasic -> httpBasic.disable());
 
         // JWT 필터 추가
-        http.addFilterBefore(new JWTFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager()),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), GuestLoginFilter.class);
+
 
         // OAuth2 로그인 설정
         http.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
@@ -79,8 +104,9 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http.authorizeHttpRequests(
                 auth -> auth.requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
-                                "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**", "/api/v1/user/**").permitAll().anyRequest()
-                        .authenticated());
+                                "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**",
+                                "/api/v1/user/**").permitAll()
+                        .anyRequest().authenticated());
 
         // 세션 설정 : STATELESS
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
