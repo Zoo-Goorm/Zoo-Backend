@@ -34,8 +34,6 @@ public class Payment extends BaseTimeEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    private String email;
-    private String phoneNumber;
     private int amount;
 
     @Enumerated(EnumType.STRING)

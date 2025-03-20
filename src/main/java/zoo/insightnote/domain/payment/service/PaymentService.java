@@ -70,8 +70,6 @@ public class PaymentService {
         Payment payment = Payment.builder()
                 .user(user)
                 .event(sessionInfo.getEvent())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
                 .amount(responseDto.getAmount().getTotalAmount())
                 .paymentStatus(PaymentStatus.COMPLETED)
                 .build();
