@@ -47,13 +47,13 @@ public class SecurityConfig {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online"));
+                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online", "https://api.synapsex.online", "http://api.synapsex.online"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
                 configuration.setMaxAge(3600L);
-                //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-                configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+//                configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
 
                 return configuration;
             }
