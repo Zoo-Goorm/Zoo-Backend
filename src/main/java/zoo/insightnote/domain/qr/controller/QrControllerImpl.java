@@ -13,9 +13,11 @@ import zoo.insightnote.domain.qr.service.QrService;
 public class QrControllerImpl {
     private final QrService qrService;
 
-    @PostMapping("/{eventId}")
-    public void createEventQR(@PathVariable Long eventId) {
-        qrService.createEventQR(eventId);
+    @PostMapping("/{qrType}/{Id}")
+    public void createQR(
+                        @PathVariable String qrType,
+                        @PathVariable Long Id) {
+        qrService.createQr(qrType, Id);
     }
 
 }
