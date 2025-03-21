@@ -2,11 +2,14 @@ package zoo.insightnote.domain.comment.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.comment.dto.CommentRequest;
 import zoo.insightnote.domain.comment.dto.CommentResponse;
+import zoo.insightnote.domain.comment.dto.CommentResponseDto;
 import zoo.insightnote.domain.comment.entity.Comment;
 import zoo.insightnote.domain.comment.mapper.CommentMapper;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
@@ -73,6 +76,17 @@ public class CommentService {
         commentRepository.deleteById(commentId);
 
         return new CommentResponse.Delete(commentId);
+    }
+
+    public List<CommentResponseDto> getCommentsByInsight(Long insightId) {
+
+        // 예외처리 로직 필요함
+
+        List<Comment> comments = commentRepository.findByInsightIdWithUser(insightId);
+
+        return comments.stream()
+                .map(CommentResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     public Comment findCommentById(Long commentId) {
