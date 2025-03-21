@@ -45,5 +45,9 @@ public class Comment extends BaseTimeEntity {
         }
     }
 
+    public boolean isUpdated() {
+        return this.getUpdatedAt() != null && !this.getCreateAt().isEqual(this.getUpdatedAt());
+    }
+
 }
 
