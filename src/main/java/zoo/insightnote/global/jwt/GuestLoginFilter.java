@@ -20,6 +20,8 @@ public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     private final JWTUtil jwtUtil;
 
+    private static final long EXPIRATION_TIME = 10 * 60 * 60 * 1000L; // 10시간 (refresh token 적용시 변경 예정)
+
     public GuestLoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         super(defaultFilterProcessesUrl);
         setAuthenticationManager(authenticationManager);
@@ -61,7 +63,7 @@ public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority().replace("ROLE_", "");
-        String token = jwtUtil.createJwt(name, email, role, 60*60*10L);
+        String token = jwtUtil.createJwt(name, email, role, EXPIRATION_TIME);
 
         response.addHeader("Authorization", "Bearer " + token);
     }
