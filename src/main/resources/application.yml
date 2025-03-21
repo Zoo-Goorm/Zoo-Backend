@@ -62,3 +62,6 @@ management:
   endpoint:
     health:
       show-details: always
+
+environment:
+  - SPRING_PROFILES_ACTIVE=${PROFILES}
