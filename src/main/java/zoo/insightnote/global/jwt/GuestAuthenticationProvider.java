@@ -17,7 +17,7 @@ public class GuestAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String name = (String) authentication.getPrincipal();
         String email = (String) authentication.getCredentials();
-        UserDetails userDetails = customUserDetailsService.loadUserByNameAndEmail(name, email);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
