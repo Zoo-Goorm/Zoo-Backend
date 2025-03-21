@@ -21,11 +21,8 @@ import java.io.IOException;
 public class QrService {
     private final String QR_SAVE_PATH_NAME = "/Users/hyunoi/Desktop/";
 
-    // TODO: url 바꿔주어야 함
-    // 나중에 환경 변수 처리
-    private final String EVENT_QR_REDIRECTION_URL = "https://api.synapsex.online/oauth2/authorization/google";
-    private final String SESSION_QR_REDIRECTION_URL = "https://api.synapsex.online/oauth2/authorization/google";
-    private final PaymentRepository paymentRepository;
+    private final String EVENT_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/event/";
+    private final String SESSION_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/session/";
 
     public void createQr(String qrType, Long Id) {
         String qrInfo;
