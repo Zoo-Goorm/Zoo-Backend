@@ -62,10 +62,10 @@ public class JWTUtil {
     // 비회원 로그인 시 사용
     public String createJwt(String name, String email, String role, Long expiredMs) {
         return Jwts.builder()
+                .claim("username", email)
                 .claim("name", name)
                 .claim("email", email)
                 .claim("role", role)
-                .claim("type", "guest")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
