@@ -3,7 +3,6 @@ spring:
     name: InsightNote
 
   profiles:
-    active: blue
     group:
       blue: blue, oauth
       green: green, oauth
