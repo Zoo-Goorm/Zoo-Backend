@@ -38,11 +38,17 @@ public class JWTUtil {
                 .get("email", String.class);
     }
 
+    public String getType(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()
+                .get("type", String.class);
+    }
+
     public Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration()
                 .before(new Date());
     }
 
+    // 소셜 로그인 시 사용
     public String createJwt(String username, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("username", username)
@@ -53,11 +59,13 @@ public class JWTUtil {
                 .compact();
     }
 
+    // 비회원 로그인 시 사용
     public String createJwt(String name, String email, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("name", name)
                 .claim("email", email)
                 .claim("role", role)
+                .claim("type", "guest")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
