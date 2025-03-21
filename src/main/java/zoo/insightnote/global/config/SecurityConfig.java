@@ -73,8 +73,7 @@ public class SecurityConfig {
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
                 configuration.setMaxAge(3600L);
-                //configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-                configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                configuration.setExposedHeaders(List.of("Set-Cookie", "Authorization"));
 
                 return configuration;
             }
@@ -93,7 +92,7 @@ public class SecurityConfig {
         http
                 .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager(), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JWTFilter(jwtUtil, userDetailsService), GuestLoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, userDetailsService), GuestLoginFilter.class);
 
 
         // OAuth2 로그인 설정
@@ -103,7 +102,10 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests(
-                auth -> auth.requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
+                auth -> auth
+                        //.requestMatchers("/api/v1/user/me").hasRole("USER")
+                        //.requestMatchers("/api/v1/user/guest/me").hasRole("GUEST")
+                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
                                 "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**",
                                 "/api/v1/user/**").permitAll()
                         .anyRequest().authenticated());
