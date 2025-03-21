@@ -128,6 +128,14 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QVoteOption voteOption = QVoteOption.voteOption;
         QVoteResponse voteResponse = QVoteResponse.voteResponse;
 
+        Long totalVotes = Optional.ofNullable(
+                queryFactory
+                        .select(voteResponse.id.count())
+                        .from(voteResponse)
+                        .where(voteResponse.voteOption.insight.id.eq(insightId))
+                        .fetchOne()
+        ).orElse(1L);
+
         // 1. 투표 옵션과 투표 수 조회
         List<Tuple> voteResults = queryFactory
                 .select(voteOption.id, voteOption.optionText, voteResponse.id.count())
@@ -138,11 +146,24 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .fetch();
 
         List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
-                .map(tuple -> new InsightResponseDto.VoteOptionDto(
-                        tuple.get(voteOption.id),
-                        tuple.get(voteOption.optionText),
-                        tuple.get(voteResponse.id.count()).intValue()))
+                .map(tuple -> {
+                    Long voteCount = tuple.get(voteResponse.id.count());
+                    double percentage = (voteCount == null ? 0 : (voteCount * 100.0 / totalVotes));
+                    return new InsightResponseDto.VoteOptionDto(
+                            tuple.get(voteOption.id),
+                            tuple.get(voteOption.optionText),
+                            String.format("%.1f%%", percentage)// 퍼센트 변환
+                    );
+                })
                 .collect(Collectors.toList());
+
+
+//        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
+//                .map(tuple -> new InsightResponseDto.VoteOptionDto(
+//                        tuple.get(voteOption.id),
+//                        tuple.get(voteOption.optionText),
+//                        tuple.get(voteResponse.id.count()).intValue()))
+//                .collect(Collectors.toList());
 
         // 2. 인사이트 상세 정보 조회
         InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory

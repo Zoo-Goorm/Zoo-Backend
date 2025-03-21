@@ -103,7 +103,7 @@ public static class InsightDetailQueryDto {
     public static class VoteOptionDto {
         private Long optionId;
         private String optionText;
-        private int voteCount;
+        private String voteCount;
     }
 
 
