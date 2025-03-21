@@ -40,4 +40,12 @@ public class Payment extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    public void update() {
+        if (isChanged(this.checkedEvent, Boolean.TRUE)) this.checkedEvent = true;
+    }
+
+    private boolean isChanged(Object currentValue, Object newValue) {
+        return newValue != null && !newValue.equals(currentValue);
+    }
+
 }
