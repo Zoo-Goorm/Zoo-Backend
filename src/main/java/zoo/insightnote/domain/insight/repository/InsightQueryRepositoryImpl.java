@@ -62,62 +62,6 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .fetch();
     }
 
-//    @Override
-//    public Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Pageable pageable) {
-//        QInsight insight = QInsight.insight;
-//        QSession session = QSession.session;
-//        QInsightLike insightLike = QInsightLike.insightLike;
-//        QUser user = QUser.user;
-//
-//        // 데이터 조회
-//        List<InsightResponseDto.InsightListQueryDto> insights = queryFactory
-//                .select(Projections.constructor(
-//                        InsightResponseDto.InsightListQueryDto.class,
-//                        insight.id,
-//                        insight.memo,
-//                        insight.isPublic,
-//                        insight.isAnonymous,
-//                        insight.createAt,
-//                        insight.updatedAt,
-//                        session.id,
-//                        session.name,
-//                        insightLike.id.count(), // 좋아요 개수
-//                        Expressions.stringTemplate(
-//                                "(SELECT i.fileUrl FROM Image i " +
-//                                        "WHERE i.entityId = {0} AND i.entityType = 'INSIGHT' " +
-//                                        "ORDER BY i.createAt DESC, i.id DESC LIMIT 1)",
-//                                insight.id
-//                        ).as("imageUrl"),
-//                        user.interestCategory
-//                ))
-//                .from(insight)
-//                .join(insight.session, session)
-//                .leftJoin(insightLike).on(insightLike.insight.eq(insight))
-//                .leftJoin(insight.user, user)
-//                .where(
-//                        session.eventDay.eq(eventDay),
-//                        insight.isDraft.eq(false)
-//                )
-//                .groupBy(insight.id, session.id, session.name, session.eventDay)
-//                .orderBy(insight.createAt.desc())
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
-//                .fetch();
-//
-//        long totalElements = Optional.ofNullable(
-//                queryFactory
-//                        .select(insight.count())
-//                        .from(insight)
-//                        .join(insight.session, session)
-//                        .where(
-//                                session.eventDay.eq(eventDay),
-//                                insight.isDraft.eq(false)
-//                        )
-//                        .fetchFirst()
-//        ).orElse(0L);
-//
-//        return new PageImpl<>(insights, pageable, totalElements);
-//    }
 
     @Override
     public Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(
@@ -132,12 +76,10 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QUser user = QUser.user;
         QComment comment = QComment.comment;
 
-        // 정렬 조건 분기
         OrderSpecifier<?> orderSpecifier = sort.equals("likes")
                 ? insightLike.id.count().desc()
                 : insight.createAt.desc();
 
-        // WHERE 조건
         BooleanBuilder where = new BooleanBuilder()
                 .and(session.eventDay.eq(eventDay))
                 .and(insight.isDraft.isFalse());
@@ -145,8 +87,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         if (sessionId != null) {
             where.and(session.id.eq(sessionId));
         }
-
-        // 데이터 조회
+        
         List<InsightResponseDto.InsightListQueryDto> results = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.InsightListQueryDto.class,
