@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.insight.mapper;
 
+import org.springframework.data.domain.Page;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
@@ -59,7 +60,7 @@ public class InsightMapper {
     }
 
 
-    public static InsightResponseDto.InsightList toListPageResponse (
+    public static InsightResponseDto.InsightList toBuildInsight (
             InsightResponseDto.InsightListQueryDto insightDto
     ) {
         return InsightResponseDto.InsightList.builder()
@@ -74,15 +75,32 @@ public class InsightMapper {
                 .likeCount(insightDto.getLikeCount())
                 .latestImageUrl(insightDto.getLatestImageUrl())
                 .interestCategory(splitToList(insightDto.getInterestCategory()))
+                .commentCount(insightDto.getCommentCount())
                 .build();
     }
 
-    public static List<InsightResponseDto.InsightList> toListPageResponse(
+    public static List<InsightResponseDto.InsightList> makeInsightList(
             List<InsightResponseDto.InsightListQueryDto> insightDtos
     ) {
         return insightDtos.stream()
-                .map(InsightMapper::toListPageResponse)
+                .map(InsightMapper::toBuildInsight)
                 .collect(Collectors.toList());
+    }
+
+
+    public static InsightResponseDto.InsightListPageRes toListPageResponse(
+            Page<InsightResponseDto.InsightListQueryDto> page,
+            int pageNumber,
+            int pageSize
+    ) {
+        return InsightResponseDto.InsightListPageRes.builder()
+                .hasNext(page.hasNext())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .content(makeInsightList(page.getContent()))
+                .build();
     }
 
 

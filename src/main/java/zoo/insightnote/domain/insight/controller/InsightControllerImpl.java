@@ -69,12 +69,24 @@ public class InsightControllerImpl implements InsightController{
 
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
-    @GetMapping("/list")
-    public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsightsByEventDay(
-            @RequestParam("eventDay") LocalDate eventDay,
-            @RequestParam(value = "page", defaultValue = "0") int page) {
+//    @GetMapping("/list")
+//    public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsightsByEventDay(
+//            @RequestParam("eventDay") LocalDate eventDay,
+//            @RequestParam(value = "page", defaultValue = "0") int page) {
+//
+//        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, page);
+//        return ResponseEntity.ok(insights);
+//    }
 
-        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, page);
+    @Override
+    @GetMapping("/list")
+    public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
+            @RequestParam("eventDay") LocalDate eventDay,
+            @RequestParam(value = "sessionId", required = false) Long sessionId,
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+            @RequestParam(value = "page", defaultValue = "0") int page
+    ) {
+        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, sessionId, sort, page);
         return ResponseEntity.ok(insights);
     }
 

@@ -136,6 +136,7 @@ public static class InsightDetailQueryDto {
         private Long likeCount;
         private String latestImageUrl;
         private String interestCategory;
+        private Long commentCount;
     }
 
     @Getter
@@ -153,18 +154,19 @@ public static class InsightDetailQueryDto {
         private Long likeCount;
         private String latestImageUrl;
         private List<String> interestCategory;
+        private Long commentCount;
     }
 
     @Getter
     @AllArgsConstructor
     @Builder
     public static class InsightListPageRes {
-        private boolean hasNext;  // 다음 페이지 존재 여부
-        private long totalElements;  // 전체 데이터 개수
-        private int totalPages;  // 전체 페이지 개수
-        private int pageNumber;  // 현재 페이지 번호
-        private int pageSize;  // 페이지 크기
-        private List<InsightResponseDto.InsightList> content;  // 실제 데이터
+        private boolean hasNext;
+        private long totalElements;
+        private int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private List<InsightResponseDto.InsightList> content; // 인사이트 리스트
     }
 
 }

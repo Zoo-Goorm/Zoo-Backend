@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 
+import java.time.LocalDate;
+
 @Tag(name = "INSIGHT", description = "인사이트 관련 API")
 @RequestMapping("/api/v1/insights")
 public interface InsightController {
@@ -73,6 +75,40 @@ public interface InsightController {
 //            @Parameter(description = "조회할 인사이트 ID") @PathVariable Long insightId
 //    );
 
+    @Operation(
+            summary = "인사이트 목록 조회",
+            description = """
+        세션 날짜(eventDay)에 해당하는 인사이트 목록을 조회합니다.
+        
+        - 정렬: `latest` (최신순, 기본값), `likes` (좋아요순)
+        - 세션 필터링: 특정 세션 ID로 필터링 가능
+        - 페이징: page 번호 (0부터 시작)
+        
+        요청 예시:  
+        `/api/v1/insights/list?eventDay=2025-04-04&sort=likes&sessionId=2&page=0`
+    """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/list")
+    ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
+            @Parameter(description = "세션 날짜 (예: 2025-04-04)", required = true)
+            @RequestParam("eventDay") LocalDate eventDay,
+
+            @Parameter(description = "선택적 세션 ID")
+            @RequestParam(value = "sessionId", required = false) Long sessionId,
+
+            @Parameter(description = "정렬 기준: latest(최신순), likes(좋아요순)", example = "latest")
+            @RequestParam(value = "sort", defaultValue = "latest") String sort,
+
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @RequestParam(value = "page", defaultValue = "0") int page
+    );
+
+
     @Operation(summary = "좋아요 등록/취소",
             description = """
            특정 인사이트에 대해 사용자가 좋아요를 등록하거나 취소합니다.
@@ -101,4 +137,6 @@ public interface InsightController {
             @Parameter(description = "좋아요를 등록/취소할 인사이트 ID") @PathVariable Long insightId,
             @Parameter(description = "좋아요를 누르는 사용자 ID") @RequestParam Long userId
     );
+
+
 }

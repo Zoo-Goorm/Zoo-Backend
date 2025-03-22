@@ -14,7 +14,8 @@ public interface InsightQueryRepository {
 
     List<InsightResponseDto.InsightTopRes> findTopInsights();
 
-    Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Pageable pageable);
+//    Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Pageable pageable);
+    Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Long sessionId, String sortCondition, Pageable pageable);
 
     Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId);
 }

@@ -177,26 +177,55 @@ public class InsightService {
 
     // 인사이트 목록 9개 기준 (시간순 정렬)
     // 무한 스크롤 (페이징)
+//    @Transactional(readOnly = true)
+//    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, int page) {
+//        int pageSize = 9;  // 한 페이지당 9개씩 가져옴
+//        Pageable pageable = PageRequest.of(page, pageSize);
+//
+//        Page<InsightResponseDto.InsightListQueryDto> insightPage = insightRepository.findInsightsByEventDay(eventDay, pageable);
+//
+//        if (insightPage.isEmpty()) {
+//            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+//        }
+//
+//        return InsightResponseDto.InsightListPageRes.builder()
+//                .hasNext(insightPage.hasNext())
+//                .totalElements(insightPage.getTotalElements())
+//                .totalPages(insightPage.getTotalPages())
+//                .content(InsightMapper.toListPageResponse(insightPage.getContent()))  // 매퍼 활용
+//                .pageNumber(page)
+//                .pageSize(pageSize)
+//                .build();
+//    }
+
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, int page) {
-        int pageSize = 9;  // 한 페이지당 9개씩 가져옴
+    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(
+            LocalDate eventDay,
+            Long sessionId,
+            String sort,
+            int page
+    ) {
+        int pageSize = 9;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
 
-        Page<InsightResponseDto.InsightListQueryDto> insightPage = insightRepository.findInsightsByEventDay(eventDay, pageable);
+        Page<InsightResponseDto.InsightListQueryDto> insightPage =
+                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable);
 
         if (insightPage.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
         }
 
-        return InsightResponseDto.InsightListPageRes.builder()
-                .hasNext(insightPage.hasNext())
-                .totalElements(insightPage.getTotalElements())
-                .totalPages(insightPage.getTotalPages())
-                .content(InsightMapper.toListPageResponse(insightPage.getContent()))  // 매퍼 활용
-                .pageNumber(page)
-                .pageSize(pageSize)
-                .build();
+        return InsightMapper.toListPageResponse(insightPage, page, pageSize);
+//        return InsightResponseDto.InsightListPageRes.builder()
+//                .hasNext(insightPage.hasNext())
+//                .totalElements(insightPage.getTotalElements())
+//                .totalPages(insightPage.getTotalPages())
+//                .content(InsightMapper.toListPageResponse(insightPage.getContent()))  // 매핑 로직 그대로
+//                .pageNumber(page)
+//                .pageSize(pageSize)
+//                .build();
     }
+
 
 
     // 인사이트 상세 페이지
