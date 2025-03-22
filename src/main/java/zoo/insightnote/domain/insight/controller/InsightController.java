@@ -120,7 +120,8 @@ public interface InsightController {
 
     @Operation(summary = "인기 인사이트 상위 3개 조회",
             description = """
-            좋아요 수를 기준으로 가장 인기 있는 인사이트 3개를 조회합니다.  
+            좋아요 수를 기준으로 가장 인기 있는 인사이트 3개를 조회합니다.
+            - 익명 여부가 true 경우 nickname , false 인경우 name을 반환합니다. 
             - 좋아요 수가 많은 순서대로 정렬되어 반환됩니다.  
             - 각 인사이트에는 최신 이미지와 댓글 수가 포함됩니다.
         """

@@ -129,6 +129,8 @@ public static class InsightDetailQueryDto {
         private Long likeCount;
         private String imageUrl;
         private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
     @Getter

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static zoo.insightnote.domain.user.entity.QUser.user;
+
 @RequiredArgsConstructor
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
@@ -39,6 +41,11 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
+        QUser user = QUser.user;
+
+        StringExpression displayNameExpr = new CaseBuilder()
+                .when(insight.isAnonymous.isTrue()).then(user.nickname)
+                .otherwise(user.name);
 
         return queryFactory
                 .select(Projections.constructor(
@@ -56,12 +63,19 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                         "ORDER BY i.createAt DESC LIMIT 1)",
                                 insight.id
                         ).as("imageUrl"),
-                        comment.id.countDistinct().as("commentCount")
+                        comment.id.countDistinct().as("commentCount"),
+                        displayNameExpr,
+                        user.job
                 ))
                 .from(insight)
+                .leftJoin(insight.user, user)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
-                .groupBy(insight.id)
+                .where(
+                        insight.isPublic.isTrue()
+                                .and(insight.isDraft.isFalse())
+                )
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous)
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
                 .fetch();
