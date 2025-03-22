@@ -163,7 +163,8 @@ public static class InsightDetailQueryDto {
         private LocalDateTime updatedAt;
         private Long likeCount;
         private Long commentCount;
-
+        private String displayName;
+        private String job;
     }
 
 
@@ -199,6 +200,8 @@ public static class InsightDetailQueryDto {
         private LocalDateTime updatedAt;
         private Long likeCount;
         private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
     @Getter

@@ -240,6 +240,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
+        QUser user = QUser.user;
 
         // 정렬 조건 설정
         OrderSpecifier<?> dynamicSort = sort.equals("likes")
@@ -259,6 +260,10 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                 )
                 );
 
+        StringExpression displayNameExpr = new CaseBuilder()
+                .when(insight.isAnonymous.isTrue()).then(user.nickname)
+                .otherwise(user.name);
+
         List<InsightResponseDto.SessionInsightListQueryDto> results = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.SessionInsightListQueryDto.class,
@@ -269,13 +274,16 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.createAt,
                         insight.updatedAt,
                         insightLike.id.countDistinct().as("likeCount"),
-                        comment.id.countDistinct().as("commentCount")
+                        comment.id.countDistinct().as("commentCount"),
+                        displayNameExpr,
+                        user.job
                 ))
                 .from(insight)
+                .leftJoin(insight.user, user)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
                 .where(where)
-                .groupBy(insight.id)
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous)
                 .orderBy(insight.isDraft.desc(), dynamicSort) // 1. 임시저장 먼저, 2. 정렬조건 적용
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
