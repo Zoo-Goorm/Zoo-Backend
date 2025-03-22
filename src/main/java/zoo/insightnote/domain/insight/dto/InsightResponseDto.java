@@ -120,6 +120,7 @@ public static class InsightDetailQueryDto {
         private LocalDateTime updatedAt;
         private Long likeCount;
         private String imageUrl;
+        private Long commentCount;
     }
 
     @Getter

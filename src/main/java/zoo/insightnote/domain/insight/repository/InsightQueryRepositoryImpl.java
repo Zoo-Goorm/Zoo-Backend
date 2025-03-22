@@ -36,6 +36,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     public List<InsightResponseDto.InsightTopRes> findTopInsights() {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
+        QComment comment = QComment.comment;
 
         return queryFactory
                 .select(Projections.constructor(
@@ -52,10 +53,12 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                         "WHERE i.entityId = {0} AND i.entityType = 'INSIGHT' " +
                                         "ORDER BY i.createAt DESC LIMIT 1)",
                                 insight.id
-                        ).as("imageUrl")
+                        ).as("imageUrl"),
+                        comment.id.countDistinct().as("commentCount")
                 ))
                 .from(insight)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
+                .leftJoin(comment).on(comment.insight.eq(insight))
                 .groupBy(insight.id)
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
@@ -87,7 +90,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         if (sessionId != null) {
             where.and(session.id.eq(sessionId));
         }
-        
+
         List<InsightResponseDto.InsightListQueryDto> results = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.InsightListQueryDto.class,
