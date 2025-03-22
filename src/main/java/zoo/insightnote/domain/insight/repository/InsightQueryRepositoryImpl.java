@@ -224,7 +224,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
     @Override
     public Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(
-            Long sessionId, String sort, Pageable pageable
+            Long sessionId, String sort, Pageable pageable, Long currentUserId
     ) {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
@@ -236,7 +236,17 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 : insight.createAt.desc();
 
         BooleanBuilder where = new BooleanBuilder()
-                .and(insight.session.id.eq(sessionId));
+                .and(insight.session.id.eq(sessionId))
+                .and(
+                        insight.isDraft.isFalse()
+                                .or(
+                                        insight.isDraft.isTrue().and(
+                                                currentUserId != null
+                                                        ? insight.user.id.eq(currentUserId)
+                                                        : insight.user.id.isNull()
+                                        )
+                                )
+                );
 
         List<InsightResponseDto.SessionInsightListQueryDto> results = queryFactory
                 .select(Projections.constructor(

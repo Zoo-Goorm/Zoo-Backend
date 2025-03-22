@@ -84,9 +84,18 @@ public interface SessionController {
     );
 
     @Operation(
-            summary = "세션별 인사이트 리스트 조회",
-            description = "특정 세션 ID에 해당하는 인사이트 목록을 조회합니다. 임시 저장된 인사이트가 먼저 정렬되고, " +
-                    "정렬 조건은 최신순(latest, 기본값) 또는 좋아요순(likes)으로 지정할 수 있습니다."
+            summary = "특정 세션의 인사이트 목록 조회",
+            description = """
+        특정 세션 ID에 해당하는 인사이트 목록을 조회합니다.
+
+        - 로그인한 사용자가 해당 세션에 작성한 '임시 저장글(draft)'이 있다면 가장 먼저 반환됩니다.
+        - 그 다음에는 일반 공개 인사이트가 정렬 조건에 따라 나열됩니다.
+          - 정렬 방식: `latest` (최신순, 기본값), `likes` (좋아요순)
+        - 페이지네이션 적용: page (0부터 시작), size 지정 가능
+
+        요청 예시:  
+        `/api/v1/sessions/2/insight-notes?sort=likes&page=0&size=10`
+        """
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
