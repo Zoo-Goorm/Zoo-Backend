@@ -11,6 +11,7 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "INSIGHT", description = "인사이트 관련 API")
 @RequestMapping("/api/v1/insights")
@@ -74,6 +75,20 @@ public interface InsightController {
 //    ResponseEntity<InsightResponseDto.InsightRes> getInsightById(
 //            @Parameter(description = "조회할 인사이트 ID") @PathVariable Long insightId
 //    );
+
+    @Operation(summary = "인기 인사이트 상위 3개 조회",
+            description = """
+            좋아요 수를 기준으로 가장 인기 있는 인사이트 3개를 조회합니다.  
+            - 좋아요 수가 많은 순서대로 정렬되어 반환됩니다.  
+            - 각 인사이트에는 최신 이미지와 댓글 수가 포함됩니다.
+        """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상위 인기 인사이트 3개 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/top")
+    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights();
 
     @Operation(
             summary = "인사이트 목록 조회",
