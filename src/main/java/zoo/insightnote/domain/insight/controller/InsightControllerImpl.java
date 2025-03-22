@@ -17,14 +17,39 @@ public class InsightControllerImpl implements InsightController{
 
     private final InsightService insightService;
 
+//    @Override
+//    @PostMapping
+//    public ResponseEntity<InsightResponseDto.InsightRes> createInsight(
+//            @RequestBody InsightRequestDto.CreateDto request) {
+//
+//        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
+//        return ResponseEntity.ok(insight);
+//    }
+
+
     @Override
     @PostMapping
-    public ResponseEntity<InsightResponseDto.InsightRes> createInsight(
-            @RequestBody InsightRequestDto.CreateDto request) {
-
-        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
-        return ResponseEntity.ok(insight);
+    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(InsightRequestDto.CreateInsight request) {
+        InsightResponseDto.InsightIdRes response = insightService.createInsight(request);
+        return ResponseEntity.ok(response);
     }
+
+    @Override
+    @PutMapping("/{insightId}")
+    public ResponseEntity<InsightResponseDto.InsightIdRes> updateInsight(
+            @PathVariable Long insightId,
+            @RequestBody InsightRequestDto.UpdateInsight request
+    ) {
+        InsightResponseDto.InsightIdRes response = insightService.updateInsight(insightId, request);
+        return ResponseEntity.ok(response);
+    }
+
+//    @Override
+//    public ResponseEntity<InsightResponseDto.InsightRes> updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
+//        InsightResponseDto.InsightRes updated = insightService.updateInsightMemoOnly(insightId, request);
+//        return ResponseEntity.ok(updated);
+//    }
+//
 
 //    @Override
 //    @PutMapping("/{insightId}")

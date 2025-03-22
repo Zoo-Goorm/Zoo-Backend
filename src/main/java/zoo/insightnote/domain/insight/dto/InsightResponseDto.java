@@ -24,6 +24,13 @@ public class InsightResponseDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    public static class InsightIdRes {
+        private Long id;
+    }
+
+
+    @Getter
     @Builder
     public static class InsightDetailPageRes {
         private Long id;

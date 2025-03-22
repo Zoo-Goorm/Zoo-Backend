@@ -13,17 +13,17 @@ import java.util.stream.Collectors;
 
 public class InsightMapper {
 
-    public static Insight toEntity(InsightRequestDto.CreateDto request, Session session, User user) {
-        return Insight.create(
-                session,
-                user,
-                request.getMemo(),
-                request.getIsPublic(),
-                request.getIsAnonymous(),
-                request.getIsDraft(),
-                request.getVoteTitle()
-        );
-    }
+//    public static Insight toEntity(InsightRequestDto.CreateInsight request, Session session, User user) {
+//        return Insight.create(
+//                session,
+//                user,
+//                request.getMemo(),
+//                request.getIsPublic(),
+//                request.getIsAnonymous(),
+//                request.getIsDraft()
+////                request.getVoteTitle()
+//        );
+//    }
 
     public static InsightResponseDto.InsightRes toResponse(Insight insight) {
         return InsightResponseDto.InsightRes.builder()
@@ -37,6 +37,17 @@ public class InsightMapper {
                 .updatedAt(insight.getUpdatedAt())
                 .build();
     }
+
+//    public static Insight toEntityInsightBuild(InsightRequestDto.CreateDto request, Session session, User user) {
+//        return Insight.builder()
+//                .session(session)
+//                .user(user)
+//                .memo(request.getMemo())
+//                .isPublic(request.getIsPublic())
+//                .isAnonymous(request.getIsAnonymous())
+//                .isDraft(request.getIsDraft())
+//                .build();
+//    }
 
     public static InsightResponseDto.InsightDetailPageRes toDetailPageResponse(
             InsightResponseDto.InsightDetailQueryDto insightDto

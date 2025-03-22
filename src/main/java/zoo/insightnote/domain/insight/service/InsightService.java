@@ -50,63 +50,42 @@ public class InsightService {
     private final SessionKeywordRepository sessionKeywordRepository;
 
     @Transactional
-    public InsightResponseDto.InsightRes saveOrUpdateInsight(InsightRequestDto.CreateDto request) {
-
+    public InsightResponseDto.InsightIdRes createInsight(InsightRequestDto.CreateInsight request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        Optional<Insight> existingInsight = insightRepository.findBySessionAndUser(session, user);
-        Insight savedInsight;
+        Insight insight = Insight.create(session, user, request);
 
-        if (existingInsight.isPresent()) {
-            // 기존에 저장된 인사이트가 있으면 업데이트
-            Insight insight = existingInsight.get();
-            insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(), request.getIsDraft(), request.getVoteTitle());
+        Insight savedInsight = insightRepository.save(insight);
 
-            // **기존 투표 제목과 비교**
-            boolean isVoteTitleChanged = !Objects.equals(insight.getVoteTitle(), request.getVoteTitle());
-
-            // **기존 투표 옵션과 비교**
-            List<String> existingOptions = voteOptionRepository.findByInsight(insight).stream()
-                    .map(VoteOption::getOptionText)
-                    .toList();
-
-            List<String> newOptions = request.getVoteOptions();
-
-            boolean isVoteOptionsChanged = !existingOptions.equals(newOptions);
-
-            // **기존 제목 또는 옵션이 변경되었을 경우에만 업데이트**
-            if (isVoteTitleChanged || isVoteOptionsChanged) {
-                voteOptionRepository.deleteByInsight(insight); // 기존 투표 삭제
-                saveVoteOptions(insight, request.getVoteOptions()); // 새 투표 저장
-            }
-
-            // 정식 저장이면 finalizeDraft() 호출
-            if (!request.getIsDraft()) {
-                insight.finalizeDraft();
-            }
-
-            savedInsight = insight;
-            imageService.updateImages(new ImageRequest.UploadImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages()));
-        } else {
-            // 기존 데이터가 없으면 새롭게 생성
-            Insight insight = InsightMapper.toEntity(request, session, user);
-            savedInsight = insightRepository.save(insight);
-
-            if (request.getVoteTitle() != null && request.getVoteOptions() != null) {
-                saveVoteOptions(savedInsight, request.getVoteOptions());
-            }
-
-
-            // 이미지 값이 있으면 저장을 하는 로직이 필요하다
-            imageService.saveImages(savedInsight.getId(), EntityType.INSIGHT, request.getImages());
-        }
-
-        return InsightMapper.toResponse(savedInsight);
+        return new InsightResponseDto.InsightIdRes(savedInsight.getId());
     }
+
+    @Transactional
+    public InsightResponseDto.InsightIdRes updateInsight(Long insightId, InsightRequestDto.UpdateInsight request) {
+        Insight insight = insightRepository.findById(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+
+        insight.updateIfChanged(request);
+
+        return new InsightResponseDto.InsightIdRes(insight.getId());
+    }
+
+    
+
+//    @Transactional
+//    public InsightResponseDto.InsightIdRes updateInsightMemoOnly(Long insightId, String updatedMemo) {
+//        Insight insight = insightRepository.findById(insightId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+//
+//        insight.updateMemoOnly(updatedMemo);
+//        return InsightMapper.toResponse(insight);
+//    }
+
+
 
     @Transactional
     public void saveVoteOptions(Insight insight, List<String> voteOptionTexts) {
@@ -117,17 +96,17 @@ public class InsightService {
         voteOptionRepository.saveAll(voteOptions);
     }
 
-    @Transactional
-    public InsightResponseDto.InsightRes updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
-        Insight insight = insightRepository.findById(insightId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
-
-        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(),request.getIsDraft(), request.getVoteTitle());
-
-        imageService.updateImages(new ImageRequest.UploadImages(insight.getId(), EntityType.INSIGHT, request.getImages()));
-
-        return InsightMapper.toResponse(insight);
-    }
+//    @Transactional
+//    public InsightResponseDto.InsightRes updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
+//        Insight insight = insightRepository.findById(insightId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+//
+//        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(),request.getIsDraft(), request.getVoteTitle());
+//
+//        imageService.updateImages(new ImageRequest.UploadImages(insight.getId(), EntityType.INSIGHT, request.getImages()));
+//
+//        return InsightMapper.toResponse(insight);
+//    }
 
     @Transactional
     public void deleteInsight(Long insightId) {
