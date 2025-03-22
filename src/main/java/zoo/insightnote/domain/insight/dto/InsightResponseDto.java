@@ -146,6 +146,8 @@ public static class InsightDetailQueryDto {
         private String latestImageUrl;
         private String interestCategory;
         private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
 
@@ -181,6 +183,8 @@ public static class InsightDetailQueryDto {
         private String latestImageUrl;
         private List<String> interestCategory;
         private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
     @Getter

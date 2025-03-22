@@ -103,6 +103,8 @@ public class InsightMapper {
                 .latestImageUrl(insightDto.getLatestImageUrl())
                 .interestCategory(splitToList(insightDto.getInterestCategory()))
                 .commentCount(insightDto.getCommentCount())
+                .displayName(insightDto.getDisplayName())
+                .job(insightDto.getJob())
                 .build();
     }
 

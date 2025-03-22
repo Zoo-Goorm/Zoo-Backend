@@ -4,7 +4,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -85,11 +87,17 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         BooleanBuilder where = new BooleanBuilder()
                 .and(session.eventDay.eq(eventDay))
-                .and(insight.isDraft.isFalse());
+                .and(insight.isDraft.isFalse())
+                .and(insight.isPublic.isTrue());
 
         if (sessionId != null) {
             where.and(session.id.eq(sessionId));
         }
+
+        StringExpression displayNameExpr = new CaseBuilder()
+                .when(insight.isAnonymous.isTrue()).then(user.nickname)
+                .otherwise(user.name);
+
 
         List<InsightResponseDto.InsightListQueryDto> results = queryFactory
                 .select(Projections.constructor(
@@ -108,7 +116,10 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                 insight.id
                         ),
                         user.interestCategory,
-                        comment.id.countDistinct().as("commentCount")
+                        comment.id.countDistinct().as("commentCount"),
+                        displayNameExpr,
+                        user.job
+
                 ))
                 .from(insight)
                 .join(insight.session, session)
@@ -116,7 +127,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
                 .where(where)
-                .groupBy(insight.id, session.id, session.name, session.eventDay, user.interestCategory)
+                .groupBy(insight.id, session.id, session.name, session.eventDay, user.interestCategory, user.nickname, user.name,user.job, insight.isAnonymous)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

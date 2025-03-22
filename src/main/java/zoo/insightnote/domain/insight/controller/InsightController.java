@@ -136,12 +136,14 @@ public interface InsightController {
             summary = "인사이트 목록 조회",
             description = """
         세션 날짜(eventDay)에 해당하는 인사이트 목록을 조회합니다.
-        
+        - 사용자가 비공개로 설정한 인사이트 경우에는 해당 리스트 목록에서 제외됩니다.
+        - 익명여부가 true인경우 nickname을 반환하고 false 인경우 name을 반환합니다 
+    
         - 정렬: `latest` (최신순, 기본값), `likes` (좋아요순)
         - 세션 필터링: 특정 세션 ID로 필터링 가능
         - 페이징: page 번호 (0부터 시작)
-        
-        요청 예시:  
+    
+        요청 예시:
         `/api/v1/insights/list?eventDay=2025-04-04&sort=likes&sessionId=2&page=0`
     """
     )
