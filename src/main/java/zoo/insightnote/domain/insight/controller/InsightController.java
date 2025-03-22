@@ -2,6 +2,8 @@ package zoo.insightnote.domain.insight.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -105,8 +107,15 @@ public interface InsightController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "404", description = "해당 인사이트를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Not Found",
+                                    value = "{ \"message\": \"해당 인사이트를 찾을 수 없습니다.\" }"
+                            )
+                    )
+            ),
     })
     @GetMapping("/list")
     ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
@@ -121,6 +130,32 @@ public interface InsightController {
 
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
             @RequestParam(value = "page", defaultValue = "0") int page
+    );
+
+    @Operation(summary = "인사이트 상세 조회",
+            description = """
+            특정 인사이트 ID에 해당하는 인사이트 상세 정보를 조회합니다.  
+            - 작성자 정보, 좋아요 수, 투표 정보, 세션 정보 등이 포함됩니다.  
+            - 비공개 인사이트이거나 존재하지 않는 경우에는 예외가 발생합니다.
+        """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인사이트 상세 조회 성공"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 인사이트를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Not Found",
+                                    value = "{ \"message\": \"해당 인사이트를 찾을 수 없습니다.\" }"
+                            )
+                    )
+            )
+    })
+    @GetMapping("/{insightId}")
+    ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
+            @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId
     );
 
 
@@ -152,6 +187,7 @@ public interface InsightController {
             @Parameter(description = "좋아요를 등록/취소할 인사이트 ID") @PathVariable Long insightId,
             @Parameter(description = "좋아요를 누르는 사용자 ID") @RequestParam Long userId
     );
+
 
 
 }
