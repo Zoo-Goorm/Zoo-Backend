@@ -1,8 +1,12 @@
 package zoo.insightnote.domain.session.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.service.SessionService;
@@ -15,6 +19,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/sessions")
 public class SessionControllerImpl implements SessionController {
     private final SessionService sessionService;
+    private final InsightService insightService;
 
     @Override
     @PostMapping
@@ -61,6 +66,18 @@ public class SessionControllerImpl implements SessionController {
     @GetMapping("/{sessionId}")
     public ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(@PathVariable Long sessionId) {
         SessionResponseDto.SessionSpeakerDetailRes response = sessionService.getSessionDetails(sessionId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{sessionId}/insight-notes")
+    public ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+            @PathVariable Long sessionId,
+            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable);
         return ResponseEntity.ok(response);
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 
@@ -80,5 +81,22 @@ public interface SessionController {
     @GetMapping("/{sessionId}")
     ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(
             @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
+    );
+
+    @Operation(
+            summary = "세션별 인사이트 리스트 조회",
+            description = "특정 세션 ID에 해당하는 인사이트 목록을 조회합니다. 임시 저장된 인사이트가 먼저 정렬되고, " +
+                    "정렬 조건은 최신순(latest, 기본값) 또는 좋아요순(likes)으로 지정할 수 있습니다."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음"),
+    })
+    @GetMapping("/{sessionId}/insight-notes")
+    ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+            @Parameter(description = "세션 ID") @PathVariable Long sessionId,
+            @Parameter(description = "정렬 조건 (latest | likes)", example = "latest") @RequestParam(defaultValue = "latest") String sort,
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기", example = "5") @RequestParam(defaultValue = "5") int size
     );
 }

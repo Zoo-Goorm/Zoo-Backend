@@ -71,6 +71,22 @@ public class InsightMapper {
     }
 
 
+    public static InsightResponseDto.SessionInsightList toBuildSessionInsigh(
+            InsightResponseDto.SessionInsightListQueryDto dto
+    ) {
+        return InsightResponseDto.SessionInsightList.builder()
+                .id(dto.getId())
+                .memo(dto.getMemo())
+                .isPublic(dto.getIsPublic())
+                .isAnonymous(dto.getIsAnonymous())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
+                .likeCount(dto.getLikeCount())
+                .commentCount(dto.getCommentCount())
+                .build();
+    }
+
+
     public static InsightResponseDto.InsightList toBuildInsight (
             InsightResponseDto.InsightListQueryDto insightDto
     ) {
@@ -98,6 +114,13 @@ public class InsightMapper {
                 .collect(Collectors.toList());
     }
 
+    public static List<InsightResponseDto.SessionInsightList> makeSessionInsightList(
+            List<InsightResponseDto.SessionInsightListQueryDto> insightDtos
+    ) {
+        return insightDtos.stream()
+                .map(InsightMapper::toBuildSessionInsigh)
+                .collect(Collectors.toList());
+    }
 
     public static InsightResponseDto.InsightListPageRes toListPageResponse(
             Page<InsightResponseDto.InsightListQueryDto> page,
@@ -113,6 +136,23 @@ public class InsightMapper {
                 .content(makeInsightList(page.getContent()))
                 .build();
     }
+
+    // 최종 Page 응답 변환
+    public static InsightResponseDto.SessionInsightListPageRes  toSessionInsightPageResponse(
+            Page<InsightResponseDto.SessionInsightListQueryDto> page,
+            int pageNumber,
+            int pageSize
+    ) {
+        return InsightResponseDto.SessionInsightListPageRes.builder()
+                .hasNext(page.hasNext())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .content(makeSessionInsightList(page.getContent()))
+                .build();
+    }
+
 
 
     private static List<String> splitToList(String str) {

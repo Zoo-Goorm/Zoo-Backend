@@ -221,4 +221,51 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                     return detail;
                 });
     }
+
+    @Override
+    public Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(
+            Long sessionId, String sort, Pageable pageable
+    ) {
+        QInsight insight = QInsight.insight;
+        QInsightLike insightLike = QInsightLike.insightLike;
+        QComment comment = QComment.comment;
+
+        // 정렬 조건 설정
+        OrderSpecifier<?> dynamicSort = sort.equals("likes")
+                ? insightLike.id.countDistinct().desc()
+                : insight.createAt.desc();
+
+        BooleanBuilder where = new BooleanBuilder()
+                .and(insight.session.id.eq(sessionId));
+
+        List<InsightResponseDto.SessionInsightListQueryDto> results = queryFactory
+                .select(Projections.constructor(
+                        InsightResponseDto.SessionInsightListQueryDto.class,
+                        insight.id,
+                        insight.memo,
+                        insight.isPublic,
+                        insight.isAnonymous,
+                        insight.createAt,
+                        insight.updatedAt,
+                        insightLike.id.countDistinct().as("likeCount"),
+                        comment.id.countDistinct().as("commentCount")
+                ))
+                .from(insight)
+                .leftJoin(insightLike).on(insightLike.insight.eq(insight))
+                .leftJoin(comment).on(comment.insight.eq(insight))
+                .where(where)
+                .groupBy(insight.id)
+                .orderBy(insight.isDraft.desc(), dynamicSort) // 1. 임시저장 먼저, 2. 정렬조건 적용
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(insight.count())
+                .from(insight)
+                .where(where)
+                .fetchOne();
+
+        return new PageImpl<>(results, pageable, total == null ? 0 : total);
+    }
 }

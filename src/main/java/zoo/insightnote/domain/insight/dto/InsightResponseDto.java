@@ -3,6 +3,7 @@ package zoo.insightnote.domain.insight.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -147,6 +148,23 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
     }
 
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SessionInsightListQueryDto {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private Long commentCount;
+
+    }
+
+
     @Getter
     @AllArgsConstructor
     @Builder
@@ -168,6 +186,20 @@ public static class InsightDetailQueryDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    public static class SessionInsightList {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private Long commentCount;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
     public static class InsightListPageRes {
         private boolean hasNext;
         private long totalElements;
@@ -175,6 +207,18 @@ public static class InsightDetailQueryDto {
         private int pageNumber;
         private int pageSize;
         private List<InsightResponseDto.InsightList> content; // 인사이트 리스트
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SessionInsightListPageRes {
+        private boolean hasNext;
+        private long totalElements;
+        private int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private List<InsightResponseDto.SessionInsightList> content; // 인사이트 리스트
     }
 
 }

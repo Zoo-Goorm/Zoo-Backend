@@ -8,21 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
-import zoo.insightnote.domain.image.dto.ImageRequest;
-import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
-import zoo.insightnote.domain.insight.repository.InsightQueryRepository;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
-import zoo.insightnote.domain.userIntroductionLink.entity.UserIntroductionLink;
 import zoo.insightnote.domain.userIntroductionLink.repository.UserIntroductionLinkRepository;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
@@ -30,9 +26,7 @@ import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -74,7 +68,14 @@ public class InsightService {
         return new InsightResponseDto.InsightIdRes(insight.getId());
     }
 
-    
+    @Transactional(readOnly = true)
+    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable) {
+        // 정렬 조건 처리
+        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable);
+
+        return InsightMapper.toSessionInsightPageResponse(insightPage, pageable.getPageNumber(), pageable.getPageSize());
+    }
+
 
 //    @Transactional
 //    public InsightResponseDto.InsightIdRes updateInsightMemoOnly(Long insightId, String updatedMemo) {
