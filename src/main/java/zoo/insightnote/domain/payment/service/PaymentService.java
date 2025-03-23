@@ -9,13 +9,13 @@ import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
-import zoo.insightnote.domain.payment.entity.PaymentStatus;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
 
 import java.util.List;
@@ -31,6 +31,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final ReservationRepository reservationRepository;
     private final PaymentRedisService paymentRedisService;
+    private final UserRepository userRepository;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -52,15 +53,11 @@ public class PaymentService {
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
-        Payment payment = Payment.builder()
-                .user(user)
-                .event(sessionInfo.getEvent())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .amount(responseDto.getAmount().getTotalAmount())
-                .paymentStatus(PaymentStatus.COMPLETED)
-                .build();
-
+        Payment payment = Payment.create(
+                user,
+                sessionInfo,
+                responseDto.getAmount().getTotalAmount()
+        );
         paymentRepository.save(payment);
     }
 
