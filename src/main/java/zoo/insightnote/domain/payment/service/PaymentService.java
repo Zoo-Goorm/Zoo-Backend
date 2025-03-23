@@ -17,8 +17,6 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
-import zoo.insightnote.global.exception.CustomException;
-import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.List;
 
@@ -32,12 +30,13 @@ public class PaymentService {
     private final SessionService sessionService;
     private final PaymentRepository paymentRepository;
     private final ReservationRepository reservationRepository;
+    private final PaymentRedisService paymentRedisService;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        String tid = kakaoPayService.getTidKey(requestDto.getOrderId());
-        List<Long> sessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
-        UserInfoDto userInfo = kakaoPayService.getUserInfo(requestDto.getOrderId());
+        String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
+        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.getOrderId());
+        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
 
