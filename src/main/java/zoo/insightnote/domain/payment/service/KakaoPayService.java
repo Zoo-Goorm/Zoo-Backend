@@ -47,7 +47,12 @@ public class KakaoPayService {
 
     public String getTidKey(Long orderId) {
         String tidKey = "payment:tid: " + orderId;
-        return redisTemplate.opsForValue().get(tidKey);
+        String tid = redisTemplate.opsForValue().get(tidKey);
+        if (tid == null) {
+            log.error("❌ Redis에서 tid 조회 실패! (orderId={})", orderId);
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+        return tid;
     }
 
     private void saveSessionIds(Long orderId, List<Long> sessionsId) {
@@ -65,6 +70,11 @@ public class KakaoPayService {
     public List<Long> getSessionIds(Long orderId) {
         String sessionIdsKey = "payment:sessions: " + orderId;
         String getSessionsIds = redisTemplate.opsForValue().get(sessionIdsKey);
+
+        if (getSessionsIds == null) {
+            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})", orderId);
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -89,6 +99,11 @@ public class KakaoPayService {
     public UserInfoDto getUserInfo(Long orderId) {
         String userInfoKey = "payment:userInfo: " + orderId;
         String getUserInfo = redisTemplate.opsForValue().get(userInfoKey);
+
+        if (getUserInfo == null) {
+            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})", orderId);
+            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
