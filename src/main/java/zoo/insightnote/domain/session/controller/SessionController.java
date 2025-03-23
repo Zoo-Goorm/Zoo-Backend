@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
@@ -96,7 +98,7 @@ public interface SessionController {
 
         요청 예시:  
         `/api/v1/sessions/2/insight-notes?sort=likes&page=0&size=10`
-        """
+    """
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
@@ -107,6 +109,7 @@ public interface SessionController {
             @Parameter(description = "세션 ID") @PathVariable Long sessionId,
             @Parameter(description = "정렬 조건 (latest | likes)", example = "latest") @RequestParam(defaultValue = "latest") String sort,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "페이지 크기", example = "5") @RequestParam(defaultValue = "5") int size
+            @Parameter(description = "페이지 크기", example = "5") @RequestParam(defaultValue = "5") int size,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails
     );
 }
