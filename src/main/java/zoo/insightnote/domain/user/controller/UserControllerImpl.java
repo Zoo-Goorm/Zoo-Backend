@@ -2,6 +2,7 @@ package zoo.insightnote.domain.user.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -11,19 +12,33 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import zoo.insightnote.domain.user.dto.request.JoinDto;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
 
     private final JWTUtil jwtUtil;
     private final UserService userService;
+
+    @PostMapping("/join")
+    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinDto joinDto) {
+        userService.joinProcess(joinDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody JoinDto joinDto) {
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {

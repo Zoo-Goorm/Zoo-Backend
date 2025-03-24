@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.service.InsightService;
-import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
-import zoo.insightnote.global.exception.CustomException;
-import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +31,6 @@ public class InsightControllerImpl implements InsightController{
 //        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
 //        return ResponseEntity.ok(insight);
 //    }
-
 
     @Override
     @PostMapping("/insights")

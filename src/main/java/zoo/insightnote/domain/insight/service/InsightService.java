@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
-import zoo.insightnote.domain.image.service.ImageService;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
@@ -18,12 +15,9 @@ import zoo.insightnote.domain.insight.mapper.InsightMapper;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
-import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
-import zoo.insightnote.domain.user.entity.CustomUserDetails;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
-import zoo.insightnote.domain.userIntroductionLink.repository.UserIntroductionLinkRepository;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
 import zoo.insightnote.global.exception.CustomException;
@@ -181,8 +175,6 @@ public class InsightService {
         return InsightMapper.toListPageResponse(insightPage, page, pageSize);
     }
 
-
-
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
     public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId) {
@@ -192,7 +184,4 @@ public class InsightService {
 
         return InsightMapper.toDetailPageResponse(insightDto);
     }
-
-
-
 }
