@@ -14,7 +14,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online") // 특정 Origin만 허용해야 함
+                .allowedOrigins("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online","http://api.synapsex.online", "https://api.synapsex.online") // 특정 Origin만 허용해야 함
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true) // 쿠키 허용 설정 추가

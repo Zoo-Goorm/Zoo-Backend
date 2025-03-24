@@ -26,9 +26,7 @@ public class JWTFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/actuator")
-            || requestURI.startsWith("/favicon.ico") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/sessions") || requestURI.startsWith("/api/v1/speakers")
-                || requestURI.startsWith("/api/v1/keywords")) {
+        if (isIgnoredUri(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,6 +42,21 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isIgnoredUri(String uri) {
+        return uri.startsWith("/swagger-ui")
+                || uri.startsWith("/v3/api-docs")
+                || uri.startsWith("/actuator")
+                || uri.startsWith("/favicon.ico")
+                || uri.startsWith("/login")
+                || uri.equals("/api/v1/sessions")
+                || uri.equals("/api/v1/sessions/{sessionId}")
+                || uri.equals("/api/v1/sessions/detailed")
+                || uri.startsWith("/api/v1/speakers")
+                || uri.startsWith("/api/v1/keywords")
+                || uri.startsWith("/api/v1/user/join")
+                || uri.startsWith("/api/v1/user/login");
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
