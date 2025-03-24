@@ -162,7 +162,7 @@ public class InsightService {
             String sort,
             int page
     ) {
-        int pageSize = 9;  // 한 페이지당 9개
+        int pageSize = 3;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
 
         Page<InsightResponseDto.InsightListQueryDto> insightPage =
