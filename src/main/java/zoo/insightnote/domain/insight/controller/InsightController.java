@@ -65,6 +65,7 @@ public interface InsightController {
     })
     @PostMapping("/insights")
     ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody InsightRequestDto.CreateInsight request
     );
 
