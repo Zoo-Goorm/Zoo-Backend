@@ -44,7 +44,9 @@ public enum ErrorCode {
     DUPLICATE_SESSION_TIME(HttpStatus.BAD_REQUEST,"세션 시간이 중복되어 신청할 수 없습니다."),
 
     // User
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User 사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User 사용자를 찾을 수 없습니다."),
+    ALREADY_EXIST_USER(HttpStatus.BAD_REQUEST, "이미 존재하는 사용자입니다.");
+
 
 
     private final HttpStatus errorCode;

@@ -22,10 +22,7 @@ public class UserService {
         String name = joinDto.getName();
         String email = joinDto.getEmail();
 
-        boolean isExist = userRepository.existsByUsername(email);
-        if (isExist) {
-            throw new CustomException(null, "이미 가입된 사용자입니다.");
-        }
+        existUser(email);
 
         User user = User.builder()
                 .name(name)
@@ -34,6 +31,13 @@ public class UserService {
                 .username(email)
                 .build();
         userRepository.save(user);
+    }
+
+    public void existUser(String email) {
+        boolean isExist = userRepository.existsByUsername(email);
+        if (!isExist) {
+            throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
+        }
     }
 
     public User findByUsername(String username) {
