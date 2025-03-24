@@ -20,6 +20,9 @@ public class CustomUserDetails implements UserDetails {
         collection.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         return collection;
     }
+    public Long getUserId() {
+        return user.getId();
+    }
 
     @Override
     public String getPassword() {

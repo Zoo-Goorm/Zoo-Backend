@@ -78,6 +78,7 @@ public class SessionCustomQueryRepository {
                         session.maxCapacity,
                         session.participantCount,
                         session.location,
+                        session.videoLink,
                         speaker.name,
                         image.fileUrl,
                         session.startTime,
@@ -147,8 +148,8 @@ public class SessionCustomQueryRepository {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M월 d일");
 
         for (Tuple row : results) {
-            LocalDateTime startTime = row.get(8, LocalDateTime.class);
-            LocalDateTime endTime = row.get(9, LocalDateTime.class);
+            LocalDateTime startTime = row.get(9, LocalDateTime.class);
+            LocalDateTime endTime = row.get(10, LocalDateTime.class);
             String formattedDate = startTime.format(dateFormatter);
 
             String timeRange = formatTimeRange(startTime, endTime);
@@ -213,12 +214,13 @@ public class SessionCustomQueryRepository {
                 .maxCapacity(row.get(3, Integer.class))
                 .participantCount(row.get(4, Integer.class))
                 .location(row.get(5, String.class))
-                .speakerName(row.get(6, String.class))
-                .speakerImageUrl(row.get(7, String.class))
-                .startTime(row.get(8, LocalDateTime.class))
-                .endTime(row.get(9, LocalDateTime.class))
-                .status(row.get(10, SessionStatus.class))
-                .keywords(convertToSet(row.get(11, String.class)))
+                .videoLink(row.get(6, String.class))
+                .speakerName(row.get(7, String.class))
+                .speakerImageUrl(row.get(8, String.class))
+                .startTime(row.get(9, LocalDateTime.class))
+                .endTime(row.get(10, LocalDateTime.class))
+                .status(row.get(11, SessionStatus.class))
+                .keywords(convertToSet(row.get(12, String.class)))
                 .build();
     }
 

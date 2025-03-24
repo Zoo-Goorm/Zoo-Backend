@@ -15,10 +15,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
 import zoo.insightnote.domain.user.service.CustomUserDetailsService;
 import zoo.insightnote.global.jwt.GuestAuthenticationProvider;
@@ -66,6 +68,7 @@ public class SecurityConfig {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
+                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online", "https://api.synapsex.online", "http://api.synapsex.online"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));

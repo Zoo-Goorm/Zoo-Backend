@@ -65,6 +65,7 @@ public class SessionResponseDto {
             private Integer maxCapacity;
             private Integer participantCount;
             private String location;
+            private String videoLink;
             private String speakerName;
             private String speakerImageUrl;
             private LocalDateTime startTime;
