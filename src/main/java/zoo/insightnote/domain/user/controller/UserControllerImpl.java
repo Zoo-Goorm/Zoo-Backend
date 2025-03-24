@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.domain.user.dto.request.JoinDto;
+import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
@@ -80,6 +81,12 @@ public class UserControllerImpl implements UserController {
         } else {
             throw new RuntimeException("Token not found");
         }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/userInfo")
+    public ResponseEntity<PaymentUserInfoResponseDto> getPaymentUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        PaymentUserInfoResponseDto response = userService.getPaymentUserInfo(userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 }

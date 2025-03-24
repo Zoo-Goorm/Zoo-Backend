@@ -1,6 +1,9 @@
 package zoo.insightnote.domain.insight.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
@@ -12,16 +15,22 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
+import zoo.insightnote.domain.insight.repository.InsightQueryRepository;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
+import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.userIntroductionLink.entity.UserIntroductionLink;
+import zoo.insightnote.domain.userIntroductionLink.repository.UserIntroductionLinkRepository;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,11 +41,13 @@ import java.util.stream.Collectors;
 public class InsightService {
 
     private final InsightRepository insightRepository;
+    private final InsightLikeRepository insightLikeRepository;
     private final SessionRepository sessionRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
-    private final InsightLikeRepository insightLikeRepository;
     private final VoteOptionRepository voteOptionRepository;
+    private final UserIntroductionLinkRepository userIntroductionLinkRepository;
+    private final SessionKeywordRepository sessionKeywordRepository;
 
     @Transactional
     public InsightResponseDto.InsightRes saveOrUpdateInsight(InsightRequestDto.CreateDto request) {
@@ -157,5 +168,47 @@ public class InsightService {
             return 1;
         }
     }
+
+    // 인기순위 상위 3개 가져오기
+    @Transactional(readOnly = true)
+    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights() {
+        return insightRepository.findTopInsights();
+    }
+
+    // 인사이트 목록 9개 기준 (시간순 정렬)
+    // 무한 스크롤 (페이징)
+    @Transactional(readOnly = true)
+    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, int page) {
+        int pageSize = 9;  // 한 페이지당 9개씩 가져옴
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<InsightResponseDto.InsightListQueryDto> insightPage = insightRepository.findInsightsByEventDay(eventDay, pageable);
+
+        if (insightPage.isEmpty()) {
+            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+        }
+
+        return InsightResponseDto.InsightListPageRes.builder()
+                .hasNext(insightPage.hasNext())
+                .totalElements(insightPage.getTotalElements())
+                .totalPages(insightPage.getTotalPages())
+                .content(InsightMapper.toListPageResponse(insightPage.getContent()))  // 매퍼 활용
+                .pageNumber(page)
+                .pageSize(pageSize)
+                .build();
+    }
+
+
+    // 인사이트 상세 페이지
+    @Transactional(readOnly = true)
+    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId) {
+
+        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+
+        return InsightMapper.toDetailPageResponse(insightDto);
+    }
+
+
 
 }

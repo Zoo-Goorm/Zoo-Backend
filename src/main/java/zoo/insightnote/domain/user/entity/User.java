@@ -40,6 +40,8 @@ public class User {
 
     private String interestCategory;
 
+    private Boolean isOnline;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -58,12 +60,14 @@ public class User {
         this.name = name;
     }
 
-    public void update(String email, String name, String phoneNumber, String job, String interestCategory) {
-        if (isChanged(this.email, email)) this.email = email;
+    public void update(String name, String phoneNumber, String job, String occupation, String interestCategory, Boolean isOnline) {
         if (isChanged(this.name, name)) this.name = name;
         if (isChanged(this.phoneNumber, phoneNumber)) this.phoneNumber = phoneNumber;
         if (isChanged(this.job, job)) this.job = job;
+        if (isChanged(this.occupation, occupation)) this.occupation = occupation;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
+        if (isChanged(this.isOnline, isOnline)) this.isOnline = isOnline;
+
     }
 
     private boolean isChanged(Object currentValue, Object newValue) {

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import zoo.insightnote.domain.user.dto.request.JoinDto;
+import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {
@@ -29,4 +30,7 @@ public interface UserController {
 
     @Operation(summary = "토큰 반환", description = "쿠키에 저장된 토큰을 반환합니다.")
     ResponseEntity<Map<String, String>> getToken(HttpServletRequest request);
+
+    @Operation(summary = "유저 정보 반환", description = "결제 시 참가자 신청 정보에 보여지는 유저 정보를 반환합니다.")
+    ResponseEntity<PaymentUserInfoResponseDto> getPaymentUserInfo(@AuthenticationPrincipal UserDetails userDetails);
 }

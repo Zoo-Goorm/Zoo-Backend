@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.domain.comment.dto.CommentRequest;
 import zoo.insightnote.domain.comment.dto.CommentRequest.Create;
 import zoo.insightnote.domain.comment.dto.CommentResponse;
+import zoo.insightnote.domain.comment.dto.CommentResponseDto;
 import zoo.insightnote.domain.comment.service.CommentService;
 
 @RestController
@@ -37,11 +38,11 @@ public class CommentControllerImpl implements CommentController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Override
-    @GetMapping("/{insightId}/comments")
-    public ResponseEntity<List<CommentResponse>> listComments(@PathVariable Long insightId) {
-        return ResponseEntity.ok().body(commentService.findCommentsByInsightId(insightId));
-    }
+//    @Override
+//    @GetMapping("/{insightId}/comments")
+//    public ResponseEntity<List<CommentResponse>> listComments(@PathVariable Long insightId) {
+//        return ResponseEntity.ok().body(commentService.findCommentsByInsightId(insightId));
+//    }
 
     @Override
     @PutMapping("/{insightId}/comments/{commentId}")
@@ -72,6 +73,14 @@ public class CommentControllerImpl implements CommentController {
         return new User("001", "password", Collections.emptyList());
     }
 
+
+    // 댓글 리스트 출력
+    @Override
+    @GetMapping("/comments/{insightId}")
+    public ResponseEntity<List<CommentResponseDto>> getListComments(@PathVariable Long insightId) {
+        List<CommentResponseDto> comments = commentService.getCommentsByInsight(insightId);
+        return ResponseEntity.ok(comments);
+    }
 }
 
 
