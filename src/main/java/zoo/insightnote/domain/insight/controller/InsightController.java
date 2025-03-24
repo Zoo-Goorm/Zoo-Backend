@@ -63,7 +63,7 @@ public interface InsightController {
             @ApiResponse(responseCode = "200", description = "인사이트 생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
     })
-    @PostMapping
+    @PostMapping("/insights")
     ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
             @RequestBody InsightRequestDto.CreateInsight request
     );
