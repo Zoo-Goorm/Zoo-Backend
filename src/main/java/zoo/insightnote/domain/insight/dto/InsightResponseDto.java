@@ -131,7 +131,27 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
+        private List<String> interestCategory;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class InsightTopListQueryDto {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private String imageUrl;
+        private Long commentCount;
+        private String displayName;
+        private String job;
+        private String interestCategory; // ← raw string (쉼표 구분)
+    }
+
 
     @Getter
     @AllArgsConstructor

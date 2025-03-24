@@ -37,7 +37,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<InsightResponseDto.InsightTopRes> findTopInsights() {
+    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights() {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
@@ -49,7 +49,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         return queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightTopRes.class,
+                        InsightResponseDto.InsightTopListQueryDto.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -65,7 +65,8 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         ).as("imageUrl"),
                         comment.id.countDistinct().as("commentCount"),
                         displayNameExpr,
-                        user.job
+                        user.job,
+                        user.interestCategory
                 ))
                 .from(insight)
                 .leftJoin(insight.user, user)
@@ -75,7 +76,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.isPublic.isTrue()
                                 .and(insight.isDraft.isFalse())
                 )
-                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous)
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous,user.interestCategory)
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
                 .fetch();
@@ -100,9 +101,12 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 : insight.createAt.desc();
 
         BooleanBuilder where = new BooleanBuilder()
-                .and(session.eventDay.eq(eventDay))
                 .and(insight.isDraft.isFalse())
                 .and(insight.isPublic.isTrue());
+
+        if (eventDay != null) {
+            where.and(session.eventDay.eq(eventDay));
+        }
 
         if (sessionId != null) {
             where.and(session.id.eq(sessionId));

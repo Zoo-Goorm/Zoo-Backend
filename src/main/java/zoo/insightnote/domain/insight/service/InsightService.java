@@ -151,7 +151,9 @@ public class InsightService {
     // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
     public List<InsightResponseDto.InsightTopRes> getTopPopularInsights() {
-        return insightRepository.findTopInsights();
+//        return insightRepository.findTopInsights();
+        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights();
+        return InsightMapper.toTopInsightList(topList);
     }
 
 
@@ -162,7 +164,7 @@ public class InsightService {
             String sort,
             int page
     ) {
-        int pageSize = 9;  // 한 페이지당 9개
+        int pageSize = 3;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
 
         Page<InsightResponseDto.InsightListQueryDto> insightPage =
