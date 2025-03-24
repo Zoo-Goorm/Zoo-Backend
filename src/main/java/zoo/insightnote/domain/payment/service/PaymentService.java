@@ -40,7 +40,7 @@ public class PaymentService {
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
 
         User user = userService.findByUsername(requestDto.getUsername());
-        savePaymentInfo(response, sessionIds.get(0), user);
+        savePaymentInfo(response, sessionIds.get(0), user, userInfo.isOnline());
         saveReservationsInfo(sessionIds, user);
         updateUserInfo(userInfo);
 
@@ -48,13 +48,14 @@ public class PaymentService {
 
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user) {
+    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.create(
                 user,
                 sessionInfo,
-                responseDto.getAmount().getTotalAmount()
+                responseDto.getAmount().getTotalAmount(),
+                isOnline
         );
 
         paymentRepository.save(payment);
@@ -81,8 +82,7 @@ public class PaymentService {
                 userInfo.getPhoneNumber(),
                 userInfo.getJob(),              // 직업
                 userInfo.getOccupation(),       // 직군
-                userInfo.getInterestCategory(),
-                userInfo.isOnline()
+                userInfo.getInterestCategory()
         );
     }
 }

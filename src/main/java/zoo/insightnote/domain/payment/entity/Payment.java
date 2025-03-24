@@ -37,15 +37,17 @@ public class Payment extends BaseTimeEntity {
 
     private int amount;
     private Boolean checkedEvent;
+    private Boolean isOnline;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    public static Payment create(User user, Session session, int amount) {
+    public static Payment create(User user, Session session, int amount, Boolean isOnline) {
         return Payment.builder()
                 .user(user)
                 .event(session.getEvent())
                 .amount(amount)
+                .isOnline(isOnline)
                 .checkedEvent(Boolean.FALSE)
                 .paymentStatus(PaymentStatus.COMPLETED)
                 .build();
