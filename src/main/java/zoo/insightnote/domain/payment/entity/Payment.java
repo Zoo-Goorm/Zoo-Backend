@@ -34,11 +34,18 @@ public class Payment extends BaseTimeEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    private String email;
-    private String phoneNumber;
     private int amount;
+    private Boolean checkedEvent;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    public void update() {
+        if (isChanged(this.checkedEvent, Boolean.TRUE)) this.checkedEvent = true;
+    }
+
+    private boolean isChanged(Object currentValue, Object newValue) {
+        return newValue != null && !newValue.equals(currentValue);
+    }
 
 }
