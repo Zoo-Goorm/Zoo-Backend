@@ -131,13 +131,9 @@ public class InsightControllerImpl implements InsightController{
             @AuthenticationPrincipal UserDetails userDetails
     ) {
 
-        User user = userService.findByUsername(userDetails.getUsername());
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
+//        User user = userService.findByUsername(userDetails.getUsername());
         Pageable pageable = PageRequest.of(page, size);
-        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, user.getId() );
+        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 

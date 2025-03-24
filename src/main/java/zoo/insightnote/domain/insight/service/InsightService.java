@@ -22,6 +22,7 @@ import zoo.insightnote.domain.sessionKeyword.repository.SessionKeywordRepository
 import zoo.insightnote.domain.user.entity.CustomUserDetails;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.domain.userIntroductionLink.repository.UserIntroductionLinkRepository;
 import zoo.insightnote.domain.voteOption.entity.VoteOption;
 import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
@@ -40,11 +41,9 @@ public class InsightService {
     private final InsightRepository insightRepository;
     private final InsightLikeRepository insightLikeRepository;
     private final SessionRepository sessionRepository;
-    private final ImageService imageService;
     private final UserRepository userRepository;
     private final VoteOptionRepository voteOptionRepository;
-    private final UserIntroductionLinkRepository userIntroductionLinkRepository;
-    private final SessionKeywordRepository sessionKeywordRepository;
+    private final UserService userService;
 
     @Transactional
     public InsightResponseDto.InsightIdRes createInsight(InsightRequestDto.CreateInsight request) {
@@ -72,11 +71,12 @@ public class InsightService {
     }
 
     @Transactional(readOnly = true)
-    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, Long userId) {
+    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
         // 정렬 조건 처리
 
+        User user = userService.findByUsername(userName);
 
-        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable,userId);
+        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable, user.getId());
 
         return InsightMapper.toSessionInsightPageResponse(insightPage, pageable.getPageNumber(), pageable.getPageSize());
     }
