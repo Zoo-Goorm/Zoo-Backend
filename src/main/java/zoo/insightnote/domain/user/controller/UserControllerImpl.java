@@ -2,13 +2,13 @@ package zoo.insightnote.domain.user.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.domain.user.dto.request.JoinDto;
-import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
@@ -31,9 +29,14 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public String joinProcess(@RequestBody JoinDto joinDto) {
+    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinDto joinDto) {
         userService.joinProcess(joinDto);
-        return "ok";
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody JoinDto joinDto) {
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")
