@@ -25,9 +25,11 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // 토큰 값 추출 못하는 경로
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs") || requestURI.startsWith("/actuator")
-            || requestURI.startsWith("/favicon.ico") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/sessions")|| requestURI.startsWith("/api/v1/sessions/detailed")|| requestURI.startsWith("/api/v1/speakers")
+                || requestURI.startsWith("/favicon.ico") || requestURI.startsWith("/login") || requestURI.startsWith("/api/v1/speakers")
+                || requestURI.equals("/api/v1/sessions") || requestURI.equals("/api/v1/sessions/{sessionId}") || requestURI.equals("/api/v1/sessions/detailed")
                 || requestURI.startsWith("/api/v1/keywords")) {
             filterChain.doFilter(request, response);
             return;
