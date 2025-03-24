@@ -5,11 +5,10 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.EntityListeners;
 
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -21,7 +20,7 @@ public class BaseTimeEntity {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 

@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
@@ -59,15 +60,15 @@ public class Insight extends BaseTimeEntity {
         this.voteTitle = voteTitle;
     }
 
-    public static Insight create(Session session, User user, String memo, Boolean isPublic, Boolean isAnonymous, Boolean isDraft, String voteTitle) {
+    public static Insight create(Session session, User user, InsightRequestDto.CreateInsight request) {
         return Insight.builder()
                 .session(session)
                 .user(user)
-                .memo(memo)
-                .isPublic(isPublic)
-                .isAnonymous(isAnonymous)
-                .isDraft(isDraft)
-                .voteTitle(voteTitle)
+                .memo(request.getMemo())
+                .isPublic(request.getIsPublic())
+                .isAnonymous(request.getIsAnonymous())
+                .isDraft(request.getIsDraft())
+//                .voteTitle(voteTitle)
                 .build();
     }
 
@@ -77,22 +78,22 @@ public class Insight extends BaseTimeEntity {
     }
 
     // 업데이트 로직 (익명 여부 포함)
-    public void updateIfChanged(String newMemo, Boolean newIsPublic, Boolean newIsAnonymous, Boolean newIsDraft, String newVoteTitle) {
-        if (newMemo != null && !newMemo.equals(this.memo)) {
-            this.memo = newMemo;
+    public void updateIfChanged(InsightRequestDto.UpdateInsight request) {
+        if (request.getMemo() != null && !request.getMemo().equals(this.memo)) {
+            this.memo = request.getMemo();
         }
-        if (newIsPublic != null && !newIsPublic.equals(this.isPublic)) {
-            this.isPublic = newIsPublic;
+        if (request.getIsPublic() != null && !request.getIsPublic().equals(this.isPublic)) {
+            this.isPublic = request.getIsPublic();
         }
-        if (newIsAnonymous != null && !newIsAnonymous.equals(this.isAnonymous)) {
-            this.isAnonymous = newIsAnonymous;
+        if (request.getIsAnonymous() != null && !request.getIsAnonymous().equals(this.isAnonymous)) {
+            this.isAnonymous = request.getIsAnonymous();
         }
-        if (newIsDraft != null && !newIsDraft.equals(this.isDraft)) {
-            this.isDraft = newIsDraft;
+        if (request.getIsDraft() != null && !request.getIsDraft().equals(this.isDraft)) {
+            this.isDraft = request.getIsDraft();
         }
-        if (newVoteTitle != null && !newVoteTitle.equals(this.voteTitle)) {
-            this.voteTitle = newVoteTitle;
-        }
+//        if (newVoteTitle != null && !newVoteTitle.equals(this.voteTitle)) {
+//            this.voteTitle = newVoteTitle;
+//        }
     }
 
     public void finalizeDraft() {

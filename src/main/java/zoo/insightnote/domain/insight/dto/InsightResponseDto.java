@@ -3,6 +3,7 @@ package zoo.insightnote.domain.insight.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,13 @@ public class InsightResponseDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class InsightIdRes {
+        private Long id;
+    }
+
 
     @Getter
     @Builder
@@ -103,7 +111,7 @@ public static class InsightDetailQueryDto {
     public static class VoteOptionDto {
         private Long optionId;
         private String optionText;
-        private int voteCount;
+        private String voteCount;
     }
 
 
@@ -120,6 +128,9 @@ public static class InsightDetailQueryDto {
         private LocalDateTime updatedAt;
         private Long likeCount;
         private String imageUrl;
+        private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
     @Getter
@@ -136,7 +147,28 @@ public static class InsightDetailQueryDto {
         private Long likeCount;
         private String latestImageUrl;
         private String interestCategory;
+        private Long commentCount;
+        private String displayName;
+        private String job;
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SessionInsightListQueryDto {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private Long commentCount;
+        private String displayName;
+        private String job;
+    }
+
 
     @Getter
     @AllArgsConstructor
@@ -153,18 +185,49 @@ public static class InsightDetailQueryDto {
         private Long likeCount;
         private String latestImageUrl;
         private List<String> interestCategory;
+        private Long commentCount;
+        private String displayName;
+        private String job;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SessionInsightList {
+        private Long id;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private Long likeCount;
+        private Long commentCount;
+        private String displayName;
+        private String job;
     }
 
     @Getter
     @AllArgsConstructor
     @Builder
     public static class InsightListPageRes {
-        private boolean hasNext;  // 다음 페이지 존재 여부
-        private long totalElements;  // 전체 데이터 개수
-        private int totalPages;  // 전체 페이지 개수
-        private int pageNumber;  // 현재 페이지 번호
-        private int pageSize;  // 페이지 크기
-        private List<InsightResponseDto.InsightList> content;  // 실제 데이터
+        private boolean hasNext;
+        private long totalElements;
+        private int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private List<InsightResponseDto.InsightList> content; // 인사이트 리스트
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SessionInsightListPageRes {
+        private boolean hasNext;
+        private long totalElements;
+        private int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private List<InsightResponseDto.SessionInsightList> content; // 인사이트 리스트
     }
 
 }

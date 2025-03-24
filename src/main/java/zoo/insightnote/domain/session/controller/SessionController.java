@@ -6,7 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 
@@ -81,4 +84,5 @@ public interface SessionController {
     ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(
             @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
     );
+
 }
