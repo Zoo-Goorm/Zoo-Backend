@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
@@ -231,6 +233,32 @@ public interface InsightController {
             @Parameter(description = "좋아요를 누르는 사용자 ID") @RequestParam Long userId
     );
 
+    @Operation(
+            summary = "특정 세션의 인사이트 목록 조회",
+            description = """
+        특정 세션 ID에 해당하는 인사이트 목록을 조회합니다.
 
+        - 익명여부가 true인 경우 nickname을 출력하고 false 인경우 name을 반환합니다.
+        - 로그인한 사용자가 해당 세션에 작성한 '임시 저장글(draft)'이 있다면 가장 먼저 반환됩니다.
+            - 그 다음에는 일반 공개 인사이트가 정렬 조건에 따라 나열됩니다.
+        - 정렬 방식: `latest` (최신순, 기본값), `likes` (좋아요순)
+        - 페이지네이션 적용: page (0부터 시작), size 지정 가능
+
+        요청 예시:  
+        `/api/v1/sessions/2/insight-notes?sort=likes&page=0&size=10`
+    """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "인사이트 목록 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음"),
+    })
+    @GetMapping("/{sessionId}/insight-notes")
+    ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+            @Parameter(description = "세션 ID") @PathVariable Long sessionId,
+            @Parameter(description = "정렬 조건 (latest | likes)", example = "latest") @RequestParam(defaultValue = "latest") String sort,
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기", example = "5") @RequestParam(defaultValue = "5") int size,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails
+    );
 
 }

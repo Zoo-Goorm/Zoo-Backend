@@ -76,22 +76,5 @@ public class SessionControllerImpl implements SessionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{sessionId}/insight-notes")
-    public ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
-            @PathVariable Long sessionId,
-            @RequestParam(defaultValue = "latest") String sort,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        
-        User user = userService.findByUsername(userDetails.getUsername());
-        if (user == null) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
 
-        Pageable pageable = PageRequest.of(page, size);
-        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, user.getId() );
-        return ResponseEntity.ok(response);
-    }
 }

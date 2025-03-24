@@ -1,21 +1,30 @@
 package zoo.insightnote.domain.insight.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.service.InsightService;
+import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.service.UserService;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/insights")
+@RequestMapping("/api/v1")
 public class InsightControllerImpl implements InsightController{
 
     private final InsightService insightService;
+    private final UserService userService;
 
 //    @Override
 //    @PostMapping
@@ -35,7 +44,7 @@ public class InsightControllerImpl implements InsightController{
     }
 
     @Override
-    @PutMapping("/{insightId}")
+    @PutMapping("/insights/{insightId}")
     public ResponseEntity<InsightResponseDto.InsightIdRes> updateInsight(
             @PathVariable Long insightId,
             @RequestBody InsightRequestDto.UpdateInsight request
@@ -61,7 +70,7 @@ public class InsightControllerImpl implements InsightController{
 //    }
 
     @Override
-    @DeleteMapping("/{insightId}")
+    @DeleteMapping("/insights/{insightId}")
     public ResponseEntity<Void> deleteInsight(@PathVariable Long insightId) {
         insightService.deleteInsight(insightId);
         return ResponseEntity.noContent().build();
@@ -75,7 +84,7 @@ public class InsightControllerImpl implements InsightController{
 //    }
 
     //  좋아요 등록/취소 API
-    @PostMapping("/{insightId}/like")
+    @PostMapping("/insights/{insightId}/like")
     public ResponseEntity<String> toggleLike(@PathVariable Long insightId,
                                              @RequestParam Long userId) {
         int result = insightService.toggleLike(userId, insightId);
@@ -86,14 +95,14 @@ public class InsightControllerImpl implements InsightController{
 
 
     // 인기순위 상위 3개 가져오기
-    @GetMapping("/top")
+    @GetMapping("/insights/top")
     public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights() {
         List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights();
         return ResponseEntity.ok(topInsights);
     }
 
     @Override
-    @GetMapping("/list")
+    @GetMapping("/insights/list")
     public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
             @RequestParam("eventDay") LocalDate eventDay,
             @RequestParam(value = "sessionId", required = false) Long sessionId,
@@ -105,16 +114,31 @@ public class InsightControllerImpl implements InsightController{
     }
 
     // 인사이트 상세 페이지
-    @GetMapping("/{insightId}")
+    @Override
+    @GetMapping("/insights/{insightId}")
     public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(@PathVariable Long insightId) {
         InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId);
         return ResponseEntity.ok(insightDetail);
     }
 
+    @Override
+    @GetMapping("sessions/{sessionId}/insight-notes")
+    public ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+            @PathVariable Long sessionId,
+            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
 
+        User user = userService.findByUsername(userDetails.getUsername());
+        if (user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
 
-
-
-
+        Pageable pageable = PageRequest.of(page, size);
+        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, user.getId() );
+        return ResponseEntity.ok(response);
+    }
 
 }
