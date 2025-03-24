@@ -1,7 +1,6 @@
 package zoo.insightnote.global.oauth2;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -39,16 +38,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority().replace("ROLE_", "");
         String token = jwtUtil.createJwt(username, role, EXPIRATION_TIME);
-
-//        String origin = request.getHeader("Origin");
-//        String referer = request.getHeader("Referer");
-//        // Origin 또는 Referer에 "localhost"가 포함되어 있으면 로컬 환경으로 판단
-//        boolean isLocal = (origin != null && origin.contains("localhost")) ||
-//                (referer != null && referer.contains("localhost"));
-        boolean isLocal = frontUrl.contains("localhost");
-
         //response.addCookie(createCookie("Authorization", token));
 
+        boolean isLocal = frontUrl.contains("localhost");
         ResponseCookie accessTokenCookie = ResponseCookie.from("Authorization", token)
                 .httpOnly(false)   // XSS 공격 방지
                 .secure(true)     // HTTPS 환경에서만 쿠키 전송
@@ -59,14 +51,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-
         // response.sendRedirect("https://www.synapsex.online/session-schedule");
         // response.sendRedirect("https://localhost:3000/session-schedule"); // 추후 프론트 배포 서버로 변경 해야됨.
-//        if (isLocal) {
-//            response.sendRedirect("http://localhost:3000/session-schedule");
-//        } else {
-//            response.sendRedirect("https://www.synapsex.online/session-schedule");
-//        }
         response.sendRedirect(frontUrl); // 추후 프론트 배포 서버로 변경 해야됨.
     }
 

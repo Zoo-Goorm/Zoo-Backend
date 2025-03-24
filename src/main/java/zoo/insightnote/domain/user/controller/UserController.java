@@ -9,10 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestBody;
+import zoo.insightnote.domain.user.dto.request.JoinDto;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {
+
+    @Operation(summary = "비회원 회원가입", description = "이메일 인증 후 비회원 회원가입을 진행합니다.")
+    ResponseEntity<?> joinProcess(@Parameter(description = "이름, 이메일 기입")@RequestBody JoinDto joinDto);
+
+    @Operation(summary = "비회원 로그인", description = "이메일 인증 후 비회원 로그인을 진행합니다.")
+    ResponseEntity<?> login(@Parameter(description = "이메일, 이메일 기입") @RequestBody JoinDto joinDto);
 
     @Operation(summary = "토큰 기반 본인 확인", description = "토큰에 저장된 username을 반환합니다.")
     ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails);

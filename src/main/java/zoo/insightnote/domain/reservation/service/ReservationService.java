@@ -36,7 +36,7 @@ public class ReservationService {
 
     public void addSession(Long sessionId, String username) {
         // 유저가 예약한 세션의 리스트
-        List<Long> sessionIds = reservationRepository.findSessionIdsByUserId(username);
+        List<Long> sessionIds = reservationRepository.findSessionIdsByUsername(username);
 
         // 이미 신청한 세션인지 확인
         if (sessionIds.contains(sessionId)) {

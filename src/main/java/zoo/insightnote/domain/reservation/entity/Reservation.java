@@ -40,4 +40,12 @@ public class Reservation {
                 .checked(checked != null ? checked : false)
                 .build();
     }
+
+    public void update() {
+        if (isChanged(this.checked, Boolean.TRUE)) this.checked = true;
+    }
+
+    private boolean isChanged(Object currentValue, Object newValue) {
+        return newValue != null && !newValue.equals(currentValue);
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     @Query("SELECT r.session.id FROM Reservation r WHERE r.user.username = :username")
-    List<Long> findSessionIdsByUserId(@Param("username") String username);
+    List<Long> findSessionIdsByUsername(@Param("username") String username);
 
     @Query("SELECT r FROM Reservation r WHERE r.user.username = :username and r.session.id = :sessionId")
     Optional<Reservation> findReservedSession(@Param("username") String username, @Param("sessionId") Long sessionId);

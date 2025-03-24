@@ -15,7 +15,6 @@ import zoo.insightnote.domain.reservation.repository.ReservationRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
 
 import java.util.List;
@@ -31,7 +30,6 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final ReservationRepository reservationRepository;
     private final PaymentRedisService paymentRedisService;
-    private final UserRepository userRepository;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -58,6 +56,7 @@ public class PaymentService {
                 sessionInfo,
                 responseDto.getAmount().getTotalAmount()
         );
+
         paymentRepository.save(payment);
     }
 

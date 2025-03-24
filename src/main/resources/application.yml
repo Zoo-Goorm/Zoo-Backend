@@ -6,6 +6,7 @@ spring:
     group:
       blue: blue, oauth
       green: green, oauth
+      default: oauth
 
   config:
     import: optional:file:.env[.properties]

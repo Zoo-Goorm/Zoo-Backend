@@ -35,9 +35,8 @@ public class Payment extends BaseTimeEntity {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    private String email;
-    private String phoneNumber;
     private int amount;
+    private Boolean checkedEvent;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
@@ -46,12 +45,18 @@ public class Payment extends BaseTimeEntity {
         return Payment.builder()
                 .user(user)
                 .event(session.getEvent())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
                 .amount(amount)
+                .checkedEvent(Boolean.FALSE)
                 .paymentStatus(PaymentStatus.COMPLETED)
                 .build();
+    }
 
+    public void update() {
+        if (isChanged(this.checkedEvent, Boolean.TRUE)) this.checkedEvent = true;
+    }
+
+    private boolean isChanged(Object currentValue, Object newValue) {
+        return newValue != null && !newValue.equals(currentValue);
     }
 
 }
