@@ -40,9 +40,10 @@ public class InsightService {
     private final UserService userService;
 
     @Transactional
-    public InsightResponseDto.InsightIdRes createInsight(InsightRequestDto.CreateInsight request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public InsightResponseDto.InsightIdRes createInsight(InsightRequestDto.CreateInsight request ,String userName) {
+        // 이 부분 스크링 시큐리티가 loadUserByUsername인증할때 쿼리  1번 + 아래 findByUsername 쿼리 1번
+        // 총 2번 같은 쿼리가 실행됨 - 영광님 의견 필요
+        User user = userService.findByUsername(userName);
 
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));

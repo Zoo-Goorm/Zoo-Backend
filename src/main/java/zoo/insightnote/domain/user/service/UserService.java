@@ -5,6 +5,9 @@ import static zoo.insightnote.domain.user.entity.Role.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.entity.User;
@@ -71,5 +74,17 @@ public class UserService {
                 .build();
 
         return response;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateUserInfo(UserInfoDto userInfo) {
+        User user = findUserByEmail(userInfo.getEmail());
+        user.update(
+                userInfo.getName(),
+                userInfo.getPhoneNumber(),
+                userInfo.getJob(),              // 직업
+                userInfo.getOccupation(),       // 직군
+                userInfo.getInterestCategory()
+        );
     }
 }

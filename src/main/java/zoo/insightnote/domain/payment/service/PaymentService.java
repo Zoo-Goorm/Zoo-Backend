@@ -9,7 +9,6 @@ import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
-import zoo.insightnote.domain.payment.entity.PaymentStatus;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
@@ -17,8 +16,6 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
-import zoo.insightnote.global.exception.CustomException;
-import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.List;
 
@@ -32,48 +29,33 @@ public class PaymentService {
     private final SessionService sessionService;
     private final PaymentRepository paymentRepository;
     private final ReservationRepository reservationRepository;
+    private final PaymentRedisService paymentRedisService;
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        String tid = kakaoPayService.getTidKey(requestDto.getOrderId());
-        if (tid == null) {
-            log.error("❌ Redis에서 tid 조회 실패! (orderId={})",  requestDto.getOrderId());
-            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
-
-        List<Long> sessionIds = kakaoPayService.getSessionIds(requestDto.getOrderId());
-        if (sessionIds == null) {
-            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
-            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
-
-        UserInfoDto userInfo = kakaoPayService.getUserInfo(requestDto.getOrderId());
-        if (userInfo == null) {
-            log.error("❌ Redis에서 sessions 조회 실패! (orderId={})",  requestDto.getOrderId());
-            throw new CustomException(ErrorCode.PAYMENT_NOT_FOUND);
-        }
+        String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
+        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.getOrderId());
+        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
 
         User user = userService.findByUsername(requestDto.getUsername());
-        savePaymentInfo(response, sessionIds.get(0), user);
+        savePaymentInfo(response, sessionIds.get(0), user, userInfo.isOnline());
         saveReservationsInfo(sessionIds, user);
-        updateUserInfo(userInfo);
+        userService.updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
-
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user) {
+    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
-        Payment payment = Payment.builder()
-                .user(user)
-                .event(sessionInfo.getEvent())
-                .amount(responseDto.getAmount().getTotalAmount())
-                .paymentStatus(PaymentStatus.COMPLETED)
-                .checkedEvent(Boolean.FALSE)
-                .build();
+        Payment payment = Payment.create(
+                user,
+                sessionInfo,
+                responseDto.getAmount().getTotalAmount(),
+                isOnline
+        );
 
         paymentRepository.save(payment);
     }
@@ -90,17 +72,5 @@ public class PaymentService {
 
             reservationRepository.save(savedReservation);
         }
-    }
-
-    private void updateUserInfo(UserInfoDto userInfo) {
-        User user = userService.findUserByEmail(userInfo.getEmail());
-        user.update(
-                userInfo.getName(),
-                userInfo.getPhoneNumber(),
-                userInfo.getJob(),              // 직업
-                userInfo.getOccupation(),       // 직군
-                userInfo.getInterestCategory(),
-                userInfo.isOnline()
-        );
     }
 }

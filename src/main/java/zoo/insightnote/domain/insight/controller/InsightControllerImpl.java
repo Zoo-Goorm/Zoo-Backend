@@ -35,8 +35,11 @@ public class InsightControllerImpl implements InsightController{
 
     @Override
     @PostMapping("/insights")
-    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(InsightRequestDto.CreateInsight request) {
-        InsightResponseDto.InsightIdRes response = insightService.createInsight(request);
+    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody InsightRequestDto.CreateInsight request
+    ) {
+        InsightResponseDto.InsightIdRes response =  insightService.createInsight(request, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 
