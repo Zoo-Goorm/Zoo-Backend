@@ -87,6 +87,21 @@ public class KakaoPayService {
         }
     }
 
+    private HttpEntity<String> createKakaoHttpEntity(Map<String, Object> params) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "SECRET_KEY " + adminKey);
+        headers.set("Content-Type", "application/json");
+
+        try {
+            String jsonParams = objectMapper.writeValueAsString(params);
+            return new HttpEntity<>(jsonParams, headers);
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON 변환 실패", e);
+            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
+        }
+    }
+
+
 
     private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
@@ -106,17 +121,7 @@ public class KakaoPayService {
         params.put("cancel_url", "http://localhost:8080/api/v1/payment/cancel");
         params.put("fail_url", "http://localhost:8080/api/v1/payment/fail");
 
-        String jsonParams;
-        try {
-            jsonParams = objectMapper.writeValueAsString(params);
-        } catch (JsonProcessingException e) {
-            log.error("JSON 변환 실패", e);
-            throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
-        }
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
-
-        return requestEntity;
+        return createKakaoHttpEntity(params);
     }
 
     private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequestDto requestDto, String tid) {
@@ -131,17 +136,7 @@ public class KakaoPayService {
         params.put("partner_user_id", requestDto.getUserId());
         params.put("pg_token", requestDto.getPgToken());
 
-        String jsonParams;
-        try {
-            jsonParams = objectMapper.writeValueAsString(params);
-        } catch (JsonProcessingException e) {
-            log.error("JSON 변환 실패", e);
-            throw new RuntimeException("JSON 변환 오류 발생");
-        }
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonParams, headers);
-
-        return requestEntity;
+        return createKakaoHttpEntity(params);
     }
 
     private Long createOrderId() {
