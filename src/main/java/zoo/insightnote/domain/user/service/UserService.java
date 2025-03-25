@@ -4,10 +4,11 @@ import static zoo.insightnote.domain.user.entity.Role.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
-import zoo.insightnote.domain.user.dto.request.JoinDto;
+import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
@@ -19,12 +20,16 @@ import zoo.insightnote.global.exception.ErrorCode;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EmailVerificationService emailVerificationService;
 
-    public void joinProcess(JoinDto joinDto) {
+    @Transactional
+    public void joinProcess(JoinRequest joinRequest) {
 
-        String name = joinDto.getName();
-        String email = joinDto.getEmail();
+        String name = joinRequest.getName();
+        String email = joinRequest.getEmail();
+        String code = joinRequest.getCode();
 
+        verifyCode(email, code);
         existUser(email);
 
         User user = User.builder()
@@ -36,9 +41,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void existUser(String email) {
+    private void verifyCode(String email, String code) {
+        boolean isVerified = emailVerificationService.verifyCode(email, code);
+        if (!isVerified) {
+            throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
+        }
+    }
+
+    private void existUser(String email) {
         boolean isExist = userRepository.existsByUsername(email);
-        if (!isExist) {
+        if (isExist) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
     }
