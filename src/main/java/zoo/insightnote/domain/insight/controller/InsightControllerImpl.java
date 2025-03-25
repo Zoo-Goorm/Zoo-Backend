@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.insight.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,8 +35,11 @@ public class InsightControllerImpl implements InsightController{
 
     @Override
     @PostMapping("/insights")
-    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(InsightRequestDto.CreateInsight request) {
-        InsightResponseDto.InsightIdRes response = insightService.createInsight(request);
+    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody InsightRequestDto.CreateInsight request
+    ) {
+        InsightResponseDto.InsightIdRes response =  insightService.createInsight(request, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 
@@ -100,7 +104,8 @@ public class InsightControllerImpl implements InsightController{
     @Override
     @GetMapping("/insights/list")
     public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
-            @RequestParam("eventDay") LocalDate eventDay,
+            @Parameter(description = "세션 날짜 (선택)", required = false)
+            @RequestParam(value ="eventDay",  required = false) LocalDate eventDay,
             @RequestParam(value = "sessionId", required = false) Long sessionId,
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
             @RequestParam(value = "page", defaultValue = "0") int page

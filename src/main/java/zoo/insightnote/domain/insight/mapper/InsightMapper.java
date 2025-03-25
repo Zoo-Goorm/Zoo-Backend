@@ -158,6 +158,32 @@ public class InsightMapper {
     }
 
 
+    public static InsightResponseDto.InsightTopRes toBuildTopInsight(
+            InsightResponseDto.InsightTopListQueryDto dto
+    ) {
+        return InsightResponseDto.InsightTopRes.builder()
+                .id(dto.getId())
+                .memo(dto.getMemo())
+                .isPublic(dto.getIsPublic())
+                .isAnonymous(dto.getIsAnonymous())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
+                .likeCount(dto.getLikeCount())
+                .imageUrl(dto.getImageUrl())
+                .commentCount(dto.getCommentCount())
+                .displayName(dto.getDisplayName())
+                .job(dto.getJob())
+                .interestCategory(splitToList(dto.getInterestCategory()))
+                .build();
+    }
+
+    public static List<InsightResponseDto.InsightTopRes> toTopInsightList(
+            List<InsightResponseDto.InsightTopListQueryDto> topList
+    ) {
+        return topList.stream()
+                .map(InsightMapper::toBuildTopInsight)
+                .collect(Collectors.toList());
+    }
 
     private static List<String> splitToList(String str) {
         return (str != null && !str.isBlank()) ? Arrays.asList(str.split("\\s*,\\s*")) : List.of();

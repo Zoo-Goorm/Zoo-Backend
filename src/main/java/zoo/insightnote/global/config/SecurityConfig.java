@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -15,12 +16,10 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
 import zoo.insightnote.domain.user.service.CustomUserDetailsService;
 import zoo.insightnote.global.jwt.GuestAuthenticationProvider;
@@ -105,15 +104,29 @@ public class SecurityConfig {
                 auth -> auth
                         //.requestMatchers("/api/v1/user/me").hasRole("USER")
                         //.requestMatchers("/api/v1/user/guest/me").hasRole("GUEST")
-                        .requestMatchers("/", "/swagger-ui/**", "/v3/api-docs/**", "/user/auth/token",
-                                "/actuator/**", "/api/v1/sessions/**", "/api/v1/speakers/**", "/api/v1/keywords/**",
-                                "/api/v1/user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/sessions").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/sessions/*").permitAll()
+                        .requestMatchers(getPermitAllUris()).permitAll() // 모든 http 메소드 로그인 없이 접근 허용하는 경로
                         .anyRequest().authenticated());
 
         // 세션 설정 : STATELESS
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
+    }
+
+    // 로그인 없이 접근 가능한 경로
+    private String[] getPermitAllUris() {
+        return new String[] {
+                "/",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
+                "/user/auth/token",
+                "/actuator/**",
+                "/api/v1/speakers/**",
+                "/api/v1/keywords/**",
+                "/api/v1/user/**"
+        };
     }
 
 //    @Bean

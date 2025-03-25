@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import zoo.insightnote.domain.comment.dto.CommentRequest;
-import zoo.insightnote.domain.comment.dto.CommentRequest.Create;
-import zoo.insightnote.domain.comment.dto.CommentResponse;
-import zoo.insightnote.domain.comment.dto.CommentResponseDto;
+import zoo.insightnote.domain.comment.dto.res.CommentListResDto;
+
+import zoo.insightnote.domain.comment.dto.req.CommentCreateReqDto;
+import zoo.insightnote.domain.comment.dto.req.CommentUpdateReqDto;
+import zoo.insightnote.domain.comment.dto.res.CommentIdResDto;
+
 import zoo.insightnote.domain.comment.service.CommentService;
 
 @RestController
@@ -30,12 +32,13 @@ public class CommentControllerImpl implements CommentController {
 
     @Override
     @PostMapping("/{insightId}/comments")
-    public ResponseEntity<CommentResponse> writeComment(@PathVariable Long insightId,
-                                                        @AuthenticationPrincipal UserDetails userDetails,
-                                                        @RequestBody Create request) {
-        userDetails = validateUser(userDetails);
-        CommentResponse response = commentService.createComment(insightId, Long.valueOf(userDetails.getUsername()), request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<CommentIdResDto> writeComment(
+            @PathVariable Long insightId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CommentCreateReqDto request)
+    {
+        CommentIdResDto commentId = commentService.createComment(insightId, userDetails.getUsername(), request);
+        return ResponseEntity.ok().body(commentId);
     }
 
 //    @Override
@@ -46,23 +49,23 @@ public class CommentControllerImpl implements CommentController {
 
     @Override
     @PutMapping("/{insightId}/comments/{commentId}")
-    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long insightId,
+    public ResponseEntity<CommentIdResDto> updateComment(@PathVariable Long insightId,
                                                          @PathVariable Long commentId,
                                                          @AuthenticationPrincipal UserDetails userDetails,
-                                                         @RequestBody CommentRequest.Update request) {
-        userDetails = validateUser(userDetails);
-        CommentResponse response = commentService.updateComment(insightId, Long.valueOf(userDetails.getUsername()), commentId, request);
+                                                         @RequestBody CommentUpdateReqDto request) {
+        CommentIdResDto response = commentService.updateComment(insightId, userDetails.getUsername(), commentId, request);
         return ResponseEntity.ok().body(response);
     }
 
     @Override
     @DeleteMapping("/{insightId}/comments/{commentId}")
-    public ResponseEntity<CommentResponse> deleteComment(@PathVariable Long insightId,
-                                                         @PathVariable Long commentId,
-                                                         @AuthenticationPrincipal UserDetails userDetails) {
-        userDetails = validateUser(userDetails);
-        CommentResponse response = commentService.deleteComment(insightId, Long.valueOf(userDetails.getUsername()), commentId);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails)
+    {
+        commentService.deleteComment(insightId, userDetails.getUsername(), commentId);
+        return ResponseEntity.noContent().build();
     }
 
     // 임시 로직
@@ -77,8 +80,8 @@ public class CommentControllerImpl implements CommentController {
     // 댓글 리스트 출력
     @Override
     @GetMapping("/comments/{insightId}")
-    public ResponseEntity<List<CommentResponseDto>> getListComments(@PathVariable Long insightId) {
-        List<CommentResponseDto> comments = commentService.getCommentsByInsight(insightId);
+    public ResponseEntity<List<CommentListResDto>> getListComments(@PathVariable Long insightId) {
+        List<CommentListResDto> comments = commentService.getCommentsByInsight(insightId);
         return ResponseEntity.ok(comments);
     }
 }

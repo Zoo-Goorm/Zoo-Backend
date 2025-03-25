@@ -12,7 +12,6 @@ public class InsightRequestDto {
     @AllArgsConstructor
     public static class CreateInsight {
         private Long sessionId;
-        private Long userId;
         private String memo;
         private Boolean isPublic;
         private Boolean isAnonymous;

@@ -65,6 +65,7 @@ public interface InsightController {
     })
     @PostMapping("/insights")
     ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody InsightRequestDto.CreateInsight request
     );
 
@@ -164,8 +165,8 @@ public interface InsightController {
     })
     @GetMapping("/list")
     ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
-            @Parameter(description = "세션 날짜 (예: 2025-04-04)", required = true)
-            @RequestParam("eventDay") LocalDate eventDay,
+            @Parameter(description = "세션 날짜 (선택)", required = false)
+            @RequestParam(value = "eventDay", required = false ) LocalDate eventDay,
 
             @Parameter(description = "선택적 세션 ID")
             @RequestParam(value = "sessionId", required = false) Long sessionId,
