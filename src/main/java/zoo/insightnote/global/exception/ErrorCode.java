@@ -50,8 +50,6 @@ public enum ErrorCode {
     QR_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "QR 코드 생성에 실패했습니다."),
 
     // Email
-    // 저장된 인증코드가 없습니다.
-    NO_SAVED_CODE(HttpStatus.BAD_REQUEST, "인증 시간이 지났습니다. 인증번호를 재전송하세요."),
     INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "인증에 실패했습니다. 코드가 올바르지 않거나 만료되었습니다."),
     ;
 

@@ -30,7 +30,7 @@ public class EmailVerificationService {
     public boolean verifyCode(String email, String inputCode) {
         String savedCode = redisTemplate.opsForValue().get(email);
         if (savedCode == null) {
-            throw new CustomException(ErrorCode.NO_SAVED_CODE);
+            throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
         return savedCode.equals(inputCode);
     }
