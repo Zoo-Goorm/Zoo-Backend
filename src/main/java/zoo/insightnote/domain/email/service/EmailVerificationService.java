@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.email.service;
 
+import jakarta.mail.MessagingException;
 import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class EmailVerificationService {
     private final EmailService emailService;
     private final StringRedisTemplate redisTemplate;
 
-    public void sendVerificationCode(String email) {
+    public void sendVerificationCode(String email) throws MessagingException {
         redisTemplate.delete(email);
 
         SecureRandom secureRandom = new SecureRandom();

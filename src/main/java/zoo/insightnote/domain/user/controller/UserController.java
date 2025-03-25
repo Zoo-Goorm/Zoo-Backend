@@ -3,14 +3,13 @@ package zoo.insightnote.domain.user.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
@@ -26,7 +25,7 @@ public interface UserController {
     ResponseEntity<?> login(@Parameter(description = "이메일, 이메일 기입") @RequestBody JoinRequest joinRequest);
 
     @Operation(summary = "비회원 이메일 인증", description = "비회원 회원가입과 로그인을 위한 로그인 인증입니다. 전송 시 5분간 유효합니다. (코드 전송은 약 4초 정도 소요되니 잠시만 기다려주세요.)")
-    public ResponseEntity<?> sendEmailAuthCode(@Parameter(description = "인증할 이메일 기입") @RequestBody EmailAuthRequest emailAuthRequest);
+    public ResponseEntity<?> sendEmailAuthCode(@Parameter(description = "인증할 이메일 기입") @RequestBody EmailAuthRequest emailAuthRequest) throws MessagingException;
 
     @Operation(summary = "토큰 기반 본인 확인", description = "토큰에 저장된 username을 반환합니다.")
     ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails);
