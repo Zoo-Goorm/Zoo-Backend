@@ -42,10 +42,9 @@ public class PaymentService {
         User user = userService.findByUsername(requestDto.getUsername());
         savePaymentInfo(response, sessionIds.get(0), user, userInfo.isOnline());
         saveReservationsInfo(sessionIds, user);
-        updateUserInfo(userInfo);
+        userService.updateUserInfo(userInfo);
 
         return ResponseEntity.ok(response);
-
     }
 
     private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, Boolean isOnline) {
@@ -73,16 +72,5 @@ public class PaymentService {
 
             reservationRepository.save(savedReservation);
         }
-    }
-
-    private void updateUserInfo(UserInfoDto userInfo) {
-        User user = userService.findUserByEmail(userInfo.getEmail());
-        user.update(
-                userInfo.getName(),
-                userInfo.getPhoneNumber(),
-                userInfo.getJob(),              // 직업
-                userInfo.getOccupation(),       // 직군
-                userInfo.getInterestCategory()
-        );
     }
 }
