@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
-
     // 행사
     EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 ID의 이벤트가 존재하지 않습니다."),
 
@@ -53,6 +52,7 @@ public enum ErrorCode {
     // Email
     // 저장된 인증코드가 없습니다.
     NO_SAVED_CODE(HttpStatus.BAD_REQUEST, "인증 시간이 지났습니다. 인증번호를 재전송하세요."),
+    INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "인증에 실패했습니다. 코드가 올바르지 않거나 만료되었습니다."),
     ;
 
     private final HttpStatus errorCode;
