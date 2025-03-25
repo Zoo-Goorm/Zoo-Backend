@@ -46,7 +46,7 @@ public class UserService {
 
     private void existUser(String email) {
         boolean isExist = userRepository.existsByUsername(email);
-        if (!isExist) {
+        if (isExist) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
     }
