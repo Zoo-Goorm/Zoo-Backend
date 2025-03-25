@@ -13,4 +13,6 @@ public interface InsightLikeRepository extends JpaRepository<InsightLike, Long> 
 
     // 더미데이터 중복 방지용
     boolean existsByUserAndInsight(User user, Insight insight);
+
+    boolean existsByUserIdAndInsightId(Long userId, Long insightId);
 }

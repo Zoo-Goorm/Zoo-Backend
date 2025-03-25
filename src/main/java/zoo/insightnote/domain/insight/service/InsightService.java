@@ -180,9 +180,10 @@ public class InsightService {
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId) {
+    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId , String username) {
 
-        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
+        User user = userService.findByUsername(username);
+        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId,user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
         return InsightMapper.toDetailPageResponse(insightDto);

@@ -84,7 +84,7 @@ public class InsightControllerImpl implements InsightController{
     }
 
 
-
+    // 3333333333333333
     // 인기순위 상위 3개 가져오기
     @GetMapping("/insights/top")
     public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights() {
@@ -92,6 +92,8 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(topInsights);
     }
 
+    // 44444444444444444444
+    // 인사이트 목록 조회
     @Override
     @GetMapping("/insights/list")
     public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
@@ -106,13 +108,19 @@ public class InsightControllerImpl implements InsightController{
     }
 
     // 인사이트 상세 페이지
+    // 111111111111111111
     @Override
     @GetMapping("/insights/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(@PathVariable Long insightId) {
-        InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId);
+    public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
+            @PathVariable Long insightId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId,userDetails.getUsername());
         return ResponseEntity.ok(insightDetail);
     }
 
+    // 222222222222222222222
+    // 특정 세션의 인사이트 목록 조회
     @Override
     @GetMapping("sessions/{sessionId}/insight-notes")
     public ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(

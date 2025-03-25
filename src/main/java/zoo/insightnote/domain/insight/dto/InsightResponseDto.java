@@ -1,9 +1,6 @@
 package zoo.insightnote.domain.insight.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,6 +40,7 @@ public class InsightResponseDto {
         private Long likeCount;
         private String voteTitle;
         private List<VoteOptionDto> voteOptions;
+        private Boolean isLiked;
 
         @Getter
         @Builder
@@ -73,7 +71,12 @@ public static class InsightDetailQueryDto {
     private String keywords;
     private String introductionLinks;
     private Long likeCount;
+
+    @Setter(AccessLevel.PUBLIC)
     private List<VoteOptionDto> voteOptions;
+
+    @Setter(AccessLevel.PUBLIC)
+    private Boolean isLiked;
 
     // QueryDSL이 사용하는 생성자,  Projections.constructor()가 생성자를 찾지 못하기 때문에 별도로 표기함
     // @AllArgsConstructor 있어도 해당 생성자 없으면 실행 오류나옴
@@ -99,10 +102,7 @@ public static class InsightDetailQueryDto {
         this.likeCount = likeCount;
     }
 
-    // 투표 옵션 경우 쿼리에서 가져오는게 아니라 별도로 조회 후 추가하는 Setter 메서드
-    public void setVoteOptions(List<VoteOptionDto> voteOptions) {
-        this.voteOptions = voteOptions;
-    }
+
 }
 
 

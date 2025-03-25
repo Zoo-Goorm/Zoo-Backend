@@ -201,7 +201,8 @@ public interface InsightController {
     })
     @GetMapping("/{insightId}")
     ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
-            @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId
+            @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId,
+            @AuthenticationPrincipal UserDetails userDetails
     );
 
 

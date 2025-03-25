@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
+import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.QInsight;
@@ -20,6 +21,7 @@ import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import zoo.insightnote.domain.user.entity.QUser;
+import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 import zoo.insightnote.domain.voteOption.entity.QVoteOption;
 import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
@@ -35,6 +37,7 @@ import static zoo.insightnote.domain.user.entity.QUser.user;
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final InsightLikeRepository insightLikeRepository;
 
     @Override
     public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights() {
@@ -163,7 +166,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId) {
+    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId , Long userId ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QUser user = QUser.user;
@@ -203,14 +206,6 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 })
                 .collect(Collectors.toList());
 
-
-//        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
-//                .map(tuple -> new InsightResponseDto.VoteOptionDto(
-//                        tuple.get(voteOption.id),
-//                        tuple.get(voteOption.optionText),
-//                        tuple.get(voteResponse.id.count()).intValue()))
-//                .collect(Collectors.toList());
-
         // 2. 인사이트 상세 정보 조회
         InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory
                 .select(Projections.constructor(
@@ -243,10 +238,14 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .groupBy(insight.id, session.id, user.id)
                 .fetchOne();
 
+
+        boolean isLiked = insightLikeRepository.existsByUserIdAndInsightId(userId, insightId);
+
         // 3. 조회된 결과가 있다면 투표 정보 추가 후 반환
         return Optional.ofNullable(insightDetail)
                 .map(detail -> {
                     detail.setVoteOptions(voteOptions);
+                    detail.setIsLiked(isLiked);
                     return detail;
                 });
     }
