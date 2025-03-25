@@ -15,4 +15,8 @@ public class JoinRequest {
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
     @Schema(description = "이메일", example = "abc@example.com")
     private String email;
+
+    @NotBlank(message = "인증코드는 필수입니다.")
+    @Schema(description = "인증코드", example = "123456")
+    private String code;
 }
