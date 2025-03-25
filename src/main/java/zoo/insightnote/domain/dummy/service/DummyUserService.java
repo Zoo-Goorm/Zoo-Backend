@@ -40,7 +40,6 @@ public class DummyUserService {
                     .job(JOBS.get(faker.random().nextInt(JOBS.size())))
                     .occupation(OCCUPATIONS.get(faker.random().nextInt(OCCUPATIONS.size())))
                     .interestCategory(interests)
-                    .isOnline(false)
                     .role(faker.bool().bool() ? Role.USER : Role.GUEST)
                     .provider(AuthProvider.GOOGLE)
                     .build();
