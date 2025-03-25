@@ -163,13 +163,15 @@ public class InsightService {
             LocalDate eventDay,
             Long sessionId,
             String sort,
-            int page
+            int page,
+            String username
     ) {
         int pageSize = 3;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
 
+        User user = userService.findByUsername(username);
         Page<InsightResponseDto.InsightListQueryDto> insightPage =
-                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable);
+                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable, user.getId());
 
         if (insightPage.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);

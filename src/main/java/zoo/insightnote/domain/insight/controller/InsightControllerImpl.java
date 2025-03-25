@@ -92,7 +92,6 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(topInsights);
     }
 
-    // 44444444444444444444
     // 인사이트 목록 조회
     @Override
     @GetMapping("/insights/list")
@@ -101,9 +100,10 @@ public class InsightControllerImpl implements InsightController{
             @RequestParam(value ="eventDay",  required = false) LocalDate eventDay,
             @RequestParam(value = "sessionId", required = false) Long sessionId,
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
-            @RequestParam(value = "page", defaultValue = "0") int page
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, sessionId, sort, page);
+        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, sessionId, sort, page ,userDetails.getUsername());
         return ResponseEntity.ok(insights);
     }
 

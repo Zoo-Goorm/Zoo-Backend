@@ -177,7 +177,9 @@ public interface InsightController {
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
 
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam(value = "page", defaultValue = "0") int page
+            @RequestParam(value = "page", defaultValue = "0") int page,
+
+            @AuthenticationPrincipal UserDetails userDetails
     );
 
     @Operation(summary = "인사이트 상세 조회",

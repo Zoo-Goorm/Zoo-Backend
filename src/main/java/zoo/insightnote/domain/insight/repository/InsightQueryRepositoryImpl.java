@@ -113,7 +113,8 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
             LocalDate eventDay,
             Long sessionId,
             String sort,
-            Pageable pageable
+            Pageable pageable,
+            Long userId
     ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
@@ -175,6 +176,23 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        if (userId != null && !results.isEmpty()) {
+            List<Long> insightIds = results.stream()
+                    .map(InsightResponseDto.InsightListQueryDto::getId)
+                    .collect(Collectors.toList());
+
+            List<Long> likedInsightIds = queryFactory
+                    .select(insightLike.insight.id)
+                    .from(insightLike)
+                    .where(insightLike.user.id.eq(userId)
+                            .and(insightLike.insight.id.in(insightIds)))
+                    .fetch();
+
+            Set<Long> likedSet = new HashSet<>(likedInsightIds);
+
+            results.forEach(dto -> dto.setIsLiked(likedSet.contains(dto.getId())));
+        }
 
         // 전체 개수
         Long totalCount = queryFactory

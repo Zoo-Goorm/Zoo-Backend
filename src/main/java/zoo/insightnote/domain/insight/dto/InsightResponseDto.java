@@ -192,6 +192,32 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
+
+        @Setter
+        private Boolean isLiked;
+
+        public InsightListQueryDto(
+                Long id, String memo, Boolean isPublic, Boolean isAnonymous,
+                LocalDateTime createdAt, LocalDateTime updatedAt,
+                Long sessionId, String sessionName,
+                Long likeCount, String latestImageUrl, String interestCategory,
+                Long commentCount, String displayName, String job
+        ) {
+            this.id = id;
+            this.memo = memo;
+            this.isPublic = isPublic;
+            this.isAnonymous = isAnonymous;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.sessionId = sessionId;
+            this.sessionName = sessionName;
+            this.likeCount = likeCount;
+            this.latestImageUrl = latestImageUrl;
+            this.interestCategory = interestCategory;
+            this.commentCount = commentCount;
+            this.displayName = displayName;
+            this.job = job;
+        }
     }
 
 
@@ -250,6 +276,7 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
+        private Boolean isLiked;
     }
 
     @Getter
