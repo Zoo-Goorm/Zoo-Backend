@@ -22,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
 
+    @Transactional
     public void joinProcess(JoinRequest joinRequest) {
 
         String name = joinRequest.getName();
