@@ -110,7 +110,7 @@ jobs:
             echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
             echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
             echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env          
-            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env   
+            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env
             echo "SPRING_PROFILES_ACTIVE=${{ env.TARGET_UPSTREAM }}" >> .env  
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
