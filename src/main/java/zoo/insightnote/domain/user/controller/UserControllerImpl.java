@@ -43,6 +43,12 @@ public class UserControllerImpl implements UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/email-auth")
+    public ResponseEntity<?> sendEmailAuthCode(@Valid @RequestBody EmailAuthRequest emailAuthRequest) {
+        emailVerificationService.sendVerificationCode(emailAuthRequest.getEmail());
+        return ResponseEntity.ok("인증코드를 전송했습니다");
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(userDetails.getUsername());
