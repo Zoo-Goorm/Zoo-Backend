@@ -108,7 +108,6 @@ public class InsightControllerImpl implements InsightController{
     }
 
     // 인사이트 상세 페이지
-    // 111111111111111111
     @Override
     @GetMapping("/insights/{insightId}")
     public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
@@ -118,8 +117,7 @@ public class InsightControllerImpl implements InsightController{
         InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId,userDetails.getUsername());
         return ResponseEntity.ok(insightDetail);
     }
-
-    // 222222222222222222222
+    
     // 특정 세션의 인사이트 목록 조회
     @Override
     @GetMapping("sessions/{sessionId}/insight-notes")

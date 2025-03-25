@@ -27,8 +27,10 @@ import zoo.insightnote.domain.voteOption.entity.QVoteOption;
 import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static zoo.insightnote.domain.user.entity.QUser.user;
@@ -305,6 +307,18 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        //  좋아요 여부 in-query로 최적화 처리
+        if (currentUserId != null && !results.isEmpty()) {
+            List<Long> insightIds = results.stream()
+                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .toList();
+
+            List<Long> likedIds = insightLikeRepository.findInsightIdsByUserIdAndInsightIds(currentUserId, insightIds);
+            Set<Long> likedIdSet = new HashSet<>(likedIds);
+
+            results.forEach(dto -> dto.setIsLiked(likedIdSet.contains(dto.getId())));
+        }
 
         Long total = queryFactory
                 .select(insight.count())

@@ -174,8 +174,6 @@ public static class InsightDetailQueryDto {
 
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class SessionInsightListQueryDto {
         private Long id;
         private String memo;
@@ -187,6 +185,28 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
+
+        @Setter
+        private Boolean isLiked;
+
+        // @AllArgsConstructor 를 사용하지 않고 생성자를 직접 쓰는 이유는 쿼리 로직에서 isLiked 는 select에 포함되는게 아닌 서브로 추가된 쿼리여서
+        // @AllArgsConstructor가 인식을 하지 못하고 오류가 발생합니다 그래서 이처럼 복잡한 쿼리 경우는 생성자를 직접 적어줘야 합니다
+        public SessionInsightListQueryDto(
+                Long id, String memo, Boolean isPublic, Boolean isAnonymous,
+                LocalDateTime createdAt, LocalDateTime updatedAt,
+                Long likeCount, Long commentCount, String displayName, String job
+        ) {
+            this.id = id;
+            this.memo = memo;
+            this.isPublic = isPublic;
+            this.isAnonymous = isAnonymous;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.likeCount = likeCount;
+            this.commentCount = commentCount;
+            this.displayName = displayName;
+            this.job = job;
+        }
     }
 
 
@@ -224,6 +244,7 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
+        private Boolean isLiked;
     }
 
     @Getter
