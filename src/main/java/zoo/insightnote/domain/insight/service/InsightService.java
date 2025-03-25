@@ -187,4 +187,26 @@ public class InsightService {
 
         return InsightMapper.toDetailPageResponse(insightDto);
     }
+
+    @Transactional(readOnly = true)
+    public InsightResponseDto.MyInsightListPageRes getMyInsights(
+            String username,
+            LocalDate eventDay,
+            Long sessionId,
+            Pageable pageable
+    ) {
+
+        // 기존에는 DTO를 직접 반환했지만, 이제는 Page로 받아서 Mapper로 변환
+        Page<InsightResponseDto.MyInsightListQueryDto> myInsightList =
+                insightRepository.findMyInsights(username, eventDay, sessionId, pageable);
+
+        if (myInsightList.isEmpty()) {
+            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+        }
+
+
+        return InsightMapper.toMyListPageResponse(myInsightList, pageable.getPageNumber(), pageable.getPageSize()
+        );
+    }
+
 }

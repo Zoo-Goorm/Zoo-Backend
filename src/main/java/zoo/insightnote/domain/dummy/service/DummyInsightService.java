@@ -30,7 +30,7 @@ public class DummyInsightService {
     private final Random random = new Random();
 
     @PersistenceContext
-    private EntityManager em; // ⭐ 엔티티 매니저 사용
+    private EntityManager em;
     @Transactional
     public void generateInsights(int count) {
         List<User> users = userRepository.findAll();

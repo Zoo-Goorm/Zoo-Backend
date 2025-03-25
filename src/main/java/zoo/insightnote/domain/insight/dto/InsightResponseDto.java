@@ -250,4 +250,32 @@ public static class InsightDetailQueryDto {
         private List<InsightResponseDto.SessionInsightList> content; // 인사이트 리스트
     }
 
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class MyInsightListPageRes {
+        private boolean hasNext;
+        private long totalElements;
+        private int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private List<InsightResponseDto.MyInsightListQueryDto> content; // 인사이트 리스트
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class MyInsightListQueryDto {
+        private Long insightId;
+        private String memo;
+        private Boolean isPublic;
+        private Boolean isAnonymous;
+        private Boolean isDraft;
+        private LocalDateTime updatedAt;
+        private Long sessionId;
+        private String sessionName;
+    }
+
+
 }

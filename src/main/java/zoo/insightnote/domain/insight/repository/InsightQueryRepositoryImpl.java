@@ -315,4 +315,63 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
+
+    public Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(
+            String username,
+            LocalDate eventDay,
+            Long sessionId,
+            Pageable pageable
+    ) {
+        QInsight insight = QInsight.insight;
+        QUser user = QUser.user;
+        QSession session = QSession.session;
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(insight.user.username.eq(username));
+
+        if (eventDay != null) {
+            where.and(session.eventDay.eq(eventDay));
+        }
+
+        if (sessionId != null) {
+            where.and(session.id.eq(sessionId));
+        }
+
+        OrderSpecifier<?> orderSpecifier = insight.updatedAt.desc();
+//        OrderSpecifier<?> orderSpecifier = sort.equals("likes")
+//                ? insight.id.desc() // 임시 정렬 (likes 기준 정렬이 필요하다면 별도 countJoin 필요)
+//                : insight.updatedAt.desc();
+
+        List<InsightResponseDto.MyInsightListQueryDto> content = queryFactory
+                .select(Projections.constructor(
+                        InsightResponseDto.MyInsightListQueryDto.class,
+                        insight.id,
+                        insight.memo,
+                        insight.isPublic,
+                        insight.isAnonymous,
+                        insight.isDraft,
+                        insight.updatedAt,
+                        session.id,
+                        session.name
+                ))
+                .from(insight)
+                .join(insight.session, session)
+                .leftJoin(insight.user, user)
+                .where(where)
+                .orderBy(orderSpecifier)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 전체 카운트
+        Long totalCount = queryFactory
+                .select(insight.count())
+                .from(insight)
+                .join(insight.session, session)
+                .where(where)
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, totalCount == null ? 0 : totalCount);
+    }
+
 }

@@ -20,4 +20,7 @@ public interface InsightQueryRepository {
     Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId);
 
     Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(Long sessionId, String sortCondition, Pageable pageable , Long currentUserId);
+
+    Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(String username, LocalDate eventDay, Long sessionId, Pageable pageable
+    );
 }

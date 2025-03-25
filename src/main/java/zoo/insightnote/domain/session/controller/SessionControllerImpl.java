@@ -22,14 +22,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/sessions")
+@RequestMapping("/api/v1")
 public class SessionControllerImpl implements SessionController {
     private final SessionService sessionService;
     private final InsightService insightService;
     private final UserService userService;
 
     @Override
-    @PostMapping
+    @PostMapping("/sessions")
     public ResponseEntity<SessionResponseDto.SessionRes> createSession(
             @RequestBody SessionRequestDto.Create request
     ) {
@@ -38,7 +38,7 @@ public class SessionControllerImpl implements SessionController {
     }
 
     @Override
-    @PutMapping("/{sessionId}")
+    @PutMapping("/sessions/{sessionId}")
     public ResponseEntity<SessionResponseDto.SessionRes> updateSession(
             @PathVariable Long sessionId,
             @RequestBody SessionRequestDto.Update request) {
@@ -47,7 +47,7 @@ public class SessionControllerImpl implements SessionController {
     }
 
     @Override
-    @DeleteMapping("/{sessionId}")
+    @DeleteMapping("/sessions/{sessionId}")
     public ResponseEntity<Void> deleteSession(@PathVariable Long sessionId) {
         sessionService.deleteSession(sessionId);
         return ResponseEntity.noContent().build();
@@ -55,7 +55,7 @@ public class SessionControllerImpl implements SessionController {
 
     // 1. 세션 전체 조회 (이미지 제외, 인원수 제외)
     @Override
-    @GetMapping
+    @GetMapping("/sessions")
     public ResponseEntity<Map<String, List<SessionResponseDto.SessionAllRes>>> getAllSessions() {
         Map<String, List<SessionResponseDto.SessionAllRes>> response = sessionService.getAllSessions();
         return ResponseEntity.ok(response);
@@ -63,14 +63,14 @@ public class SessionControllerImpl implements SessionController {
 
     // 2. 세션 전체 조회 (연사 이미지, 인원수 포함)
     @Override
-    @GetMapping("/detailed")
+    @GetMapping("/sessions/detailed")
     public ResponseEntity<Map<String, List<SessionResponseDto.SessionDetailedRes>>> getAllSessionsWithDetails() {
         Map<String, List<SessionResponseDto.SessionDetailedRes>> response = sessionService.getAllSessionsWithDetails();
         return ResponseEntity.ok(response);
     }
 
     @Override
-    @GetMapping("/{sessionId}")
+    @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(@PathVariable Long sessionId) {
         SessionResponseDto.SessionSpeakerDetailRes response = sessionService.getSessionDetails(sessionId);
         return ResponseEntity.ok(response);

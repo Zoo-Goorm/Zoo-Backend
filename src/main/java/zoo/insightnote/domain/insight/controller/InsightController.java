@@ -262,4 +262,50 @@ public interface InsightController {
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails
     );
 
+    @Operation(
+            summary = "내가 작성한 인사이트 목록 조회",
+            description = """
+        로그인한 사용자가 작성한 인사이트 목록을 조회합니다.
+
+        - 임시 저장 여부, 공개 여부에 상관없이 **본인이 작성한 모든 인사이트**가 조회됩니다.
+        - 정렬은 항상 최신순으로 고정됩니다.
+        - `eventDay` 또는 `sessionId`를 통해 필터링할 수 있습니다.
+        - 무한스크롤 또는 페이지네이션에 사용하기 위해 `page`, `size` 파라미터를 지원합니다.
+    """
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "나의 인사이트 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "해당 인사이트를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "Not Found",
+                                    value = """
+                                        {
+                                          "message": "해당 인사이트를 찾을 수 없습니다.",
+                                        }
+                                        """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/my/insights")
+    ResponseEntity<InsightResponseDto.MyInsightListPageRes> getMyInsights(
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
+
+            @Parameter(description = "세션 날짜 (예: 2025-04-04)", example = "2025-04-04")
+            @RequestParam(required = false) LocalDate eventDay,
+
+            @Parameter(description = "세션 ID (선택)")
+            @RequestParam(required = false) Long sessionId,
+
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "페이지 크기", example = "5")
+            @RequestParam(defaultValue = "5") int size
+    );
+
 }
