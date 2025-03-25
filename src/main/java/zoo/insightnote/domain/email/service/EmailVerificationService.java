@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.email.service;
 
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -17,7 +18,9 @@ public class EmailVerificationService {
     public void sendVerificationCode(String email) {
         redisTemplate.delete(email);
 
-        String code = String.valueOf((int) (Math.random() * 900000) + 100000);
+        SecureRandom secureRandom = new SecureRandom();
+        int codeInt = secureRandom.nextInt(900000) + 100000;
+        String code = String.valueOf(codeInt);
 
         redisTemplate.opsForValue().set(email, code, 5, TimeUnit.MINUTES);
 
