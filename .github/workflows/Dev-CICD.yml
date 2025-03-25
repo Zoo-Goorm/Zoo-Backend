@@ -110,8 +110,10 @@ jobs:
             echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
             echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
             echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env          
-            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env
-            echo "SPRING_PROFILES_ACTIVE=${{ env.TARGET_UPSTREAM }}" >> .env  
+            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env   
+            echo "SPRING_PROFILES_ACTIVE=${{ env.TARGET_UPSTREAM }}" >> .env 
+            echo "GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }}" >> .env
+            echo "GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}" >> .env 
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
