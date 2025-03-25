@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,14 @@ public class EmailVerificationService {
         redisTemplate.opsForValue().set(email, code, 5, TimeUnit.MINUTES);
 
         emailService.sendVerificationCode(email, code);
+    }
+
+    public boolean verifyCode(String email, String inputCode) {
+        String savedCode = redisTemplate.opsForValue().get(email);
+        if (savedCode == null) {
+            throw new CustomException(ErrorCode.NO_SAVED_CODE);
+        }
+        return savedCode.equals(inputCode);
     }
 }
 
