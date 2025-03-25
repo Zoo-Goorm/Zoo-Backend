@@ -4,7 +4,7 @@ import static zoo.insightnote.domain.user.entity.Role.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import zoo.insightnote.domain.user.dto.request.JoinDto;
+import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
@@ -17,10 +17,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public void joinProcess(JoinDto joinDto) {
+    public void joinProcess(JoinRequest joinRequest) {
 
-        String name = joinDto.getName();
-        String email = joinDto.getEmail();
+        String name = joinRequest.getName();
+        String email = joinRequest.getEmail();
 
         existUser(email);
 

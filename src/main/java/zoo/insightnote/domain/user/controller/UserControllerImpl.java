@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import zoo.insightnote.domain.user.dto.request.JoinDto;
+import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
+import zoo.insightnote.domain.email.service.EmailVerificationService;
+import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
@@ -28,15 +30,16 @@ public class UserControllerImpl implements UserController {
 
     private final JWTUtil jwtUtil;
     private final UserService userService;
+    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinDto joinDto) {
-        userService.joinProcess(joinDto);
+    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinRequest joinRequest) {
+        userService.joinProcess(joinRequest);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody JoinDto joinDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody JoinRequest joinRequest) {
         return ResponseEntity.ok().build();
     }
 

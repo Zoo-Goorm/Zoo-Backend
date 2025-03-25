@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class JoinDto {
+public class JoinRequest {
     @NotBlank(message = "이름을 입력해주세요.")
     @Schema(description = "이름", example = "홍길동")
     private String name;
