@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.event.entity.Event;
+import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
 
@@ -36,9 +37,21 @@ public class Payment extends BaseTimeEntity {
 
     private int amount;
     private Boolean checkedEvent;
+    private Boolean isOnline;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    public static Payment create(User user, Session session, int amount, Boolean isOnline) {
+        return Payment.builder()
+                .user(user)
+                .event(session.getEvent())
+                .amount(amount)
+                .isOnline(isOnline)
+                .checkedEvent(Boolean.FALSE)
+                .paymentStatus(PaymentStatus.COMPLETED)
+                .build();
+    }
 
     public void update() {
         if (isChanged(this.checkedEvent, Boolean.TRUE)) this.checkedEvent = true;

@@ -24,8 +24,7 @@ public class PaymentControllerImpl implements PaymentController {
     @PostMapping("/request")
     public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
             @RequestBody @Valid PaymentRequestReadyDto requestDto) {
-        ResponseEntity<KakaoPayReadyResponseDto> response = kakaoPayService.requestKakaoPayment(requestDto);
-        return response;
+        return kakaoPayService.requestKakaoPayment(requestDto);
     }
 
     // 카카오페이 API에서 결제 요청 승인
