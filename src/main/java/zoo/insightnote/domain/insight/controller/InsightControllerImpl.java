@@ -83,12 +83,12 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(message);
     }
 
-
-    // 3333333333333333
     // 인기순위 상위 3개 가져오기
     @GetMapping("/insights/top")
-    public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights() {
-        List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights();
+    public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights(userDetails.getUsername());
         return ResponseEntity.ok(topInsights);
     }
 
@@ -117,7 +117,7 @@ public class InsightControllerImpl implements InsightController{
         InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId,userDetails.getUsername());
         return ResponseEntity.ok(insightDetail);
     }
-    
+
     // 특정 세션의 인사이트 목록 조회
     @Override
     @GetMapping("sessions/{sessionId}/insight-notes")

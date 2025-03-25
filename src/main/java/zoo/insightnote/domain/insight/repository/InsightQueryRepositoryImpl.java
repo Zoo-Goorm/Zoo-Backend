@@ -42,7 +42,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     private final InsightLikeRepository insightLikeRepository;
 
     @Override
-    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights() {
+    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId) {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
@@ -52,7 +52,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        return queryFactory
+        List<InsightResponseDto.InsightTopListQueryDto> result = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.InsightTopListQueryDto.class,
                         insight.id,
@@ -81,10 +81,30 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.isPublic.isTrue()
                                 .and(insight.isDraft.isFalse())
                 )
-                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous,user.interestCategory)
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous, user.interestCategory)
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
                 .fetch();
+
+        // 2. 성능 최적화된 좋아요 여부 처리
+        if (userId != null && !result.isEmpty()) {
+            List<Long> insightIds = result.stream()
+                    .map(InsightResponseDto.InsightTopListQueryDto::getId)
+                    .collect(Collectors.toList());
+
+            List<Long> likedInsightIds = queryFactory
+                    .select(insightLike.insight.id)
+                    .from(insightLike)
+                    .where(insightLike.user.id.eq(userId)
+                            .and(insightLike.insight.id.in(insightIds)))
+                    .fetch();
+
+            Set<Long> likedSet = new HashSet<>(likedInsightIds);
+
+            result.forEach(dto -> dto.setIsLiked(likedSet.contains(dto.getId())));
+        }
+
+        return result;
     }
 
 

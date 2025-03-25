@@ -134,7 +134,9 @@ public interface InsightController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/top")
-    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights();
+    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+            @AuthenticationPrincipal UserDetails userDetails
+    );
 
     @Operation(
             summary = "인사이트 목록 조회",

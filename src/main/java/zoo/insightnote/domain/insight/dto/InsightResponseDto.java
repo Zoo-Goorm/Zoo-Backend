@@ -132,11 +132,10 @@ public static class InsightDetailQueryDto {
         private String displayName;
         private String job;
         private List<String> interestCategory;
+        private Boolean isLiked;
     }
 
     @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
     public static class InsightTopListQueryDto {
         private Long id;
         private String memo;
@@ -149,7 +148,30 @@ public static class InsightDetailQueryDto {
         private Long commentCount;
         private String displayName;
         private String job;
-        private String interestCategory; // ← raw string (쉼표 구분)
+        private String interestCategory;
+
+        @Setter
+        private Boolean isLiked;
+
+        public InsightTopListQueryDto(
+                Long id, String memo, Boolean isPublic, Boolean isAnonymous,
+                LocalDateTime createdAt, LocalDateTime updatedAt, Long likeCount,
+                String imageUrl, Long commentCount, String displayName,
+                String job, String interestCategory
+        ) {
+            this.id = id;
+            this.memo = memo;
+            this.isPublic = isPublic;
+            this.isAnonymous = isAnonymous;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.likeCount = likeCount;
+            this.imageUrl = imageUrl;
+            this.commentCount = commentCount;
+            this.displayName = displayName;
+            this.job = job;
+            this.interestCategory = interestCategory;
+        }
     }
 
 

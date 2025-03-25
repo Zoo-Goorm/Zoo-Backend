@@ -151,9 +151,9 @@ public class InsightService {
 
     // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
-    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights() {
-//        return insightRepository.findTopInsights();
-        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights();
+    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights(String username) {
+        User user = userService.findByUsername(username);
+        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights(user.getId());
         return InsightMapper.toTopInsightList(topList);
     }
 

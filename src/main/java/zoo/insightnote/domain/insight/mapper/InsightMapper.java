@@ -163,6 +163,7 @@ public class InsightMapper {
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
                 .interestCategory(splitToList(dto.getInterestCategory()))
+                .isLiked(dto.getIsLiked())
                 .build();
     }
 

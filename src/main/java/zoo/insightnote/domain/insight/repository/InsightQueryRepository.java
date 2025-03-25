@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface InsightQueryRepository {
 
-    List<InsightResponseDto.InsightTopListQueryDto> findTopInsights();
+    List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId);
 
 //    Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Pageable pageable);
     Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Long sessionId, String sortCondition, Pageable pageable);
