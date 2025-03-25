@@ -22,16 +22,7 @@ import java.util.List;
 public class InsightControllerImpl implements InsightController{
 
     private final InsightService insightService;
-    private final UserService userService;
 
-//    @Override
-//    @PostMapping
-//    public ResponseEntity<InsightResponseDto.InsightRes> createInsight(
-//            @RequestBody InsightRequestDto.CreateDto request) {
-//
-//        InsightResponseDto.InsightRes insight = insightService.saveOrUpdateInsight(request);
-//        return ResponseEntity.ok(insight);
-//    }
 
     @Override
     @PostMapping("/insights")
@@ -131,11 +122,22 @@ public class InsightControllerImpl implements InsightController{
             @RequestParam(defaultValue = "5") int size,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-
-//        User user = userService.findByUsername(userDetails.getUsername());
         Pageable pageable = PageRequest.of(page, size);
         InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 
+    @Override
+    @GetMapping("/my/insights")
+    public ResponseEntity<InsightResponseDto.MyInsightListPageRes> getMyInsights(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(required = false) LocalDate eventDay,
+            @RequestParam(required = false) Long sessionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        InsightResponseDto.MyInsightListPageRes response = insightService.getMyInsights(userDetails.getUsername(), eventDay, sessionId, pageable);
+        return ResponseEntity.ok(response);
+    }
 }
