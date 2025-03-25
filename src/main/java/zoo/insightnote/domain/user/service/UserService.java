@@ -2,14 +2,17 @@ package zoo.insightnote.domain.user.service;
 
 import static zoo.insightnote.domain.user.entity.Role.*;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
+import zoo.insightnote.domain.user.dto.CustomUserDetails;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
@@ -22,23 +25,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
 
-    @Transactional
-    public void joinProcess(JoinRequest joinRequest) {
-
-        String name = joinRequest.getName();
-        String email = joinRequest.getEmail();
-        String code = joinRequest.getCode();
-
+    public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
-        existUser(email);
 
-        User user = User.builder()
-                .name(name)
-                .email(email)
-                .role(GUEST)
-                .username(email)
-                .build();
-        userRepository.save(user);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            User user = User.builder()
+                    .name(name)
+                    .email(email)
+                    .username(email)
+                    .role(Role.GUEST)
+                    .build();
+            userRepository.save(user);
+        }
     }
 
     private void verifyCode(String email, String code) {

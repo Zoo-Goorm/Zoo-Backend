@@ -18,8 +18,8 @@ import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {
 
-    @Operation(summary = "비회원 회원가입", description = "이메일 인증 후 비회원 회원가입을 진행합니다.")
-    ResponseEntity<?> joinProcess(@Parameter(description = "이름, 이메일 기입")@RequestBody JoinRequest joinRequest);
+//    @Operation(summary = "비회원 회원가입", description = "이메일 인증 후 비회원 회원가입을 진행합니다.")
+//    ResponseEntity<?> joinProcess(@Parameter(description = "이름, 이메일 기입")@RequestBody JoinRequest joinRequest);
 
     @Operation(summary = "비회원 로그인", description = "이메일 인증 후 비회원 로그인을 진행합니다.")
     ResponseEntity<?> login(@Parameter(description = "이메일, 이메일 기입") @RequestBody JoinRequest joinRequest);

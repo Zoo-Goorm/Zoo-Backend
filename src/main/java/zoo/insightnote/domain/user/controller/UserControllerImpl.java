@@ -33,11 +33,11 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
     private final EmailVerificationService emailVerificationService;
 
-    @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinRequest joinRequest) {
-        userService.joinProcess(joinRequest);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/join")
+//    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinRequest joinRequest) {
+//        userService.joinProcess(joinRequest);
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody JoinRequest joinRequest) {
