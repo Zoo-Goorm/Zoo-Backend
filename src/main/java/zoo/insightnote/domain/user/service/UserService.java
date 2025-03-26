@@ -7,6 +7,7 @@ import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
+import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
@@ -90,6 +91,21 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserInfoResponse getUserInfo(String username) {
         User user = findByUsername(username);
+        return userMapper.toResponse(user);
+    }
+
+    @Transactional
+    public UserInfoResponse updateUserInfo(UserInfoRequest userInfoRequest, String username) {
+        User user = findByUsername(username);
+        user.update(
+                userInfoRequest.getName(),
+                userInfoRequest.getNickname(),
+                userInfoRequest.getPhoneNumber(),
+                userInfoRequest.getOccupation(),
+                userInfoRequest.getJob(),
+                userInfoRequest.getInterestCategory(),
+                userInfoRequest.getSnsUrl()
+        );
         return userMapper.toResponse(user);
     }
 }
