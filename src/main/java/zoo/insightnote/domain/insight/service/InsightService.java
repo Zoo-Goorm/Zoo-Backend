@@ -67,7 +67,6 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
-        // 정렬 조건 처리
 
         User user = userService.findByUsername(userName);
 

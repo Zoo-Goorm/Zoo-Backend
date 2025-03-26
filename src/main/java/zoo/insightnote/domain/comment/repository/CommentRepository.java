@@ -12,4 +12,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.insight.id = :insightId")
     List<Comment> findByInsightIdWithUser(@Param("insightId") Long insightId);
+
+    @Query("""
+    SELECT DISTINCT c.insight.id
+    FROM Comment c
+    JOIN c.user u
+    WHERE c.insight.id IN :insightIds
+    AND u.role = 'SPEAKER'
+    """)
+    List<Long> findInsightIdsWithSpeakerComments(@Param("insightIds") List<Long> insightIds);
 }

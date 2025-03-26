@@ -74,6 +74,7 @@ public class InsightMapper {
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
                 .isLiked(dto.getIsLiked())
+                .hasSpeakerComment(dto.getHasSpeakerComment())
                 .build();
     }
 
