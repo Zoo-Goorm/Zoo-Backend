@@ -87,6 +87,26 @@ public class KakaoPayService {
         }
     }
 
+    public KakaoPayCancelResponseDto cancelKakaoPayment(PaymentCancelRequestDto requestDto) {
+        HttpEntity<String> paymentCancelHttpEntity = createPaymentCancelHttpEntity(requestDto, requestDto.getTid());
+
+        try {
+            ResponseEntity<KakaoPayCancelResponseDto> response = restTemplate.exchange(
+                    "https://open-api.kakaopay.com/online/v1/payment/cancel",
+                    HttpMethod.POST,
+                    paymentCancelHttpEntity,
+                    KakaoPayCancelResponseDto.class
+            );
+
+            log.info("✅ 카카오페이 결제 취소 성공");
+
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("❌ 카카오페이 결제 취소 실패", e);
+            throw new CustomException(ErrorCode.KAKAO_PAY_CANCEL_FAILED);
+        }
+    }
+
     private HttpEntity<String> createKakaoHttpEntity(Map<String, Object> params) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
