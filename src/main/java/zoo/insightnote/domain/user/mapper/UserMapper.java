@@ -10,10 +10,11 @@ public class UserMapper {
     public UserInfoResponse toResponse(User user) {
         return UserInfoResponse.builder()
                 .name(user.getName())
+                .nickname(user.getNickname())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
-                .job(user.getJob())
                 .occupation(user.getOccupation())
+                .job(user.getJob())
                 .interestCategory(user.getInterestCategory())
                 .build();
     }
