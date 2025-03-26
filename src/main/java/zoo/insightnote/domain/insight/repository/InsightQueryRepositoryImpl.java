@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
+import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.QInsight;
@@ -20,13 +21,16 @@ import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import zoo.insightnote.domain.user.entity.QUser;
+import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 import zoo.insightnote.domain.voteOption.entity.QVoteOption;
 import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static zoo.insightnote.domain.user.entity.QUser.user;
@@ -35,9 +39,10 @@ import static zoo.insightnote.domain.user.entity.QUser.user;
 public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final InsightLikeRepository insightLikeRepository;
 
     @Override
-    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights() {
+    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId) {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
@@ -47,7 +52,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        return queryFactory
+        List<InsightResponseDto.InsightTopListQueryDto> result = queryFactory
                 .select(Projections.constructor(
                         InsightResponseDto.InsightTopListQueryDto.class,
                         insight.id,
@@ -76,10 +81,30 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.isPublic.isTrue()
                                 .and(insight.isDraft.isFalse())
                 )
-                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous,user.interestCategory)
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous, user.interestCategory)
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
                 .fetch();
+
+        // 2. 성능 최적화된 좋아요 여부 처리
+        if (userId != null && !result.isEmpty()) {
+            List<Long> insightIds = result.stream()
+                    .map(InsightResponseDto.InsightTopListQueryDto::getId)
+                    .collect(Collectors.toList());
+
+            List<Long> likedInsightIds = queryFactory
+                    .select(insightLike.insight.id)
+                    .from(insightLike)
+                    .where(insightLike.user.id.eq(userId)
+                            .and(insightLike.insight.id.in(insightIds)))
+                    .fetch();
+
+            Set<Long> likedSet = new HashSet<>(likedInsightIds);
+
+            result.forEach(dto -> dto.setIsLiked(likedSet.contains(dto.getId())));
+        }
+
+        return result;
     }
 
 
@@ -88,7 +113,8 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
             LocalDate eventDay,
             Long sessionId,
             String sort,
-            Pageable pageable
+            Pageable pageable,
+            Long userId
     ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
@@ -151,6 +177,23 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        if (userId != null && !results.isEmpty()) {
+            List<Long> insightIds = results.stream()
+                    .map(InsightResponseDto.InsightListQueryDto::getId)
+                    .collect(Collectors.toList());
+
+            List<Long> likedInsightIds = queryFactory
+                    .select(insightLike.insight.id)
+                    .from(insightLike)
+                    .where(insightLike.user.id.eq(userId)
+                            .and(insightLike.insight.id.in(insightIds)))
+                    .fetch();
+
+            Set<Long> likedSet = new HashSet<>(likedInsightIds);
+
+            results.forEach(dto -> dto.setIsLiked(likedSet.contains(dto.getId())));
+        }
+
         // 전체 개수
         Long totalCount = queryFactory
                 .select(insight.count())
@@ -163,7 +206,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId) {
+    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId , Long userId ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QUser user = QUser.user;
@@ -203,14 +246,6 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 })
                 .collect(Collectors.toList());
 
-
-//        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
-//                .map(tuple -> new InsightResponseDto.VoteOptionDto(
-//                        tuple.get(voteOption.id),
-//                        tuple.get(voteOption.optionText),
-//                        tuple.get(voteResponse.id.count()).intValue()))
-//                .collect(Collectors.toList());
-
         // 2. 인사이트 상세 정보 조회
         InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory
                 .select(Projections.constructor(
@@ -243,10 +278,14 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .groupBy(insight.id, session.id, user.id)
                 .fetchOne();
 
+
+        boolean isLiked = insightLikeRepository.existsByUserIdAndInsightId(userId, insightId);
+
         // 3. 조회된 결과가 있다면 투표 정보 추가 후 반환
         return Optional.ofNullable(insightDetail)
                 .map(detail -> {
                     detail.setVoteOptions(voteOptions);
+                    detail.setIsLiked(isLiked);
                     return detail;
                 });
     }
@@ -307,6 +346,18 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        //  좋아요 여부 in-query로 최적화 처리
+        if (currentUserId != null && !results.isEmpty()) {
+            List<Long> insightIds = results.stream()
+                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .toList();
+
+            List<Long> likedIds = insightLikeRepository.findInsightIdsByUserIdAndInsightIds(currentUserId, insightIds);
+            Set<Long> likedIdSet = new HashSet<>(likedIds);
+
+            results.forEach(dto -> dto.setIsLiked(likedIdSet.contains(dto.getId())));
+        }
+
         Long total = queryFactory
                 .select(insight.count())
                 .from(insight)
@@ -315,4 +366,63 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
+
+    public Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(
+            String username,
+            LocalDate eventDay,
+            Long sessionId,
+            Pageable pageable
+    ) {
+        QInsight insight = QInsight.insight;
+        QUser user = QUser.user;
+        QSession session = QSession.session;
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(insight.user.username.eq(username));
+
+        if (eventDay != null) {
+            where.and(session.eventDay.eq(eventDay));
+        }
+
+        if (sessionId != null) {
+            where.and(session.id.eq(sessionId));
+        }
+
+        OrderSpecifier<?> orderSpecifier = insight.updatedAt.desc();
+//        OrderSpecifier<?> orderSpecifier = sort.equals("likes")
+//                ? insight.id.desc() // 임시 정렬 (likes 기준 정렬이 필요하다면 별도 countJoin 필요)
+//                : insight.updatedAt.desc();
+
+        List<InsightResponseDto.MyInsightListQueryDto> content = queryFactory
+                .select(Projections.constructor(
+                        InsightResponseDto.MyInsightListQueryDto.class,
+                        insight.id,
+                        insight.memo,
+                        insight.isPublic,
+                        insight.isAnonymous,
+                        insight.isDraft,
+                        insight.updatedAt,
+                        session.id,
+                        session.name
+                ))
+                .from(insight)
+                .join(insight.session, session)
+                .leftJoin(insight.user, user)
+                .where(where)
+                .orderBy(orderSpecifier)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 전체 카운트
+        Long totalCount = queryFactory
+                .select(insight.count())
+                .from(insight)
+                .join(insight.session, session)
+                .where(where)
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, totalCount == null ? 0 : totalCount);
+    }
+
 }

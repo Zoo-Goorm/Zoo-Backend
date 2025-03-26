@@ -1,25 +1,27 @@
 package zoo.insightnote.global.config;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class RedisConfig {
+@Profile("!default")
+public class RedisClusterConfig {
 
-    @Value("${spring.data.redis.host}")
-    private String host;
-
-    @Value("${spring.data.redis.port}")
-    private int port;
+    @Value("${spring.data.redis.cluster.nodes}")
+    private List<String> clusterNodes;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
-        return new LettuceConnectionFactory(host, port);
+        RedisClusterConfiguration clusterConfiguration = new RedisClusterConfiguration(clusterNodes);
+        return new LettuceConnectionFactory(clusterConfiguration);
     }
 
     @Bean

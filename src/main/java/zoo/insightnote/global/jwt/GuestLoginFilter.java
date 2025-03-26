@@ -15,17 +15,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import zoo.insightnote.domain.user.dto.CustomUserDetails;
+import zoo.insightnote.domain.user.service.UserService;
 
 public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     private final JWTUtil jwtUtil;
+    private final UserService userService;
 
     private static final long EXPIRATION_TIME = 10 * 60 * 60 * 1000L; // 10시간 (refresh token 적용시 변경 예정)
 
-    public GuestLoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+    public GuestLoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserService userService) {
         super(defaultFilterProcessesUrl);
         setAuthenticationManager(authenticationManager);
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     @Override
@@ -37,6 +40,8 @@ public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
         Map<String, String> authRequestMap = mapper.readValue(request.getInputStream(), Map.class);
         String name = authRequestMap.get("name");
         String email = authRequestMap.get("email");
+        String code = authRequestMap.get("code");
+
         if (name == null) {
             name = "";
         }
@@ -45,6 +50,8 @@ public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {
         }
         name = name.trim();
         email = email.trim();
+
+        userService.autoRegisterAndLogin(name, email, code);
 
         GuestAuthenticationToken authRequest = new GuestAuthenticationToken(name, email);
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));

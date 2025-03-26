@@ -5,15 +5,12 @@ import net.datafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zoo.insightnote.domain.insight.entity.Insight;
-import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import static zoo.insightnote.domain.dummy.data.InsightDummyData.INSIGHT_PHRASES;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,7 +27,7 @@ public class DummyInsightService {
     private final Random random = new Random();
 
     @PersistenceContext
-    private EntityManager em; // ⭐ 엔티티 매니저 사용
+    private EntityManager em;
     @Transactional
     public void generateInsights(int count) {
         List<User> users = userRepository.findAll();

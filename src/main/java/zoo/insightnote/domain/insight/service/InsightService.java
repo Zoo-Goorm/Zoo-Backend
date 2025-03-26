@@ -151,9 +151,9 @@ public class InsightService {
 
     // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
-    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights() {
-//        return insightRepository.findTopInsights();
-        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights();
+    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights(String username) {
+        User user = userService.findByUsername(username);
+        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights(user.getId());
         return InsightMapper.toTopInsightList(topList);
     }
 
@@ -163,13 +163,15 @@ public class InsightService {
             LocalDate eventDay,
             Long sessionId,
             String sort,
-            int page
+            int page,
+            String username
     ) {
         int pageSize = 3;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
 
+        User user = userService.findByUsername(username);
         Page<InsightResponseDto.InsightListQueryDto> insightPage =
-                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable);
+                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable, user.getId());
 
         if (insightPage.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
@@ -180,11 +182,34 @@ public class InsightService {
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId) {
+    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId , String username) {
 
-        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId)
+        User user = userService.findByUsername(username);
+        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId,user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
         return InsightMapper.toDetailPageResponse(insightDto);
     }
+
+    @Transactional(readOnly = true)
+    public InsightResponseDto.MyInsightListPageRes getMyInsights(
+            String username,
+            LocalDate eventDay,
+            Long sessionId,
+            Pageable pageable
+    ) {
+
+        // 기존에는 DTO를 직접 반환했지만, 이제는 Page로 받아서 Mapper로 변환
+        Page<InsightResponseDto.MyInsightListQueryDto> myInsightList =
+                insightRepository.findMyInsights(username, eventDay, sessionId, pageable);
+
+        if (myInsightList.isEmpty()) {
+            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+        }
+
+
+        return InsightMapper.toMyListPageResponse(myInsightList, pageable.getPageNumber(), pageable.getPageSize()
+        );
+    }
+
 }

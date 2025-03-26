@@ -1,11 +1,8 @@
 package zoo.insightnote.domain.insight.mapper;
 
 import org.springframework.data.domain.Page;
-import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.Insight;
-import zoo.insightnote.domain.session.entity.Session;
-import zoo.insightnote.domain.user.entity.User;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,16 +35,6 @@ public class InsightMapper {
                 .build();
     }
 
-//    public static Insight toEntityInsightBuild(InsightRequestDto.CreateDto request, Session session, User user) {
-//        return Insight.builder()
-//                .session(session)
-//                .user(user)
-//                .memo(request.getMemo())
-//                .isPublic(request.getIsPublic())
-//                .isAnonymous(request.getIsAnonymous())
-//                .isDraft(request.getIsDraft())
-//                .build();
-//    }
 
     public static InsightResponseDto.InsightDetailPageRes toDetailPageResponse(
             InsightResponseDto.InsightDetailQueryDto insightDto
@@ -59,6 +46,7 @@ public class InsightMapper {
                 .keywords(splitToList(insightDto.getKeywords()))
                 .memo(insightDto.getMemo())
                 .likeCount(insightDto.getLikeCount())
+                .isLiked(insightDto.getIsLiked())
                 .profile(InsightResponseDto.InsightDetailPageRes.UserProfileDto.builder()
                         .name(insightDto.getUserName())
                         .email(insightDto.getEmail())
@@ -85,6 +73,7 @@ public class InsightMapper {
                 .commentCount(dto.getCommentCount())
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
+                .isLiked(dto.getIsLiked())
                 .build();
     }
 
@@ -107,6 +96,7 @@ public class InsightMapper {
                 .commentCount(insightDto.getCommentCount())
                 .displayName(insightDto.getDisplayName())
                 .job(insightDto.getJob())
+                .isLiked(insightDto.getIsLiked())
                 .build();
     }
 
@@ -118,13 +108,6 @@ public class InsightMapper {
                 .collect(Collectors.toList());
     }
 
-    public static List<InsightResponseDto.SessionInsightList> makeSessionInsightList(
-            List<InsightResponseDto.SessionInsightListQueryDto> insightDtos
-    ) {
-        return insightDtos.stream()
-                .map(InsightMapper::toBuildSessionInsigh)
-                .collect(Collectors.toList());
-    }
 
     public static InsightResponseDto.InsightListPageRes toListPageResponse(
             Page<InsightResponseDto.InsightListQueryDto> page,
@@ -141,7 +124,14 @@ public class InsightMapper {
                 .build();
     }
 
-    // 최종 Page 응답 변환
+    public static List<InsightResponseDto.SessionInsightList> makeSessionInsightList(
+            List<InsightResponseDto.SessionInsightListQueryDto> insightDtos
+    ) {
+        return insightDtos.stream()
+                .map(InsightMapper::toBuildSessionInsigh)
+                .collect(Collectors.toList());
+    }
+
     public static InsightResponseDto.SessionInsightListPageRes  toSessionInsightPageResponse(
             Page<InsightResponseDto.SessionInsightListQueryDto> page,
             int pageNumber,
@@ -174,6 +164,7 @@ public class InsightMapper {
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
                 .interestCategory(splitToList(dto.getInterestCategory()))
+                .isLiked(dto.getIsLiked())
                 .build();
     }
 
@@ -184,6 +175,39 @@ public class InsightMapper {
                 .map(InsightMapper::toBuildTopInsight)
                 .collect(Collectors.toList());
     }
+
+
+    public static InsightResponseDto.MyInsightListQueryDto toBuildMyInsightList(InsightResponseDto.MyInsightListQueryDto dto) {
+        return InsightResponseDto.MyInsightListQueryDto.builder()
+                .insightId(dto.getInsightId())
+                .memo(dto.getMemo())
+                .isPublic(dto.getIsPublic())
+                .isAnonymous(dto.getIsAnonymous())
+                .updatedAt(dto.getUpdatedAt())
+                .sessionId(dto.getSessionId())
+                .sessionName(dto.getSessionName())
+                .build();
+    }
+
+    public static InsightResponseDto.MyInsightListPageRes toMyListPageResponse(
+            Page<InsightResponseDto.MyInsightListQueryDto> page,
+            int pageNumber,
+            int pageSize
+    ) {
+        List<InsightResponseDto.MyInsightListQueryDto> content = page.getContent().stream()
+                .map(InsightMapper::toBuildMyInsightList)
+                .collect(Collectors.toList());
+
+        return InsightResponseDto.MyInsightListPageRes.builder()
+                .hasNext(page.hasNext())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .content(content)
+                .build();
+    }
+
 
     private static List<String> splitToList(String str) {
         return (str != null && !str.isBlank()) ? Arrays.asList(str.split("\\s*,\\s*")) : List.of();

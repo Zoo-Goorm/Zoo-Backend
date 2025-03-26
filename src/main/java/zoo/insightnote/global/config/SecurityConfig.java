@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import zoo.insightnote.domain.user.service.CustomOAuth2UserService;
 import zoo.insightnote.domain.user.service.CustomUserDetailsService;
+import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.GuestAuthenticationProvider;
 import zoo.insightnote.global.jwt.GuestLoginFilter;
 import zoo.insightnote.global.jwt.JWTFilter;
@@ -41,6 +42,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final UserService userService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -67,7 +69,15 @@ public class SecurityConfig {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://localhost:3000", "https://www.synapsex.online", "http://www.synapsex.online", "https://api.synapsex.online", "http://api.synapsex.online"));
+                configuration.setAllowedOrigins(List.of(
+                        "http://localhost:3000",
+                        "https://localhost:3000",
+                        "https://www.synapsex.online",
+                        "http://www.synapsex.online",
+                        "https://api.synapsex.online",
+                        "http://dev.synapsex.online",
+                        "https://dev.synapsex.online"
+                ));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -89,7 +99,7 @@ public class SecurityConfig {
 
         // JWT 필터 추가
         http
-                .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager(), jwtUtil),
+                .addFilterAt(new GuestLoginFilter("/api/v1/user/login", customAuthenticationManager(), jwtUtil, userService),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil, userDetailsService), GuestLoginFilter.class);
 
