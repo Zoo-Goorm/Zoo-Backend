@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import zoo.insightnote.domain.user.dto.CustomUserDetails;
+import zoo.insightnote.global.oauth2.dto.CustomUserDetails;
 import zoo.insightnote.domain.user.service.UserService;
 
 public class GuestLoginFilter extends AbstractAuthenticationProcessingFilter {

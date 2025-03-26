@@ -1,8 +1,7 @@
-package zoo.insightnote.domain.user.dto;
+package zoo.insightnote.global.oauth2.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

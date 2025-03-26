@@ -1,4 +1,4 @@
-package zoo.insightnote.domain.user.dto;
+package zoo.insightnote.domain.user.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

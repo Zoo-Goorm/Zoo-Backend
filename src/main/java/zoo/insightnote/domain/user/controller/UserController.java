@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
-import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {

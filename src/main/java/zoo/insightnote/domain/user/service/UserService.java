@@ -1,7 +1,5 @@
 package zoo.insightnote.domain.user.service;
 
-import static zoo.insightnote.domain.user.entity.Role.*;
-
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,9 +7,7 @@ import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
-import zoo.insightnote.domain.user.dto.CustomUserDetails;
-import zoo.insightnote.domain.user.dto.request.JoinRequest;
-import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
