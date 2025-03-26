@@ -51,4 +51,31 @@ public interface DummyDataController {
     @PostMapping("/payment")
     ResponseEntity<String> generateDummyPayments(
             @Parameter(description = "생성할 결제 내역 수", example = "200") @RequestParam int count);
+
+    @Operation(
+            summary = "더미 댓글 생성",
+            description = "입력한 수만큼 랜덤 댓글 데이터를 생성합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Comment Dummy Data 생성 성공")
+            }
+    )
+    @PostMapping("/comments")
+    ResponseEntity<String> generateDummyComments(
+            @Parameter(description = "생성할 댓글 수", example = "100") @RequestParam int count);
+
+    @Operation(
+            summary = "더미 좋아요 생성",
+            description = "입력한 수만큼 랜덤 좋아요 데이터를 생성합니다."
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Like Dummy Data 생성 성공")
+            }
+    )
+    @PostMapping("/likes")
+    ResponseEntity<String> generateDummyLikes(
+            @Parameter(description = "생성할 좋아요 수", example = "100") @RequestParam int count);
+
 }

@@ -46,6 +46,7 @@ public class InsightMapper {
                 .keywords(splitToList(insightDto.getKeywords()))
                 .memo(insightDto.getMemo())
                 .likeCount(insightDto.getLikeCount())
+                .isLiked(insightDto.getIsLiked())
                 .profile(InsightResponseDto.InsightDetailPageRes.UserProfileDto.builder()
                         .name(insightDto.getUserName())
                         .email(insightDto.getEmail())
@@ -72,6 +73,7 @@ public class InsightMapper {
                 .commentCount(dto.getCommentCount())
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
+                .isLiked(dto.getIsLiked())
                 .build();
     }
 
@@ -94,6 +96,7 @@ public class InsightMapper {
                 .commentCount(insightDto.getCommentCount())
                 .displayName(insightDto.getDisplayName())
                 .job(insightDto.getJob())
+                .isLiked(insightDto.getIsLiked())
                 .build();
     }
 
@@ -161,6 +164,7 @@ public class InsightMapper {
                 .displayName(dto.getDisplayName())
                 .job(dto.getJob())
                 .interestCategory(splitToList(dto.getInterestCategory()))
+                .isLiked(dto.getIsLiked())
                 .build();
     }
 

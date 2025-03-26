@@ -134,7 +134,9 @@ public interface InsightController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/top")
-    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights();
+    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+            @AuthenticationPrincipal UserDetails userDetails
+    );
 
     @Operation(
             summary = "인사이트 목록 조회",
@@ -175,7 +177,9 @@ public interface InsightController {
             @RequestParam(value = "sort", defaultValue = "latest") String sort,
 
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam(value = "page", defaultValue = "0") int page
+            @RequestParam(value = "page", defaultValue = "0") int page,
+
+            @AuthenticationPrincipal UserDetails userDetails
     );
 
     @Operation(summary = "인사이트 상세 조회",
@@ -201,7 +205,8 @@ public interface InsightController {
     })
     @GetMapping("/{insightId}")
     ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
-            @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId
+            @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId,
+            @AuthenticationPrincipal UserDetails userDetails
     );
 
 
