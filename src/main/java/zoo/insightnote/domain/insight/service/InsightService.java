@@ -124,10 +124,9 @@ public class InsightService {
     }
 
     @Transactional
-    public int toggleLike(Long userId, Long insightId) {
+    public int toggleLike(String username, Long insightId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findByUsername(username);
 
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));

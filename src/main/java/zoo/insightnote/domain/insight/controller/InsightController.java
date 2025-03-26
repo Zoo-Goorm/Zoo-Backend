@@ -236,7 +236,7 @@ public interface InsightController {
     @PostMapping("/{insightId}/like")
     ResponseEntity<String> toggleLike(
             @Parameter(description = "좋아요를 등록/취소할 인사이트 ID") @PathVariable Long insightId,
-            @Parameter(description = "좋아요를 누르는 사용자 ID") @RequestParam Long userId
+            @AuthenticationPrincipal UserDetails userDetails
     );
 
     @Operation(
