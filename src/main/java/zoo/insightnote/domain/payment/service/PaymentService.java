@@ -47,17 +47,18 @@ public class PaymentService {
         return ResponseEntity.ok(response);
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, Boolean isOnline) {
+    private Payment savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.create(
                 user,
                 sessionInfo,
-                responseDto.getAmount().getTotalAmount(),
+                tid,
+                responseDto.getAmount().getTotal(),
                 isOnline
         );
 
-        paymentRepository.save(payment);
+        return paymentRepository.save(payment);
     }
 
     private void saveReservationsInfo(List<Long> sessionIds, User user) {
