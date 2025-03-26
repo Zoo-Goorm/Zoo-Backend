@@ -47,6 +47,7 @@ public class InsightMapper {
                 .memo(insightDto.getMemo())
                 .likeCount(insightDto.getLikeCount())
                 .isLiked(insightDto.getIsLiked())
+                .hasSpeakerComment(insightDto.getHasSpeakerComment())
                 .profile(InsightResponseDto.InsightDetailPageRes.UserProfileDto.builder()
                         .name(insightDto.getUserName())
                         .email(insightDto.getEmail())

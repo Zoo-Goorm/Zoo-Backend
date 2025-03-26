@@ -41,6 +41,7 @@ public class InsightResponseDto {
         private String voteTitle;
         private List<VoteOptionDto> voteOptions;
         private Boolean isLiked;
+        private Boolean hasSpeakerComment;
 
         @Getter
         @Builder
@@ -77,6 +78,9 @@ public static class InsightDetailQueryDto {
 
     @Setter(AccessLevel.PUBLIC)
     private Boolean isLiked;
+
+    @Setter(AccessLevel.PUBLIC)
+    private Boolean hasSpeakerComment;
 
     // QueryDSL이 사용하는 생성자,  Projections.constructor()가 생성자를 찾지 못하기 때문에 별도로 표기함
     // @AllArgsConstructor 있어도 해당 생성자 없으면 실행 오류나옴

@@ -283,11 +283,16 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         boolean isLiked = insightLikeRepository.existsByUserIdAndInsightId(userId, insightId);
 
+        long speakerCommentCount = commentRepository.countSpeakerCommentsOnInsight(insightId);
+        boolean hasSpeakerComment = speakerCommentCount > 0;
+
+
         // 3. 조회된 결과가 있다면 투표 정보 추가 후 반환
         return Optional.ofNullable(insightDetail)
                 .map(detail -> {
                     detail.setVoteOptions(voteOptions);
                     detail.setIsLiked(isLiked);
+                    detail.setHasSpeakerComment(hasSpeakerComment);
                     return detail;
                 });
     }

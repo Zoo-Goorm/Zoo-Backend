@@ -13,6 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.insight.id = :insightId")
     List<Comment> findByInsightIdWithUser(@Param("insightId") Long insightId);
 
+    // 뱃지 기능 관련 쿼리
     @Query("""
     SELECT DISTINCT c.insight.id
     FROM Comment c
@@ -21,4 +22,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     AND u.role = 'SPEAKER'
     """)
     List<Long> findInsightIdsWithSpeakerComments(@Param("insightIds") List<Long> insightIds);
+
+    // 뱃지 기능 관련 쿼리
+    @Query("""
+    SELECT COUNT(c)
+    FROM Comment c
+    WHERE c.insight.id = :insightId
+      AND c.user.role = 'SPEAKER'
+    """)
+    long countSpeakerCommentsOnInsight(@Param("insightId") Long insightId);
+
 }
