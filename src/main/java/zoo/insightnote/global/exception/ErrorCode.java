@@ -31,15 +31,16 @@ public enum ErrorCode {
     // 대댓글
     DELETED_COMMENT_CANNOT_HAVE_REPLY(HttpStatus.BAD_REQUEST, "해당 댓글이 삭제되어 댓글을 작성할 수 없습니다."),
 
-    //Payment ErrorCode
+    // 결제
     KAKAO_PAY_REQUEST_FAILED(HttpStatus.BAD_REQUEST, "카카오페이 결제 요청 중 오류 발생"),
     KAKAO_PAY_APPROVE_FAILED(HttpStatus.BAD_REQUEST, "카카오페이 결제 승인 중 오류 발생"),
+    KAKAO_PAY_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "카카오페이 결제 취소 중 오류 발생"),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
 
-    // JSON ErrorCode
+    // JSON
     JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 변환 오류 발생"),
 
-    // Reservation
+    // 세션 예약
     ALREADY_RESERVED_SESSION(HttpStatus.BAD_REQUEST, "이미 예약된 세션입니다."),
     DUPLICATE_SESSION_TIME(HttpStatus.BAD_REQUEST,"세션 시간이 중복되어 신청할 수 없습니다."),
 
