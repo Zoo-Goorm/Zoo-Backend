@@ -46,6 +46,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
+    private String snsUrl;
+
     public User(String username, String name, String email, Role role) {
         this.username = username;
         this.name = name;
