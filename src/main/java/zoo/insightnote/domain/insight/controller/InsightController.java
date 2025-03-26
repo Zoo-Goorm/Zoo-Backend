@@ -220,7 +220,6 @@ public interface InsightController {
            
            요청 파라미터:
            - `insightId`: 좋아요를 등록할 인사이트의 ID
-           - `userId`: 좋아요를 누르는 사용자 ID
            
            반환 값:
            - 좋아요가 등록되었을 경우 `"좋아요가 등록되었습니다."`
@@ -230,8 +229,6 @@ public interface InsightController {
             @ApiResponse(responseCode = "200", description = "좋아요 등록 또는 취소 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "403", description = "자신의 인사이트에 좋아요를 누를 수 없음"),
-            @ApiResponse(responseCode = "404", description = "인사이트 또는 사용자를 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/{insightId}/like")
     ResponseEntity<String> toggleLike(
