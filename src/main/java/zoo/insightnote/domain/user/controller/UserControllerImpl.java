@@ -21,6 +21,7 @@ import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
@@ -52,7 +53,8 @@ public class UserControllerImpl implements UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(userDetails.getUsername());
+        UserInfoResponse userInfoResponse = userService.getUserInfo(userDetails.getUsername());
+        return ResponseEntity.ok(userInfoResponse);
     }
 
 //    @GetMapping("/me")

@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.mapper.UserMapper;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -20,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
+    private final UserMapper userMapper;
 
     public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
@@ -82,5 +85,11 @@ public class UserService {
                 userInfo.getOccupation(),       // 직군
                 userInfo.getInterestCategory()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public UserInfoResponse getUserInfo(String username) {
+        User user = findByUsername(username);
+        return userMapper.toResponse(user);
     }
 }
