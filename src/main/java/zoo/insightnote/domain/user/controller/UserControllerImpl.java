@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.user.controller;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -32,11 +33,11 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
     private final EmailVerificationService emailVerificationService;
 
-    @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinRequest joinRequest) {
-        userService.joinProcess(joinRequest);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/join")
+//    public ResponseEntity<?> joinProcess(@Valid @RequestBody JoinRequest joinRequest) {
+//        userService.joinProcess(joinRequest);
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody JoinRequest joinRequest) {
@@ -44,7 +45,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @PostMapping("/email-auth")
-    public ResponseEntity<?> sendEmailAuthCode(@Valid @RequestBody EmailAuthRequest emailAuthRequest) {
+    public ResponseEntity<?> sendEmailAuthCode(@Valid @RequestBody EmailAuthRequest emailAuthRequest) throws MessagingException {
         emailVerificationService.sendVerificationCode(emailAuthRequest.getEmail());
         return ResponseEntity.ok("인증코드를 전송했습니다");
     }
