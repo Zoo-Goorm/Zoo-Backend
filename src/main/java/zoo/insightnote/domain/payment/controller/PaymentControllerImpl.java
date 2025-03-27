@@ -12,6 +12,8 @@ import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.service.KakaoPayService;
 import zoo.insightnote.domain.payment.service.PaymentService;
+import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/payment")
@@ -19,12 +21,15 @@ import zoo.insightnote.domain.payment.service.PaymentService;
 public class PaymentControllerImpl implements PaymentController {
     private final KakaoPayService kakaoPayService;
     private final PaymentService paymentService;
+    private final UserService userService;
 
     // 주문 정보를 가지고 카카오페이 API에 결제 요청
     @PostMapping("/request")
     public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
-            @RequestBody @Valid PaymentRequestReadyDto requestDto) {
-        return kakaoPayService.requestKakaoPayment(requestDto);
+            @RequestBody @Valid PaymentRequestReadyDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByUsername(userDetails.getUsername());
+        return kakaoPayService.requestKakaoPayment(requestDto, user);
     }
 
     // 카카오페이 API에서 결제 요청 승인

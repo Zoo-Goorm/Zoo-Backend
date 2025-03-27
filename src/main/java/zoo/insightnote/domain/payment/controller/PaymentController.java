@@ -27,7 +27,10 @@ public interface PaymentController {
             }
     )
     @PostMapping("/request")
-    ResponseEntity<KakaoPayReadyResponseDto> requestPayment(@RequestBody PaymentRequestReadyDto request);
+    ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
+            @RequestBody PaymentRequestReadyDto request,
+            @AuthenticationPrincipal UserDetails userDetails
+    );
 
     @Operation(
             summary = "결제 승인 API",

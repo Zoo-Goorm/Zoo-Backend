@@ -14,9 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PaymentRequestReadyDto {
-    @NotNull
-    private Long userId;
-
     @NotBlank
     private String itemName;
 
