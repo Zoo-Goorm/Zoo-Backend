@@ -13,6 +13,8 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
@@ -159,12 +161,21 @@ public class InsightService {
     }
 
     // 인기순위 상위 3개 가져오기
+//    @Transactional(readOnly = true)
+//    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights(String username) {
+//        User user = userService.findByUsername(username);
+//        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights(user.getId());
+//        return InsightMapper.toTopInsightList(topList);
+//    }
+
     @Transactional(readOnly = true)
-    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights(String username) {
-        User user = userService.findByUsername(username);
-        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights(user.getId());
-        return InsightMapper.toTopInsightList(topList);
+    public List<InsightTopListResponse> getTopPopularInsights(User user) {
+        List<InsightTopListQuery> topList = insightRepository.findTopInsights(user.getId());
+        return topList.stream()
+                .map(InsightTopListResponse::from)
+                .collect(Collectors.toList());
     }
+
 
 
     @Transactional(readOnly = true)

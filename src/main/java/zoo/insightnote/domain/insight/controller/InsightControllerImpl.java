@@ -12,6 +12,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -74,14 +75,24 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(message);
     }
 
-    // 인기순위 상위 3개 가져오기
+//     인기순위 상위 3개 가져오기
+//    @GetMapping("/insights/top")
+//    public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+//            @AuthenticationPrincipal UserDetails userDetails
+//    ) {
+//        List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights(userDetails.getUsername());
+//        return ResponseEntity.ok(topInsights);
+//    }
+
     @GetMapping("/insights/top")
-    public ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+    public ResponseEntity<List<InsightTopListResponse>> getTop3PopularInsights(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        List<InsightResponseDto.InsightTopRes> topInsights = insightService.getTopPopularInsights(userDetails.getUsername());
-        return ResponseEntity.ok(topInsights);
+        User user = userService.findByUsername(userDetails.getUsername());
+        List<InsightTopListResponse> response = insightService.getTopPopularInsights(user);
+        return ResponseEntity.ok(response);
     }
+
 
     // 인사이트 목록 조회
     @Override

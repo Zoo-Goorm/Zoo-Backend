@@ -17,6 +17,7 @@ import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
@@ -44,7 +45,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId) {
+    public List<InsightTopListQuery> findTopInsights(Long userId) {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
@@ -54,9 +55,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        List<InsightResponseDto.InsightTopListQueryDto> result = queryFactory
+        List< InsightTopListQuery> result = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightTopListQueryDto.class,
+                        InsightTopListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -91,7 +92,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         // 2. 성능 최적화된 좋아요 여부 처리
         if (userId != null && !result.isEmpty()) {
             List<Long> insightIds = result.stream()
-                    .map(InsightResponseDto.InsightTopListQueryDto::getId)
+                    .map(InsightTopListQuery::getId)
                     .collect(Collectors.toList());
 
             List<Long> likedInsightIds = queryFactory

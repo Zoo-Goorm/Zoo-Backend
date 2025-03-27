@@ -16,6 +16,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -146,7 +147,7 @@ public interface InsightController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/top")
-    ResponseEntity<List<InsightResponseDto.InsightTopRes>> getTop3PopularInsights(
+    ResponseEntity<List<InsightTopListResponse>> getTop3PopularInsights(
             @AuthenticationPrincipal UserDetails userDetails
     );
 
