@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
+import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
@@ -60,7 +61,7 @@ public class Insight extends BaseTimeEntity {
         this.voteTitle = voteTitle;
     }
 
-    public static Insight create(Session session, User user, InsightRequestDto.CreateInsight request) {
+    public static Insight create(Session session, User user, InsightCreateRequest request) {
         return Insight.builder()
                 .session(session)
                 .user(user)

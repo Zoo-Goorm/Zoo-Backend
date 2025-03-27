@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -64,9 +66,9 @@ public interface InsightController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
     })
     @PostMapping("/insights")
-    ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+    ResponseEntity<InsightIdResponse> createInsight(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody InsightRequestDto.CreateInsight request
+            @RequestBody InsightCreateRequest request
     );
 
     @Operation(summary = "인사이트 수정",

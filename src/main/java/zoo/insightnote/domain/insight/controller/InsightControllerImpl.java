@@ -10,7 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
+import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
 
 import java.time.LocalDate;
@@ -22,15 +25,16 @@ import java.util.List;
 public class InsightControllerImpl implements InsightController{
 
     private final InsightService insightService;
-
+    private final UserService userService;
 
     @Override
     @PostMapping("/insights")
-    public ResponseEntity<InsightResponseDto.InsightIdRes> createInsight(
+    public ResponseEntity<InsightIdResponse> createInsight(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody InsightRequestDto.CreateInsight request
+            @RequestBody InsightCreateRequest request
     ) {
-        InsightResponseDto.InsightIdRes response =  insightService.createInsight(request, userDetails.getUsername());
+        User user = userService.findByUsername(userDetails.getUsername());
+        InsightIdResponse response =  insightService.createInsight(request, user);
         return ResponseEntity.ok(response);
     }
 
