@@ -8,12 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightLikeToggleResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -64,24 +62,7 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.noContent().build();
     }
 
-//    @Override
-//    @GetMapping("/{insightId}")
-//    public ResponseEntity<InsightResponseDto.InsightRes> getInsightById(@PathVariable Long insightId) {
-//        InsightResponseDto.InsightRes insight = insightService.getInsightById(insightId);
-//        return ResponseEntity.ok(insight);
-//    }
-
     //  좋아요 등록/취소 API
-//    @PostMapping("/insights/{insightId}/like")
-//    public ResponseEntity<String> toggleLike(
-//            @PathVariable Long insightId,
-//            @AuthenticationPrincipal UserDetails userDetails
-//    ) {
-//        int result = insightService.toggleLike(userDetails.getUsername(), insightId);
-//        String message = result == 1 ? "좋아요가 등록되었습니다." : "좋아요가 취소되었습니다.";
-//        return ResponseEntity.ok(message);
-//    }
-
     @PostMapping("/insights/{insightId}/like")
     public ResponseEntity<String> toggleLike(
             @PathVariable Long insightId,
