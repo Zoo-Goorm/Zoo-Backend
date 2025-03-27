@@ -39,10 +39,10 @@ public class PaymentService {
         String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
         List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.getOrderId());
         UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
+        User user = userService.findByUsername(requestDto.getUsername());
 
-        KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
+        KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
-            User user = userService.findByUsername(requestDto.getUsername());
             savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
             saveReservationsInfo(sessionIds, user);
             userService.updateUserInfo(userInfo, user);
