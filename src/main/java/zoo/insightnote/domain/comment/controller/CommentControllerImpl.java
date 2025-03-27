@@ -33,18 +33,19 @@ public class CommentControllerImpl implements CommentController {
     public ResponseEntity<CommentIdResDto> writeComment(
             @PathVariable Long insightId,
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody CommentCreateReqDto request)
-    {
+            @RequestBody CommentCreateReqDto request) {
         CommentIdResDto commentId = commentService.createComment(insightId, userDetails.getUsername(), request);
         return ResponseEntity.ok().body(commentId);
     }
 
     @Override
     @PutMapping("/{insightId}/comments/{commentId}")
-    public ResponseEntity<CommentIdResDto> updateComment(@PathVariable Long insightId,
-                                                         @PathVariable Long commentId,
-                                                         @AuthenticationPrincipal UserDetails userDetails,
-                                                         @RequestBody CommentUpdateReqDto request) {
+    public ResponseEntity<CommentIdResDto> updateComment(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CommentUpdateReqDto request
+    ) {
         CommentIdResDto response = commentService.updateComment(insightId, userDetails.getUsername(), commentId, request);
         return ResponseEntity.ok().body(response);
     }
@@ -54,13 +55,11 @@ public class CommentControllerImpl implements CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long insightId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails)
-    {
+            @AuthenticationPrincipal UserDetails userDetails) {
         commentService.deleteComment(insightId, userDetails.getUsername(), commentId);
         return ResponseEntity.noContent().build();
     }
 
-    // 댓글 리스트 출력
     @Override
     @GetMapping("/comments/{insightId}")
     public ResponseEntity<List<CommentListResDto>> getListComments(@PathVariable Long insightId) {
