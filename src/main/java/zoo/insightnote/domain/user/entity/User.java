@@ -78,6 +78,12 @@ public class User {
         if (isChanged(this.snsUrl, snsUrl)) this.snsUrl = snsUrl;
     }
 
+    public void anonymizeUserData() {
+        this.username = null;
+        this.name = "알 수 없음";
+        this.nickname = "알 수 없음";
+    }
+
     private boolean isChanged(Object currentValue, Object newValue) {
         return newValue != null && !newValue.equals(currentValue);
     }
