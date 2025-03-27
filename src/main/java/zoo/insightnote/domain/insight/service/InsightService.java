@@ -11,6 +11,7 @@ import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
@@ -29,6 +30,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static zoo.insightnote.domain.insight.entity.QInsight.insight;
 
 @Service
 @RequiredArgsConstructor
@@ -55,13 +58,18 @@ public class InsightService {
     }
 
     @Transactional
-    public InsightResponseDto.InsightIdRes updateInsight(Long insightId, InsightRequestDto.UpdateInsight request) {
+    public InsightIdResponse updateInsight(Long insightId, InsightUpdateRequest request, User user) {
+
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
+        if (!insight.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.NO_EDIT_PERMISSION); // 예외 코드는 상황에 맞게 설정
+        }
+
         insight.updateIfChanged(request);
 
-        return new InsightResponseDto.InsightIdRes(insight.getId());
+        return new InsightIdResponse(insight.getId());
     }
 
     @Transactional(readOnly = true)

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
@@ -40,11 +41,13 @@ public class InsightControllerImpl implements InsightController{
 
     @Override
     @PutMapping("/insights/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightIdRes> updateInsight(
+    public ResponseEntity<InsightIdResponse> updateInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long insightId,
-            @RequestBody InsightRequestDto.UpdateInsight request
+            @RequestBody InsightUpdateRequest request
     ) {
-        InsightResponseDto.InsightIdRes response = insightService.updateInsight(insightId, request);
+        User user = userService.findByUsername(userDetails.getUsername());
+        InsightIdResponse response = insightService.updateInsight(insightId, request , user);
         return ResponseEntity.ok(response);
     }
 

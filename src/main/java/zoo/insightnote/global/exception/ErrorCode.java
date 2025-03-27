@@ -14,6 +14,7 @@ public enum ErrorCode {
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 세션을 찾을 수 없습니다."),
 
     // 인사이트 노트
+    NO_EDIT_PERMISSION(HttpStatus.NOT_FOUND, "인사이트 작성자가 아닙니다, 본인이 작성한 인사이트만 수정할 수 있습니다 "),
     INSIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 인사이트를 찾을 수 없습니다."),
     CANNOT_LIKE_OWN_INSIGHT(HttpStatus.BAD_REQUEST, "자신의 인사이트에는 좋아요를 누를 수 없습니다."),
 

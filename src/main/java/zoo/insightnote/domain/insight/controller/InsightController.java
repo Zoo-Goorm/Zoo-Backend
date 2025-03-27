@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 
 import java.time.LocalDate;
@@ -82,10 +83,11 @@ public interface InsightController {
             @ApiResponse(responseCode = "404", description = "인사이트를 찾을 수 없음"),
     })
     @PutMapping("/{insightId}")
-    ResponseEntity<InsightResponseDto.InsightIdRes> updateInsight(
+    ResponseEntity<InsightIdResponse> updateInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "수정할 인사이트 ID", example = "1")
             @PathVariable Long insightId,
-            @RequestBody InsightRequestDto.UpdateInsight request
+            @RequestBody InsightUpdateRequest request
     );
 
 

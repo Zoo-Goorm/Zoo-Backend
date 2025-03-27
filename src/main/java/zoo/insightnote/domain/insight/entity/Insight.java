@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
@@ -79,7 +80,7 @@ public class Insight extends BaseTimeEntity {
     }
 
     // 업데이트 로직 (익명 여부 포함)
-    public void updateIfChanged(InsightRequestDto.UpdateInsight request) {
+    public void updateIfChanged(InsightUpdateRequest request) {
         if (request.getMemo() != null && !request.getMemo().equals(this.memo)) {
             this.memo = request.getMemo();
         }
