@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import zoo.insightnote.domain.user.dto.CustomOAuth2User;
+import zoo.insightnote.global.oauth2.dto.CustomOAuth2User;
 import zoo.insightnote.global.jwt.JWTUtil;
 
 @Component

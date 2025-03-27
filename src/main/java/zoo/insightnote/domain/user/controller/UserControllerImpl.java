@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
-import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.service.UserService;
 import zoo.insightnote.global.jwt.JWTUtil;
 
@@ -52,7 +55,14 @@ public class UserControllerImpl implements UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(userDetails.getUsername());
+        UserInfoResponse userInfoResponse = userService.getUserInfo(userDetails.getUsername());
+        return ResponseEntity.ok(userInfoResponse);
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<?> updateMyInfo(@RequestBody UserInfoRequest userInfoRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        UserInfoResponse userInfoResponse = userService.updateUserInfo(userInfoRequest, userDetails.getUsername());
+        return ResponseEntity.ok(userInfoResponse);
     }
 
 //    @GetMapping("/me")

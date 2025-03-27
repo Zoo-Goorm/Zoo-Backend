@@ -9,11 +9,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zoo.insightnote.domain.user.dto.CustomOAuth2User;
-import zoo.insightnote.domain.user.dto.GoogleResponse;
-import zoo.insightnote.domain.user.dto.KakaoResponse;
-import zoo.insightnote.domain.user.dto.OAuth2Response;
-import zoo.insightnote.domain.user.dto.UserDto;
+import zoo.insightnote.global.oauth2.dto.CustomOAuth2User;
+import zoo.insightnote.global.oauth2.dto.GoogleResponse;
+import zoo.insightnote.global.oauth2.dto.KakaoResponse;
+import zoo.insightnote.global.oauth2.dto.OAuth2Response;
+import zoo.insightnote.global.oauth2.dto.UserDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 
@@ -56,7 +56,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return new CustomOAuth2User(userDto);
         }
 
-        existData.update(oAuth2Response.getEmail(), oAuth2Response.getName());
+        // existData.update(oAuth2Response.getEmail(), oAuth2Response.getName());
 
         UserDto userDto = UserDto.builder()
                 .username(username)

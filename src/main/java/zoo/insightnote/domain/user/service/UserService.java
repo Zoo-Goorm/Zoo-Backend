@@ -1,7 +1,5 @@
 package zoo.insightnote.domain.user.service;
 
-import static zoo.insightnote.domain.user.entity.Role.*;
-
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,11 +7,12 @@ import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
-import zoo.insightnote.domain.user.dto.CustomUserDetails;
-import zoo.insightnote.domain.user.dto.request.JoinRequest;
-import zoo.insightnote.domain.user.dto.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.user.mapper.UserMapper;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -24,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
+    private final UserMapper userMapper;
 
     public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
@@ -86,5 +86,26 @@ public class UserService {
                 userInfo.getOccupation(),       // 직군
                 userInfo.getInterestCategory()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public UserInfoResponse getUserInfo(String username) {
+        User user = findByUsername(username);
+        return userMapper.toResponse(user);
+    }
+
+    @Transactional
+    public UserInfoResponse updateUserInfo(UserInfoRequest userInfoRequest, String username) {
+        User user = findByUsername(username);
+        user.update(
+                userInfoRequest.getName(),
+                userInfoRequest.getNickname(),
+                userInfoRequest.getPhoneNumber(),
+                userInfoRequest.getOccupation(),
+                userInfoRequest.getJob(),
+                userInfoRequest.getInterestCategory(),
+                userInfoRequest.getSnsUrl()
+        );
+        return userMapper.toResponse(user);
     }
 }

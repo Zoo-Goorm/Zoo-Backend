@@ -1,4 +1,4 @@
-package zoo.insightnote.domain.user.dto;
+package zoo.insightnote.global.oauth2.dto;
 
 import lombok.Builder;
 import lombok.Getter;

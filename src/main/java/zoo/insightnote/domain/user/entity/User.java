@@ -46,6 +46,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
+    private String snsUrl;
+
     public User(String username, String name, String email, Role role) {
         this.username = username;
         this.name = name;
@@ -64,7 +66,16 @@ public class User {
         if (isChanged(this.job, job)) this.job = job;
         if (isChanged(this.occupation, occupation)) this.occupation = occupation;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
+    }
 
+    public void update(String name, String nickname, String phoneNumber, String occupation, String job, String interestCategory, String snsUrl) {
+        if (isChanged(this.name, name)) this.name = name;
+        if (isChanged(this.nickname, nickname)) this.nickname = nickname;
+        if (isChanged(this.phoneNumber, phoneNumber)) this.phoneNumber = phoneNumber;
+        if (isChanged(this.occupation, occupation)) this.occupation = occupation;
+        if (isChanged(this.job, job)) this.job = job;
+        if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
+        if (isChanged(this.snsUrl, snsUrl)) this.snsUrl = snsUrl;
     }
 
     private boolean isChanged(Object currentValue, Object newValue) {
