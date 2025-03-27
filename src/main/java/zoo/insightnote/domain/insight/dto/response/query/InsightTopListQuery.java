@@ -22,7 +22,7 @@ public class InsightTopListQuery {
     private String job;
     private String interestCategory;
 
-    @Setter  // isLiked 필드에 대해서만 setter를 생성
+    @Setter
     private Boolean isLiked;
 
     public InsightTopListQuery(
@@ -52,5 +52,5 @@ public class InsightTopListQuery {
         this.job = job;
         this.interestCategory = interestCategory;
     }
-    
+
 }
