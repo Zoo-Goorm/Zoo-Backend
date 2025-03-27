@@ -67,7 +67,6 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
-        // 정렬 조건 처리
 
         User user = userService.findByUsername(userName);
 
@@ -124,10 +123,9 @@ public class InsightService {
     }
 
     @Transactional
-    public int toggleLike(Long userId, Long insightId) {
+    public int toggleLike(String username, Long insightId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findByUsername(username);
 
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));

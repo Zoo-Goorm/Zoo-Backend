@@ -41,6 +41,7 @@ public class InsightResponseDto {
         private String voteTitle;
         private List<VoteOptionDto> voteOptions;
         private Boolean isLiked;
+        private Boolean hasSpeakerComment;
 
         @Getter
         @Builder
@@ -77,6 +78,9 @@ public static class InsightDetailQueryDto {
 
     @Setter(AccessLevel.PUBLIC)
     private Boolean isLiked;
+
+    @Setter(AccessLevel.PUBLIC)
+    private Boolean hasSpeakerComment;
 
     // QueryDSL이 사용하는 생성자,  Projections.constructor()가 생성자를 찾지 못하기 때문에 별도로 표기함
     // @AllArgsConstructor 있어도 해당 생성자 없으면 실행 오류나옴
@@ -237,6 +241,9 @@ public static class InsightDetailQueryDto {
         @Setter
         private Boolean isLiked;
 
+        @Setter
+        private Boolean hasSpeakerComment;
+
         // @AllArgsConstructor 를 사용하지 않고 생성자를 직접 쓰는 이유는 쿼리 로직에서 isLiked 는 select에 포함되는게 아닌 서브로 추가된 쿼리여서
         // @AllArgsConstructor가 인식을 하지 못하고 오류가 발생합니다 그래서 이처럼 복잡한 쿼리 경우는 생성자를 직접 적어줘야 합니다
         public SessionInsightListQueryDto(
@@ -294,6 +301,7 @@ public static class InsightDetailQueryDto {
         private String displayName;
         private String job;
         private Boolean isLiked;
+        private Boolean hasSpeakerComment;
     }
 
     @Getter

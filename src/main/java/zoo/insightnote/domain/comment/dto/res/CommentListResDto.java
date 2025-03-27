@@ -3,6 +3,7 @@ package zoo.insightnote.domain.comment.dto.res;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import zoo.insightnote.domain.comment.entity.Comment;
+import zoo.insightnote.domain.user.entity.Role;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,7 @@ public class CommentListResDto {
     private boolean edited;
     private String role;
     private String content;
+    private boolean isSpeaker;
 
     public CommentListResDto(Comment comment) {
         this.id = comment.getId();
@@ -24,6 +26,7 @@ public class CommentListResDto {
         this.edited = comment.isUpdated();
         this.role = comment.getUser().getRole().toString(); // User 엔티티에 role 필드가 있다고 가정
         this.content = comment.getContent();
+        this.isSpeaker = comment.getUser().getRole() == Role.SPEAKER;
     }
 
     private String formatDate(LocalDateTime dateTime) {

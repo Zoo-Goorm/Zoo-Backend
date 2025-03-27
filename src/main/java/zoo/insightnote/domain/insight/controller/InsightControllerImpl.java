@@ -76,9 +76,11 @@ public class InsightControllerImpl implements InsightController{
 
     //  좋아요 등록/취소 API
     @PostMapping("/insights/{insightId}/like")
-    public ResponseEntity<String> toggleLike(@PathVariable Long insightId,
-                                             @RequestParam Long userId) {
-        int result = insightService.toggleLike(userId, insightId);
+    public ResponseEntity<String> toggleLike(
+            @PathVariable Long insightId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        int result = insightService.toggleLike(userDetails.getUsername(), insightId);
         String message = result == 1 ? "좋아요가 등록되었습니다." : "좋아요가 취소되었습니다.";
         return ResponseEntity.ok(message);
     }

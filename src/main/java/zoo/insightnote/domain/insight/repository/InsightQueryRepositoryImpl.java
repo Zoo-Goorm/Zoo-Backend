@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
+import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
@@ -40,6 +41,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
     private final JPAQueryFactory queryFactory;
     private final InsightLikeRepository insightLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId) {
@@ -281,11 +283,16 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         boolean isLiked = insightLikeRepository.existsByUserIdAndInsightId(userId, insightId);
 
+        long speakerCommentCount = commentRepository.countSpeakerCommentsOnInsight(insightId);
+        boolean hasSpeakerComment = speakerCommentCount > 0;
+
+
         // 3. 조회된 결과가 있다면 투표 정보 추가 후 반환
         return Optional.ofNullable(insightDetail)
                 .map(detail -> {
                     detail.setVoteOptions(voteOptions);
                     detail.setIsLiked(isLiked);
+                    detail.setHasSpeakerComment(hasSpeakerComment);
                     return detail;
                 });
     }
@@ -358,6 +365,23 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
             results.forEach(dto -> dto.setIsLiked(likedIdSet.contains(dto.getId())));
         }
 
+        // 연사 댓글 여부
+        if (!results.isEmpty()) {
+            List<Long> insightIds = results.stream()
+                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .toList();
+
+            List<Long> speakerCommentInsightIds =
+                    commentRepository.findInsightIdsWithSpeakerComments(insightIds); // 이 쿼리는 아래 참고!
+
+            Set<Long> speakerInsightSet = new HashSet<>(speakerCommentInsightIds);
+
+            results.forEach(dto ->
+                    dto.setHasSpeakerComment(speakerInsightSet.contains(dto.getId()))
+            );
+        }
+
+        // 전체 수
         Long total = queryFactory
                 .select(insight.count())
                 .from(insight)
