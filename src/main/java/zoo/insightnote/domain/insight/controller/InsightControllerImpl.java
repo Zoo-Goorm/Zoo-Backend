@@ -13,6 +13,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightLikeToggleResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -51,26 +52,15 @@ public class InsightControllerImpl implements InsightController{
         return ResponseEntity.ok(response);
     }
 
-//    @Override
-//    public ResponseEntity<InsightResponseDto.InsightRes> updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
-//        InsightResponseDto.InsightRes updated = insightService.updateInsightMemoOnly(insightId, request);
-//        return ResponseEntity.ok(updated);
-//    }
-//
-
-//    @Override
-//    @PutMapping("/{insightId}")
-//    public ResponseEntity<InsightResponseDto.InsightRes> updateInsight(
-//            @PathVariable Long insightId,
-//            @RequestBody InsightRequestDto.UpdateDto request) {
-//        InsightResponseDto.InsightRes updatedInsight = insightService.updateInsight(insightId, request);
-//        return ResponseEntity.ok(updatedInsight);
-//    }
 
     @Override
     @DeleteMapping("/insights/{insightId}")
-    public ResponseEntity<Void> deleteInsight(@PathVariable Long insightId) {
-        insightService.deleteInsight(insightId);
+    public ResponseEntity<Void> deleteInsight(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long insightId
+    ) {
+        User user = userService.findByUsername(userDetails.getUsername());
+        insightService.deleteInsight(insightId, user);
         return ResponseEntity.noContent().build();
     }
 
@@ -82,13 +72,24 @@ public class InsightControllerImpl implements InsightController{
 //    }
 
     //  좋아요 등록/취소 API
+//    @PostMapping("/insights/{insightId}/like")
+//    public ResponseEntity<String> toggleLike(
+//            @PathVariable Long insightId,
+//            @AuthenticationPrincipal UserDetails userDetails
+//    ) {
+//        int result = insightService.toggleLike(userDetails.getUsername(), insightId);
+//        String message = result == 1 ? "좋아요가 등록되었습니다." : "좋아요가 취소되었습니다.";
+//        return ResponseEntity.ok(message);
+//    }
+
     @PostMapping("/insights/{insightId}/like")
     public ResponseEntity<String> toggleLike(
             @PathVariable Long insightId,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        int result = insightService.toggleLike(userDetails.getUsername(), insightId);
-        String message = result == 1 ? "좋아요가 등록되었습니다." : "좋아요가 취소되었습니다.";
+        User user = userService.findByUsername(userDetails.getUsername());
+        int result = insightService.toggleLike(user, insightId);
+        String message = result == 1 ? "좋아요 등록" : "좋아요 취소";
         return ResponseEntity.ok(message);
     }
 

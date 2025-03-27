@@ -17,6 +17,7 @@ public enum ErrorCode {
     NO_EDIT_PERMISSION(HttpStatus.NOT_FOUND, "인사이트 작성자가 아닙니다, 본인이 작성한 인사이트만 수정할 수 있습니다 "),
     INSIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 인사이트를 찾을 수 없습니다."),
     CANNOT_LIKE_OWN_INSIGHT(HttpStatus.BAD_REQUEST, "자신의 인사이트에는 좋아요를 누를 수 없습니다."),
+    UNAUTHORIZED_USER(HttpStatus.BAD_REQUEST, "권한이 없는 사용자 입니다"),
 
     // 연사
     SPEAKER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 연사가 존재하지 않습니다."),

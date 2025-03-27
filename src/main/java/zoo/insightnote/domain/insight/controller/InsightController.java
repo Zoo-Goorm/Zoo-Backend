@@ -74,9 +74,9 @@ public interface InsightController {
 
     @Operation(summary = "인사이트 수정",
             description = """
-        인사이트 ID를 기반으로 메모, 공개 여부, 익명 여부 등의 내용을 수정합니다.  
-        - 변경된 필드만 업데이트되며, 변경이 없으면 기존 값 유지됩니다.
-        """
+                인사이트 ID를 기반으로 메모, 공개 여부, 익명 여부 등의 내용을 수정합니다.
+                - 변경된 필드만 업데이트되며, 변경이 없으면 기존 값 유지됩니다.
+            """
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "인사이트 수정 성공"),
@@ -103,15 +103,23 @@ public interface InsightController {
 //            @RequestBody InsightRequestDto.UpdateDto request
 //    );
 
-    @Operation(summary = "인사이트 삭제", description = "특정 ID의 인사이트를 삭제합니다.")
+    @Operation(
+            summary = "인사이트 삭제",
+            description = """
+                특정 ID의 인사이트를 삭제합니다.
+                - 로그인한 사용자 본인이 작성한 인사이트만 삭제할 수 있습니다.
+            """
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "인사이트 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "인사이트를 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "400", description = "해당 인사이트에 대한 삭제 권한이 없음"),
     })
     @DeleteMapping("/{insightId}")
     ResponseEntity<Void> deleteInsight(
-            @Parameter(description = "삭제할 인사이트 ID") @PathVariable Long insightId
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "삭제할 인사이트 ID", example = "1")
+            @PathVariable Long insightId
     );
 
 //    @Operation(summary = "특정 인사이트 조회", description = "ID를 이용해 특정 인사이트 정보를 조회합니다.")

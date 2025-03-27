@@ -116,9 +116,14 @@ public class InsightService {
 //    }
 
     @Transactional
-    public void deleteInsight(Long insightId) {
+    public void deleteInsight(Long insightId, User user) {
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
+
+        if (!insight.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
         insightRepository.delete(insight);
     }
 
@@ -130,9 +135,7 @@ public class InsightService {
     }
 
     @Transactional
-    public int toggleLike(String username, Long insightId) {
-
-        User user = userService.findByUsername(username);
+    public int toggleLike(User user, Long insightId) {
 
         Insight insight = insightRepository.findById(insightId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
@@ -140,6 +143,7 @@ public class InsightService {
         if (insight.getUser().equals(user)) {
             throw new CustomException(ErrorCode.CANNOT_LIKE_OWN_INSIGHT);
         }
+
         // 이미 좋아요가 있는지 확인
         Optional<InsightLike> existingLike = insightLikeRepository.findByUserAndInsight(user, insight);
 
