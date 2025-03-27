@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
@@ -16,6 +17,8 @@ import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.List;
 
@@ -38,26 +41,38 @@ public class PaymentService {
         UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto);
+        try {
+            User user = userService.findByUsername(requestDto.getUsername());
+            savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
+            saveReservationsInfo(sessionIds, user);
+            userService.updateUserInfo(userInfo, user);
+        } catch (Exception e) {
+            log.error("❌ 결제 후 내부 로직 실패 → 카카오페이 결제 취소");
 
-        User user = userService.findByUsername(requestDto.getUsername());
-        savePaymentInfo(response, sessionIds.get(0), user, userInfo.isOnline());
-        saveReservationsInfo(sessionIds, user);
-        userService.updateUserInfo(userInfo);
+            PaymentCancelRequestDto cancelRequestDto = PaymentCancelRequestDto.builder()
+                    .tid(tid)
+                    .cancelAmount(response.getAmount().getTotal())
+                    .cancelTaxFreeAmount(response.getAmount().getTax_free())
+                    .build();
 
+            kakaoPayService.cancelKakaoPayment(cancelRequestDto);
+            throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
+        }
         return ResponseEntity.ok(response);
     }
 
-    private void savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, Boolean isOnline) {
+    private Payment savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.create(
                 user,
                 sessionInfo,
-                responseDto.getAmount().getTotalAmount(),
+                tid,
+                responseDto.getAmount().getTotal(),
                 isOnline
         );
 
-        paymentRepository.save(payment);
+        return paymentRepository.save(payment);
     }
 
     private void saveReservationsInfo(List<Long> sessionIds, User user) {

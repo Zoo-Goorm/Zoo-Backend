@@ -1,26 +1,24 @@
 package zoo.insightnote.domain.payment.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayCancelResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +85,26 @@ public class KakaoPayService {
         }
     }
 
+    public KakaoPayCancelResponseDto cancelKakaoPayment(PaymentCancelRequestDto requestDto) {
+        HttpEntity<String> paymentCancelHttpEntity = createPaymentCancelHttpEntity(requestDto, requestDto.getTid());
+
+        try {
+            ResponseEntity<KakaoPayCancelResponseDto> response = restTemplate.exchange(
+                    "https://open-api.kakaopay.com/online/v1/payment/cancel",
+                    HttpMethod.POST,
+                    paymentCancelHttpEntity,
+                    KakaoPayCancelResponseDto.class
+            );
+
+            log.info("✅ 카카오페이 결제 취소 성공");
+
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("❌ 카카오페이 결제 취소 실패", e);
+            throw new CustomException(ErrorCode.KAKAO_PAY_CANCEL_FAILED);
+        }
+    }
+
     private HttpEntity<String> createKakaoHttpEntity(Map<String, Object> params) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
@@ -100,8 +118,6 @@ public class KakaoPayService {
             throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);
         }
     }
-
-
 
     private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentRequestReadyDto requestDto, Long orderId) {
         HttpHeaders headers = new HttpHeaders();
@@ -135,6 +151,20 @@ public class KakaoPayService {
         params.put("partner_order_id", requestDto.getOrderId());
         params.put("partner_user_id", requestDto.getUserId());
         params.put("pg_token", requestDto.getPgToken());
+
+        return createKakaoHttpEntity(params);
+    }
+
+    private HttpEntity<String> createPaymentCancelHttpEntity(PaymentCancelRequestDto requestDto, String tid) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "SECRET_KEY " + adminKey);
+        headers.set("Content-Type", "application/json");
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("cid", cid);
+        params.put("tid", tid);
+        params.put("cancel_amount", requestDto.getCancelAmount());
+        params.put("cancel_tax_free_amount", requestDto.getCancelTaxFreeAmount());
 
         return createKakaoHttpEntity(params);
     }

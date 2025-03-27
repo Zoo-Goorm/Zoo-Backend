@@ -59,11 +59,6 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public PaymentUserInfoResponseDto getPaymentUserInfo(String username) {
         User user = findByUsername(username);
 
@@ -76,9 +71,7 @@ public class UserService {
         return response;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateUserInfo(UserInfoDto userInfo) {
-        User user = findUserByEmail(userInfo.getEmail());
+    public void updateUserInfo(UserInfoDto userInfo, User user) {
         user.update(
                 userInfo.getName(),
                 userInfo.getPhoneNumber(),
@@ -86,6 +79,7 @@ public class UserService {
                 userInfo.getOccupation(),       // 직군
                 userInfo.getInterestCategory()
         );
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
