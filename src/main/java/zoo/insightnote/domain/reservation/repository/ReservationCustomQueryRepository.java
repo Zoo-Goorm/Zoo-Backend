@@ -22,7 +22,6 @@ import java.util.*;
 @Slf4j
 public class ReservationCustomQueryRepository {
     private final JPAQueryFactory queryFactory;
-    private final SpeakerService speakerService;
 
     public List<Tuple> findUserReservationInfo(String username) {
         QReservation reservation = QReservation.reservation;
