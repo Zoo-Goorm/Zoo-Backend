@@ -21,7 +21,9 @@ public class UserTicketInfoResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class reservationSessions {
-        private String timeRange;
         private Long sessionId;
+        private String sessionName;
+        private String speakerName;
+        private String timeRange;
     }
 }

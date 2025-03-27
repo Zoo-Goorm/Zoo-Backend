@@ -10,6 +10,8 @@ import zoo.insightnote.domain.event.entity.QEvent;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 import zoo.insightnote.domain.reservation.entity.QReservation;
 import zoo.insightnote.domain.session.entity.QSession;
+import zoo.insightnote.domain.speaker.entity.QSpeaker;
+import zoo.insightnote.domain.speaker.service.SpeakerService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -20,20 +22,25 @@ import java.util.*;
 @Slf4j
 public class ReservationCustomQueryRepository {
     private final JPAQueryFactory queryFactory;
+    private final SpeakerService speakerService;
 
     public List<Tuple> findUserReservationInfo(String username) {
         QReservation reservation = QReservation.reservation;
         QSession session = QSession.session;
+        QSpeaker speaker = QSpeaker.speaker;
 
         return queryFactory
                 .select(
                         session.id,
                         session.startTime,
                         session.endTime,
-                        session.eventDay
+                        session.eventDay,
+                        session.name,
+                        speaker.name
                 )
                 .from(reservation)
                 .join(reservation.session, session)
+                .join(session.speaker, speaker)
                 .where(reservation.user.username.eq(username))
                 .fetch();
     }
@@ -52,6 +59,7 @@ public class ReservationCustomQueryRepository {
 
     public UserTicketInfoResponseDto processUserTicketInfo(String username) {
         QSession session = QSession.session;
+        QSpeaker speaker = QSpeaker.speaker;
 
         // 1️⃣ 유저가 신청한 세션 정보 조회
         List<Tuple> reservationSessions = findUserReservationInfo(username);
@@ -63,14 +71,16 @@ public class ReservationCustomQueryRepository {
         Set<String> userReservedDates = new HashSet<>();
 
         for (Tuple row : reservationSessions) {
+            Long sessionId = row.get(session.id);
+            String sessionName = row.get(session.name);
+            String speakerName = row.get(speaker.name);
             String eventDay = row.get(session.eventDay).format(DateTimeFormatter.ofPattern("M월 d일"));
             String timeRange = row.get(session.startTime).format(DateTimeFormatter.ofPattern("HH:mm"))
                     + "~" + row.get(session.endTime).format(DateTimeFormatter.ofPattern("HH:mm"));
-            Long sessionId = row.get(session.id);
 
             // 날짜별 세션 등록
             registeredSessions.computeIfAbsent(eventDay, k -> new ArrayList<>()).add(
-                    new UserTicketInfoResponseDto.reservationSessions(timeRange, sessionId)
+                    new UserTicketInfoResponseDto.reservationSessions(sessionId, sessionName, speakerName, timeRange)
             );
 
             // 유저가 등록한 날짜 저장
@@ -94,6 +104,4 @@ public class ReservationCustomQueryRepository {
                 .registeredSessions(registeredSessions)
                 .build();
     }
-
-
 }
