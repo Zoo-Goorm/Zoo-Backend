@@ -17,6 +17,8 @@ import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
+import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.QInsight;
@@ -25,6 +27,7 @@ import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import zoo.insightnote.domain.user.entity.QUser;
 import zoo.insightnote.domain.user.entity.User;
+import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
 import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 import zoo.insightnote.domain.voteOption.entity.QVoteOption;
 import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
@@ -210,7 +213,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId , Long userId ) {
+    public Optional<InsightDetailQuery> findByIdWithSessionAndUser(Long insightId , Long userId ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QUser user = QUser.user;
@@ -238,22 +241,22 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .groupBy(voteOption.id)
                 .fetch();
 
-        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
+        List<InsightVoteOption> voteOptions = voteResults.stream()
                 .map(tuple -> {
                     Long voteCount = tuple.get(voteResponse.id.count());
                     double percentage = (voteCount == null ? 0 : (voteCount * 100.0 / totalVotes));
-                    return new InsightResponseDto.VoteOptionDto(
-                            tuple.get(voteOption.id),
-                            tuple.get(voteOption.optionText),
-                            String.format("%.1f%%", percentage)// 퍼센트 변환
+                    return new InsightVoteOption(
+                            tuple.get(voteOption.id), // ID
+                            tuple.get(voteOption.optionText), // 옵션 텍스트
+                            String.format("%.1f%%", percentage) // 퍼센트 형식
                     );
                 })
                 .collect(Collectors.toList());
 
         // 2. 인사이트 상세 정보 조회
-        InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory
+        InsightDetailQuery insightDetail = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightDetailQueryDto.class,
+                        InsightDetailQuery.class,
                         insight.id,
                         insight.memo,
                         insight.voteTitle,

@@ -12,12 +12,15 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
+import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
+import zoo.insightnote.domain.insight.mapper.InsightDetailMapper;
 import zoo.insightnote.domain.insight.mapper.InsightListMapper;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
@@ -218,13 +221,13 @@ public class InsightService {
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightDetailPageRes getInsightDetail(Long insightId , String username) {
+    public InsightDetailResponse getInsightDetail(Long insightId , String username) {
 
         User user = userService.findByUsername(username);
-        InsightResponseDto.InsightDetailQueryDto insightDto = insightRepository.findByIdWithSessionAndUser(insightId,user.getId())
+        InsightDetailQuery insightDto = insightRepository.findByIdWithSessionAndUser(insightId,user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
-        return InsightMapper.toDetailPageResponse(insightDto);
+        return InsightDetailMapper.toDetailPageResponse(insightDto);
     }
 
     @Transactional(readOnly = true)

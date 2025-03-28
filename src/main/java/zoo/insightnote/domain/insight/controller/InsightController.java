@@ -15,6 +15,7 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
+import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
@@ -218,7 +219,7 @@ public interface InsightController {
             )
     })
     @GetMapping("/{insightId}")
-    ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
+    ResponseEntity<InsightDetailResponse> getInsightDetail(
             @Parameter(description = "상세 정보를 조회할 인사이트 ID", example = "1") @PathVariable Long insightId,
             @AuthenticationPrincipal UserDetails userDetails
     );

@@ -3,6 +3,7 @@ package zoo.insightnote.domain.insight.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
@@ -19,7 +20,7 @@ public interface InsightQueryRepository {
 //    Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(LocalDate eventDay, Pageable pageable);
     Page<InsightListQuery> findInsightsByEventDay(LocalDate eventDay, Long sessionId, String sortCondition, Pageable pageable , Long userId);
 
-    Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId, Long userId);
+    Optional<InsightDetailQuery> findByIdWithSessionAndUser(Long insightId, Long userId);
 
     Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(Long sessionId, String sortCondition, Pageable pageable , Long currentUserId);
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
+import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
@@ -106,11 +107,11 @@ public class InsightControllerImpl implements InsightController{
     // 인사이트 상세 페이지
     @Override
     @GetMapping("/insights/{insightId}")
-    public ResponseEntity<InsightResponseDto.InsightDetailPageRes> getInsightDetail(
+    public ResponseEntity<InsightDetailResponse> getInsightDetail(
             @PathVariable Long insightId,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        InsightResponseDto.InsightDetailPageRes insightDetail = insightService.getInsightDetail(insightId,userDetails.getUsername());
+        InsightDetailResponse insightDetail = insightService.getInsightDetail(insightId,userDetails.getUsername());
         return ResponseEntity.ok(insightDetail);
     }
 

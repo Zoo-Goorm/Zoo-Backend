@@ -32,7 +32,7 @@ public class InsightListMapper {
 
     public static List<InsightChangeCategory> makeInsightList(List<InsightListQuery> insightDtos) {
         return insightDtos.stream()
-                .map(InsightListMapper::toBuildInsight) // InsightListQuery를 InsightList로 변환
+                .map(InsightListMapper::toBuildInsight)
                 .collect(Collectors.toList());
     }
 
@@ -47,7 +47,7 @@ public class InsightListMapper {
                 .totalPages(page.getTotalPages())
                 .pageNumber(pageNumber)
                 .pageSize(pageSize)
-                .content(makeInsightList(page.getContent()))  // List<InsightList> 반환
+                .content(makeInsightList(page.getContent()))
                 .build();
     }
 
@@ -56,6 +56,6 @@ public class InsightListMapper {
         if (interestCategory != null && !interestCategory.isEmpty()) {
             return List.of(interestCategory.split("\\s*,\\s*"));
         }
-        return List.of();  // 빈 리스트 반환
+        return List.of();
     }
 }
