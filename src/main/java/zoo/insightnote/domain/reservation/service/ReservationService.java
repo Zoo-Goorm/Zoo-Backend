@@ -34,6 +34,12 @@ public class ReservationService {
         return userTicketInfo;
     }
 
+    @Transactional
+    public void cancelAndAddSession(Long cancelSessionId, Long addSessionId, String username) {
+        cancelSession(cancelSessionId, username);
+        addSession(addSessionId, username);
+    }
+
     public void addSession(Long sessionId, String username) {
         // 유저가 예약한 세션의 리스트
         List<Long> sessionIds = reservationRepository.findSessionIdsByUsername(username);
@@ -78,4 +84,19 @@ public class ReservationService {
         cancelSession(cancelSessionId, username);
         addSession(addSessionId, username);
     }
+    public void saveReservationsInfo(List<Long> sessionIds, User user) {
+        for (Long sessionId : sessionIds) {
+            Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
+
+            Reservation savedReservation = Reservation.create(
+                    user,
+                    sessionInfo,
+                    false
+            );
+
+            reservationRepository.save(savedReservation);
+        }
+    }
+
+
 }
