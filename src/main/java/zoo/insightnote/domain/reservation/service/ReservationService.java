@@ -79,14 +79,10 @@ public class ReservationService {
         reservationRepository.delete(reservedSession);
     }
 
-    @Transactional
-    public void cancelAndAddSession(Long cancelSessionId, Long addSessionId, String username) {
-        cancelSession(cancelSessionId, username);
-        addSession(addSessionId, username);
-    }
     public void saveReservationsInfo(List<Long> sessionIds, User user) {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
+            sessionInfo.increaseParticipantCount();
 
             Reservation savedReservation = Reservation.create(
                     user,
