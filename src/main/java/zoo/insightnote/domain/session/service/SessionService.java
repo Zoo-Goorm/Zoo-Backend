@@ -12,10 +12,13 @@ import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
+import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.mapper.SessionCreateMapper;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
+import zoo.insightnote.domain.session.mapper.SessionUpdateMapper;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.service.SessionKeywordService;
@@ -40,27 +43,6 @@ public class SessionService {
     private final KeywordService keywordService;
 
 
-//    @Transactional
-//    public SessionResponseDto.SessionRes createSession(SessionRequestDto.Create request) {
-//
-//        Event event = eventService.findById(request.getEventId());
-//
-//        Speaker speaker = speakerService.findById(request.getSpeakerId());
-//
-//        Session session = SessionMapper.toEntity(request, event, speaker);
-//
-//        Session savedSession = sessionRepository.save(session);
-//
-//        imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.getImages());
-//
-//        List<Keyword> keywords = request.getKeywords().stream()
-//                .map(keywordService::findOrCreateByName)
-//                .toList();
-//        sessionKeywordService.saveSessionKeywords(savedSession, keywords);
-//
-//        return SessionMapper.  toResponse(session, request.getKeywords());
-//    }
-
     @Transactional
     public SessionCreateResponse createSession(SessionCreateRequest request) {
 
@@ -82,21 +64,36 @@ public class SessionService {
 
 
     // 세션 업데이트
+//    @Transactional
+//    public SessionResponseDto.SessionRes updateSession(Long sessionId, SessionRequestDto.Update request) {
+//        Session session = sessionRepository.findById(sessionId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+//        session.update(request);
+//
+//        // 세션 키워드 업데이트 로직 필요함
+//        List<Keyword> newKeywords = request.getKeywords().stream()
+//                .map(keywordService::findOrCreateByName)
+//                .toList();
+//        sessionKeywordService.updateSessionKeywords(session, newKeywords);
+//
+//        imageService.updateImages(new ImageRequest.UploadImages(session.getId(), EntityType.SESSION, request.getImages()));
+//
+//        return SessionMapper.toResponse(session, request.getKeywords());
+//    }
+
     @Transactional
-    public SessionResponseDto.SessionRes updateSession(Long sessionId, SessionRequestDto.Update request) {
+    public SessionUpdateResponse updateSession(Long sessionId, SessionUpdateRequest request) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
         session.update(request);
 
-        // 세션 키워드 업데이트 로직 필요함
         List<Keyword> newKeywords = request.getKeywords().stream()
                 .map(keywordService::findOrCreateByName)
                 .toList();
         sessionKeywordService.updateSessionKeywords(session, newKeywords);
-
         imageService.updateImages(new ImageRequest.UploadImages(session.getId(), EntityType.SESSION, request.getImages()));
 
-        return SessionMapper.toResponse(session, request.getKeywords());
+        return SessionUpdateMapper.toResponse(session, request.getKeywords());
     }
 
     // 세션 삭제

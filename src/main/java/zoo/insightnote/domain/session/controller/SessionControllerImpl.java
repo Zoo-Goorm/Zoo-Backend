@@ -12,7 +12,9 @@ import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
+import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -39,10 +41,10 @@ public class SessionControllerImpl implements SessionController {
 
     @Override
     @PutMapping("/sessions/{sessionId}")
-    public ResponseEntity<SessionResponseDto.SessionRes> updateSession(
+    public ResponseEntity<SessionUpdateResponse> updateSession(
             @PathVariable Long sessionId,
-            @RequestBody SessionRequestDto.Update request) {
-        SessionResponseDto.SessionRes response = sessionService.updateSession(sessionId, request);
+            @RequestBody SessionUpdateRequest request) {
+       SessionUpdateResponse response = sessionService.updateSession(sessionId, request);
         return ResponseEntity.ok(response);
     }
 

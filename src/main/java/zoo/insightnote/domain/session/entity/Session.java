@@ -9,6 +9,7 @@ import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
 @Entity
@@ -73,7 +74,7 @@ public class Session {
                 .build();
     }
 
-    public void update(SessionRequestDto.Update request) {
+    public void update(SessionUpdateRequest request) {
         if (request.getName() != null) this.name = request.getName();
         if (request.getShortDescription() != null) this.shortDescription = request.getShortDescription();
         if (request.getLongDescription() != null) this.longDescription = request.getLongDescription();
