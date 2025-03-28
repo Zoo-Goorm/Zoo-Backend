@@ -16,6 +16,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
 
 import java.time.LocalDate;
@@ -179,7 +180,7 @@ public interface InsightController {
             ),
     })
     @GetMapping("/list")
-    ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
+    ResponseEntity<InsightListResponse> getInsights(
             @Parameter(description = "세션 날짜 (선택)", required = false)
             @RequestParam(value = "eventDay", required = false ) LocalDate eventDay,
 

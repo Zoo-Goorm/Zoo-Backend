@@ -17,6 +17,7 @@ import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
@@ -112,7 +113,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
 
     @Override
-    public Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(
+    public Page<InsightListQuery> findInsightsByEventDay(
             LocalDate eventDay,
             Long sessionId,
             String sort,
@@ -146,9 +147,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .otherwise(user.name);
 
 
-        List<InsightResponseDto.InsightListQueryDto> results = queryFactory
+        List<InsightListQuery> results = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightListQueryDto.class,
+                        InsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -182,7 +183,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         if (userId != null && !results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.InsightListQueryDto::getId)
+                    .map(InsightListQuery::getId)
                     .collect(Collectors.toList());
 
             List<Long> likedInsightIds = queryFactory

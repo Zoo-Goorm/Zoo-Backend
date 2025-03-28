@@ -13,9 +13,12 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
+import zoo.insightnote.domain.insight.mapper.InsightListMapper;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
@@ -168,6 +171,7 @@ public class InsightService {
 //        return InsightMapper.toTopInsightList(topList);
 //    }
 
+    // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
     public List<InsightTopListResponse> getTopPopularInsights(User user) {
         List<InsightTopListQuery> topList = insightRepository.findTopInsights(user.getId());
@@ -177,28 +181,40 @@ public class InsightService {
     }
 
 
+//    // 인사이트 목록
+//    @Transactional(readOnly = true)
+//    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, Long sessionId, String sort, int page, User user) {
+//
+//        int pageSize = 3;  // 한 페이지당 9개
+//        Pageable pageable = PageRequest.of(page, pageSize);
+//        Page<InsightResponseDto.InsightListQueryDto> insightPage =
+//                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable, user.getId());
+//
+//        if (insightPage.isEmpty()) {
+//            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
+//        }
+//
+//        return InsightMapper.toListPageResponse(insightPage, page, pageSize);
+//    }
+
 
     @Transactional(readOnly = true)
-    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(
-            LocalDate eventDay,
-            Long sessionId,
-            String sort,
-            int page,
-            String username
-    ) {
+    public InsightListResponse getInsightsByEventDay(LocalDate eventDay, Long sessionId, String sort, int page, User user) {
+
         int pageSize = 3;  // 한 페이지당 9개
         Pageable pageable = PageRequest.of(page, pageSize);
-
-        User user = userService.findByUsername(username);
-        Page<InsightResponseDto.InsightListQueryDto> insightPage =
+        Page<InsightListQuery> insightPage =
                 insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable, user.getId());
 
         if (insightPage.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
         }
 
-        return InsightMapper.toListPageResponse(insightPage, page, pageSize);
+        return InsightListMapper.toListPageResponse(insightPage, page, pageSize);
     }
+
+
+
 
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)

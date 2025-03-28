@@ -12,6 +12,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
+import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
 import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
@@ -89,7 +90,7 @@ public class InsightControllerImpl implements InsightController{
     // 인사이트 목록 조회
     @Override
     @GetMapping("/insights/list")
-    public ResponseEntity<InsightResponseDto.InsightListPageRes> getInsights(
+    public ResponseEntity<InsightListResponse> getInsights(
             @Parameter(description = "세션 날짜 (선택)", required = false)
             @RequestParam(value ="eventDay",  required = false) LocalDate eventDay,
             @RequestParam(value = "sessionId", required = false) Long sessionId,
@@ -97,7 +98,8 @@ public class InsightControllerImpl implements InsightController{
             @RequestParam(value = "page", defaultValue = "0") int page,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        InsightResponseDto.InsightListPageRes insights = insightService.getInsightsByEventDay(eventDay, sessionId, sort, page ,userDetails.getUsername());
+        User user = userService.findByUsername(userDetails.getUsername());
+        InsightListResponse insights = insightService.getInsightsByEventDay(eventDay, sessionId, sort, page ,user);
         return ResponseEntity.ok(insights);
     }
 
