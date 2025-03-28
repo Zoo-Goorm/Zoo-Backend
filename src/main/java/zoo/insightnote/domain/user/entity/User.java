@@ -23,7 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String username;
 
     private String name;
@@ -76,6 +76,12 @@ public class User {
         if (isChanged(this.job, job)) this.job = job;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
         if (isChanged(this.snsUrl, snsUrl)) this.snsUrl = snsUrl;
+    }
+
+    public void anonymizeUserData() {
+        this.username = null;
+        this.name = "알 수 없음";
+        this.nickname = "알 수 없음";
     }
 
     private boolean isChanged(Object currentValue, Object newValue) {
