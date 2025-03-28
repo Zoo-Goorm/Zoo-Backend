@@ -8,20 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
-import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.*;
-import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
-import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
-import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
-import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
+import zoo.insightnote.domain.insight.dto.response.query.*;
 import zoo.insightnote.domain.insight.entity.Insight;
-import zoo.insightnote.domain.insight.mapper.InsightDetailMapper;
-import zoo.insightnote.domain.insight.mapper.InsightListMapper;
-import zoo.insightnote.domain.insight.mapper.InsightMapper;
-import zoo.insightnote.domain.insight.mapper.SessionInsightListMapper;
+import zoo.insightnote.domain.insight.mapper.*;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -37,8 +30,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static zoo.insightnote.domain.insight.entity.QInsight.insight;
 
 @Service
 @RequiredArgsConstructor
@@ -71,24 +62,13 @@ public class InsightService {
                 .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
         if (!insight.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.NO_EDIT_PERMISSION); // 예외 코드는 상황에 맞게 설정
+            throw new CustomException(ErrorCode.NO_EDIT_PERMISSION);
         }
 
         insight.updateIfChanged(request);
 
         return new InsightIdResponse(insight.getId());
     }
-
-//    // 특정 세션의 인사이트 목록
-//    @Transactional(readOnly = true)
-//    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
-//
-//        User user = userService.findByUsername(userName);
-//
-//        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable, user.getId());
-//
-//        return InsightMapper.toSessionInsightPageResponse(insightPage, pageable.getPageNumber(), pageable.getPageSize());
-//    }
 
     // 특정 세션의 인사이트 목록
     @Transactional(readOnly = true)
@@ -102,18 +82,6 @@ public class InsightService {
     }
 
 
-
-//    @Transactional
-//    public InsightResponseDto.InsightIdRes updateInsightMemoOnly(Long insightId, String updatedMemo) {
-//        Insight insight = insightRepository.findById(insightId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
-//
-//        insight.updateMemoOnly(updatedMemo);
-//        return InsightMapper.toResponse(insight);
-//    }
-
-
-
     @Transactional
     public void saveVoteOptions(Insight insight, List<String> voteOptionTexts) {
         List<VoteOption> voteOptions = voteOptionTexts.stream()
@@ -122,18 +90,6 @@ public class InsightService {
 
         voteOptionRepository.saveAll(voteOptions);
     }
-
-//    @Transactional
-//    public InsightResponseDto.InsightRes updateInsight(Long insightId, InsightRequestDto.UpdateDto request) {
-//        Insight insight = insightRepository.findById(insightId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
-//
-//        insight.updateIfChanged(request.getMemo(), request.getIsPublic(), request.getIsAnonymous(),request.getIsDraft(), request.getVoteTitle());
-//
-//        imageService.updateImages(new ImageRequest.UploadImages(insight.getId(), EntityType.INSIGHT, request.getImages()));
-//
-//        return InsightMapper.toResponse(insight);
-//    }
 
     @Transactional
     public void deleteInsight(Long insightId, User user) {
@@ -179,14 +135,6 @@ public class InsightService {
     }
 
     // 인기순위 상위 3개 가져오기
-//    @Transactional(readOnly = true)
-//    public List<InsightResponseDto.InsightTopRes> getTopPopularInsights(String username) {
-//        User user = userService.findByUsername(username);
-//        List<InsightResponseDto.InsightTopListQueryDto> topList = insightRepository.findTopInsights(user.getId());
-//        return InsightMapper.toTopInsightList(topList);
-//    }
-
-    // 인기순위 상위 3개 가져오기
     @Transactional(readOnly = true)
     public List<InsightTopListResponse> getTopPopularInsights(User user) {
         List<InsightTopListQuery> topList = insightRepository.findTopInsights(user.getId());
@@ -195,24 +143,7 @@ public class InsightService {
                 .collect(Collectors.toList());
     }
 
-
-//    // 인사이트 목록
-//    @Transactional(readOnly = true)
-//    public InsightResponseDto.InsightListPageRes getInsightsByEventDay(LocalDate eventDay, Long sessionId, String sort, int page, User user) {
-//
-//        int pageSize = 3;  // 한 페이지당 9개
-//        Pageable pageable = PageRequest.of(page, pageSize);
-//        Page<InsightResponseDto.InsightListQueryDto> insightPage =
-//                insightRepository.findInsightsByEventDay(eventDay, sessionId, sort, pageable, user.getId());
-//
-//        if (insightPage.isEmpty()) {
-//            throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
-//        }
-//
-//        return InsightMapper.toListPageResponse(insightPage, page, pageSize);
-//    }
-
-
+    // 인사이트 목록
     @Transactional(readOnly = true)
     public InsightListResponse getInsightsByEventDay(LocalDate eventDay, Long sessionId, String sort, int page, User user) {
 
@@ -229,8 +160,6 @@ public class InsightService {
     }
 
 
-
-
     // 인사이트 상세 페이지
     @Transactional(readOnly = true)
     public InsightDetailResponse getInsightDetail(Long insightId , String username) {
@@ -242,25 +171,20 @@ public class InsightService {
         return InsightDetailMapper.toDetailPageResponse(insightDto);
     }
 
+    //마이페이지 인사이트 목록
     @Transactional(readOnly = true)
-    public InsightResponseDto.MyInsightListPageRes getMyInsights(
+    public MyInsightListResponse getMyInsights(
             String username,
             LocalDate eventDay,
             Long sessionId,
             Pageable pageable
     ) {
-
-        // 기존에는 DTO를 직접 반환했지만, 이제는 Page로 받아서 Mapper로 변환
-        Page<InsightResponseDto.MyInsightListQueryDto> myInsightList =
-                insightRepository.findMyInsights(username, eventDay, sessionId, pageable);
-
+        Page<MyInsightListQuery> myInsightList = insightRepository.findMyInsights(username, eventDay, sessionId, pageable);
         if (myInsightList.isEmpty()) {
             throw new CustomException(ErrorCode.INSIGHT_NOT_FOUND);
         }
 
-
-        return InsightMapper.toMyListPageResponse(myInsightList, pageable.getPageNumber(), pageable.getPageSize()
-        );
+        return MyInsightListMapper.toMyListPageResponse(myInsightList, pageable.getPageNumber(), pageable.getPageSize());
     }
 
 }

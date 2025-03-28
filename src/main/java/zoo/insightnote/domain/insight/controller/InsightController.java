@@ -306,7 +306,7 @@ public interface InsightController {
             )
     })
     @GetMapping("/my/insights")
-    ResponseEntity<InsightResponseDto.MyInsightListPageRes> getMyInsights(
+    ResponseEntity<MyInsightListResponse> getMyInsights(
             @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
 
             @Parameter(description = "세션 날짜 (예: 2025-04-04)", example = "2025-04-04")

@@ -129,7 +129,7 @@ public class InsightControllerImpl implements InsightController{
 
     @Override
     @GetMapping("/my/insights")
-    public ResponseEntity<InsightResponseDto.MyInsightListPageRes> getMyInsights(
+    public ResponseEntity<MyInsightListResponse> getMyInsights(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) LocalDate eventDay,
             @RequestParam(required = false) Long sessionId,
@@ -137,7 +137,7 @@ public class InsightControllerImpl implements InsightController{
             @RequestParam(defaultValue = "5") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        InsightResponseDto.MyInsightListPageRes response = insightService.getMyInsights(userDetails.getUsername(), eventDay, sessionId, pageable);
+        MyInsightListResponse response = insightService.getMyInsights(userDetails.getUsername(), eventDay, sessionId, pageable);
         return ResponseEntity.ok(response);
     }
 }

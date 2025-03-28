@@ -18,10 +18,7 @@ import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
-import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
-import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
-import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
-import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
+import zoo.insightnote.domain.insight.dto.response.query.*;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
@@ -397,7 +394,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
 
-    public Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(
+    public Page<MyInsightListQuery> findMyInsights(
             String username,
             LocalDate eventDay,
             Long sessionId,
@@ -423,9 +420,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 //                ? insight.id.desc() // 임시 정렬 (likes 기준 정렬이 필요하다면 별도 countJoin 필요)
 //                : insight.updatedAt.desc();
 
-        List<InsightResponseDto.MyInsightListQueryDto> content = queryFactory
+        List<MyInsightListQuery> content = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.MyInsightListQueryDto.class,
+                        MyInsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
