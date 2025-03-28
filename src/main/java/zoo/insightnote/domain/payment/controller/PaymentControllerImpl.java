@@ -19,7 +19,6 @@ import zoo.insightnote.domain.user.service.UserService;
 @RequestMapping("/api/v1/payment")
 @RequiredArgsConstructor
 public class PaymentControllerImpl implements PaymentController {
-    private final KakaoPayService kakaoPayService;
     private final PaymentService paymentService;
     private final UserService userService;
 
@@ -29,7 +28,7 @@ public class PaymentControllerImpl implements PaymentController {
             @RequestBody @Valid PaymentRequestReadyDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findByUsername(userDetails.getUsername());
-        return kakaoPayService.requestKakaoPayment(requestDto, user);
+        return paymentService.requestPayment(requestDto, user);
     }
 
     // 카카오페이 API에서 결제 요청 승인

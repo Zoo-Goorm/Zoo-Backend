@@ -36,9 +36,7 @@ public class KakaoPayService {
     private String adminKey;
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto, User user) {
-        Long orderId = createOrderId();
-
+    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto, User user, Long orderId) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, user, orderId);
 
         try {
@@ -167,10 +165,5 @@ public class KakaoPayService {
         params.put("cancel_tax_free_amount", requestDto.getCancelTaxFreeAmount());
 
         return createKakaoHttpEntity(params);
-    }
-
-    private Long createOrderId() {
-        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
-        return orderId;
     }
 }

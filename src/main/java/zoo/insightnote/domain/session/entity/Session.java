@@ -83,4 +83,8 @@ public class Session {
         if (request.getVideoLink() != null) this.videoLink = request.getVideoLink();
         if (request.getLocation() != null) this.location = request.getLocation();
     }
+
+    public void increaseParticipantCount() {
+        this.participantCount++;
+    }
 }

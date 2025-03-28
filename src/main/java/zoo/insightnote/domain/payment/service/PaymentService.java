@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
-import zoo.insightnote.domain.reservation.entity.Reservation;
-import zoo.insightnote.domain.reservation.repository.ReservationRepository;
+import zoo.insightnote.domain.reservation.service.ReservationService;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
@@ -21,6 +22,7 @@ import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +32,17 @@ public class PaymentService {
     private final KakaoPayService kakaoPayService;
     private final UserService userService;
     private final SessionService sessionService;
-    private final PaymentRepository paymentRepository;
-    private final ReservationRepository reservationRepository;
     private final PaymentRedisService paymentRedisService;
+    private final ReservationService reservationService;
+    private final PaymentRepository paymentRepository;
+
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto request, User user) {
+        Long orderId = createOrderId();
+        sessionService.validationParticipantCountOver(request.getSessionIds());
+        sessionService.validateSessionTime(request.getSessionIds());
+        reservationService.validateReservedSession(user, request.getSessionIds());
+        return kakaoPayService.requestKakaoPayment(request, user, orderId);
+    }
 
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
@@ -44,7 +54,7 @@ public class PaymentService {
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
             savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
-            saveReservationsInfo(sessionIds, user);
+            reservationService.saveReservationsInfo(sessionIds, user);
             userService.updateUserInfo(userInfo, user);
         } catch (Exception e) {
             log.error("❌ 결제 후 내부 로직 실패 → 카카오페이 결제 취소");
@@ -75,17 +85,8 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    private void saveReservationsInfo(List<Long> sessionIds, User user) {
-        for (Long sessionId : sessionIds) {
-            Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
-
-            Reservation savedReservation = Reservation.create(
-                    user,
-                    sessionInfo,
-                    false
-            );
-
-            reservationRepository.save(savedReservation);
-        }
+    private Long createOrderId() {
+        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
+        return orderId;
     }
 }
