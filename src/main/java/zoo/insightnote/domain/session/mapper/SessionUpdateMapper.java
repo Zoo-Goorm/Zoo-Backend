@@ -1,7 +1,5 @@
 package zoo.insightnote.domain.session.mapper;
 
-import zoo.insightnote.domain.session.dto.SessionResponseDto;
-import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 import zoo.insightnote.domain.session.entity.Session;
 

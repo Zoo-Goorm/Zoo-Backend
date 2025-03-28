@@ -10,19 +10,15 @@ import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.keyword.entity.Keyword;
 import zoo.insightnote.domain.keyword.service.KeywordService;
-import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
-import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
-import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListResponse;
-import zoo.insightnote.domain.session.dto.response.SessionTimeWithListResponse;
-import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
+import zoo.insightnote.domain.session.dto.response.*;
+import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
 import zoo.insightnote.domain.session.entity.Session;
-import zoo.insightnote.domain.session.mapper.SessionCreateMapper;
-import zoo.insightnote.domain.session.mapper.SessionMapper;
-import zoo.insightnote.domain.session.mapper.SessionSplitTimeRangeListMapper;
-import zoo.insightnote.domain.session.mapper.SessionUpdateMapper;
+import zoo.insightnote.domain.session.mapper.*;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.sessionKeyword.service.SessionKeywordService;
@@ -119,19 +115,34 @@ public class SessionService {
 //        return sessionQueryRepository.findAllSessionsWithKeywords();
 //    }
 
-    // 세션 목록 일반 페이지 (이미지 제외)
+//    // 세션 목록 일반 페이지 (이미지 제외)
+//    @Transactional(readOnly = true)
+//    public SessionTimeWithAllListResponse getAllSessions() {
+//        List<Tuple> results = sessionQueryRepository.findAllSessionsWithKeywords();
+//        return SessionListMapper.processResultsForSessionAllRes(results);
+//    }
+//
+//
+//    // 2. 세션 목록 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
+//    @Transactional(readOnly = true)
+//    public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
+//        return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
+//    }
+
+
     @Transactional(readOnly = true)
-    public SessionTimeWithAllListResponse getAllSessions() {
+    public SessionTimeWithAllListGenericResponse<SessionDetailResponse> getAllSessions() {
         List<Tuple> results = sessionQueryRepository.findAllSessionsWithKeywords();
-        return SessionSplitTimeRangeListMapper.processResultsForSessionAllRes(results);
+        return SessionListMapper.toResponse(results);
     }
 
-
-    // 2. 세션 목록 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
     @Transactional(readOnly = true)
-    public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
-        return sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
+    public SessionTimeWithAllListGenericResponse<SessionDetaileWithImageAndCountResponse> getAllSessionsWithDetails() {
+        List<Tuple> results = sessionQueryRepository.findAllSessionsWithDetails(EntityType.SPEAKER);
+        return SessionListWithImageMapper.toResponse(results);
     }
+
+
 
     @Transactional(readOnly = true)
     public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {

@@ -1,5 +1,4 @@
-package zoo.insightnote.domain.session.dto.response;
-
+package zoo.insightnote.domain.session.dto.response.query;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @Builder
-public class SessionDetailResponse {
+public class SessionDetaileWithImageAndCountResponse {
     private Long id;
     private String name;
     private String shortDescription;
@@ -17,5 +16,9 @@ public class SessionDetailResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String timeRange;
+    private Integer participantCount;
+    private Integer maxCapacity;
     private Set<String> keywords;
+    private String speakerImageUrl; // 연사 이미지
+    private String speakerName;
 }

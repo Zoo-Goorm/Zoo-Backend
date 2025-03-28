@@ -60,7 +60,7 @@ public class SessionCustomQueryRepository {
 
 
     // 세션 참가 페이지
-    public Map<String, List<SessionResponseDto.SessionDetailedRes>> findAllSessionsWithDetails(EntityType entityType) {
+    public List<Tuple> findAllSessionsWithDetails(EntityType entityType) {
         QSession session = QSession.session;
         QSpeaker speaker = QSpeaker.speaker;
         QImage image = QImage.image;
@@ -70,34 +70,31 @@ public class SessionCustomQueryRepository {
         Expression<String> keywordConcat = Expressions.stringTemplate(
                 "function('group_concat', distinct {0})", keyword.name);
 
-        List<Tuple> results = queryFactory
+
+        return queryFactory
                 .select(
                         session.id,
                         session.name,
+                        keywordConcat,
                         session.shortDescription,
-                        session.maxCapacity,
-                        session.participantCount,
                         session.location,
-                        session.videoLink,
-                        speaker.name,
-                        image.fileUrl,
                         session.startTime,
                         session.endTime,
-                        session.status,
-                        keywordConcat
+                        session.participantCount,
+                        session.maxCapacity,
+                        speaker.name,
+                        image.fileUrl
                 )
                 .from(session)
                 .join(session.speaker, speaker)
                 .leftJoin(image).on(image.entityId.eq(speaker.id).and(image.entityType.eq(entityType)))
                 .leftJoin(sessionKeyword).on(sessionKeyword.session.eq(session))
                 .leftJoin(sessionKeyword.keyword, keyword)
-                .groupBy(session.id, session.name, session.shortDescription, session.maxCapacity,
-                        session.participantCount, session.location, speaker.name, image.fileUrl,
-                        session.startTime, session.endTime, session.status)
+                .groupBy(session.id, session.name, session.shortDescription, session.location,
+                        session.startTime, session.endTime, session.participantCount,
+                        session.maxCapacity, speaker.name, image.fileUrl)
                 .orderBy(session.id.asc())
                 .fetch();
-
-        return processResultsForSessionDetailedRes(results);
     }
 
     private Map<String, List<SessionResponseDto.SessionAllRes>> processResultsForSessionAllRes(List<Tuple> results) {

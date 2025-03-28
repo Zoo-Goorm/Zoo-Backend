@@ -6,20 +6,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.insight.dto.InsightResponseDto;
-import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
-import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
-import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListResponse;
-import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
-
-import java.util.List;
-import java.util.Map;
+import zoo.insightnote.domain.session.dto.response.*;
+import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
 
 @Tag(name = "SESSION", description = "세션 관련 API")
 @RequestMapping("/api/v1")
@@ -69,7 +63,7 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/sessions")
-    ResponseEntity<SessionTimeWithAllListResponse> getAllSessions();
+    ResponseEntity<SessionTimeWithAllListGenericResponse<SessionDetailResponse>> getAllSessions();
 
     @Operation(summary = "세션 상세 조회", description = "연사 이미지, 인원수, 키워드 포함 세션 조회")
     @ApiResponses(value = {
@@ -77,7 +71,7 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/sessions/detailed")
-    ResponseEntity<Map<String, List<SessionResponseDto.SessionDetailedRes>>> getAllSessionsWithDetails();
+    ResponseEntity<SessionTimeWithAllListGenericResponse<SessionDetaileWithImageAndCountResponse>> getAllSessionsWithDetails();
 
     @Operation(summary = "세션 단일 상세 조회", description = "특정 세션 ID로 상세 정보를 조회합니다.")
     @ApiResponses(value = {
