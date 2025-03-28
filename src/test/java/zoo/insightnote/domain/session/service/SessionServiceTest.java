@@ -1,19 +1,13 @@
 package zoo.insightnote.domain.session.service;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.service.EventService;
-import zoo.insightnote.domain.image.dto.ImageRequest;
-import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.image.service.ImageService;
-import zoo.insightnote.domain.session.dto.SessionRequestDto;
-import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -21,12 +15,6 @@ import zoo.insightnote.domain.speaker.entity.Speaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SessionServiceTest {

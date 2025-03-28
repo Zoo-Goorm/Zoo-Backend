@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.insight.dto.InsightRequestDto;
-import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.*;

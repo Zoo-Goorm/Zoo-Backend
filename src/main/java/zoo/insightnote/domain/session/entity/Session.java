@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
-import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.speaker.entity.Speaker;
