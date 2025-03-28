@@ -114,11 +114,6 @@ public class SessionService {
         return SessionMapper.toSessionSpeakerDetailRes(result);
     }
 
-    public Session findSessionByEventId(Long eventId) {
-        return sessionRepository.findByEventId(eventId)
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
-    }
-
     public Session findSessionBySessionId(Long sessionId) {
         return sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
