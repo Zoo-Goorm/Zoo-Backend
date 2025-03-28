@@ -38,6 +38,7 @@ public class PaymentService {
 
     public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto request, User user) {
         Long orderId = createOrderId();
+        sessionService.validationParticipantCountOver(request.getSessionIds());
         sessionService.validateSessionTime(request.getSessionIds());
         reservationService.validateReservedSession(user, request.getSessionIds());
         return kakaoPayService.requestKakaoPayment(request, user, orderId);

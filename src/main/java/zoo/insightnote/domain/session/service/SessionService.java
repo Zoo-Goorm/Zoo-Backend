@@ -139,4 +139,14 @@ public class SessionService {
             }
         }
     }
+
+    public void validationParticipantCountOver(List<Long> sessionIds) {
+        for (Long sessionId : sessionIds) {
+            Session session = findSessionBySessionId(sessionId);
+
+            if (session.getMaxCapacity() <= session.getParticipantCount()) {
+                throw new CustomException(ErrorCode.SESSION_CAPACITY_EXCEEDED);
+            }
+        }
+    }
 }
