@@ -15,10 +15,7 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
-import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -271,7 +268,7 @@ public interface InsightController {
             @ApiResponse(responseCode = "404", description = "세션을 찾을 수 없음"),
     })
     @GetMapping("/{sessionId}/insight-notes")
-    ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+    ResponseEntity<SessionInsightListResponse> getInsightsBySession(
             @Parameter(description = "세션 ID") @PathVariable Long sessionId,
             @Parameter(description = "정렬 조건 (latest | likes)", example = "latest") @RequestParam(defaultValue = "latest") String sort,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,

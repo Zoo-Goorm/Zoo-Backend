@@ -6,6 +6,7 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
+import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
 
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ public interface InsightQueryRepository {
 
     Optional<InsightDetailQuery> findByIdWithSessionAndUser(Long insightId, Long userId);
 
-    Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(Long sessionId, String sortCondition, Pageable pageable , Long currentUserId);
+    Page<SessionInsightListQuery> findInsightsBySessionId(Long sessionId, String sortCondition, Pageable pageable , Long currentUserId);
 
     Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(String username, LocalDate eventDay, Long sessionId, Pageable pageable
     );

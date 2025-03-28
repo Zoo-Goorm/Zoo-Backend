@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
-import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.*;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -118,7 +115,7 @@ public class InsightControllerImpl implements InsightController{
     // 특정 세션의 인사이트 목록 조회
     @Override
     @GetMapping("sessions/{sessionId}/insight-notes")
-    public ResponseEntity<InsightResponseDto.SessionInsightListPageRes> getInsightsBySession(
+    public ResponseEntity<SessionInsightListResponse> getInsightsBySession(
             @PathVariable Long sessionId,
             @RequestParam(defaultValue = "latest") String sort,
             @RequestParam(defaultValue = "0") int page,
@@ -126,7 +123,7 @@ public class InsightControllerImpl implements InsightController{
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        InsightResponseDto.SessionInsightListPageRes response = insightService.getInsightsBySession(sessionId, sort, pageable, userDetails.getUsername());
+        SessionInsightListResponse response = insightService.getInsightsBySession(sessionId, sort, pageable, userDetails.getUsername());
         return ResponseEntity.ok(response);
     }
 

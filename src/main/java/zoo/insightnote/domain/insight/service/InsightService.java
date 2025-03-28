@@ -12,17 +12,16 @@ import zoo.insightnote.domain.insight.dto.InsightRequestDto;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
-import zoo.insightnote.domain.insight.dto.response.InsightDetailResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightIdResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightListResponse;
-import zoo.insightnote.domain.insight.dto.response.InsightTopListResponse;
+import zoo.insightnote.domain.insight.dto.response.*;
 import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
+import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.mapper.InsightDetailMapper;
 import zoo.insightnote.domain.insight.mapper.InsightListMapper;
 import zoo.insightnote.domain.insight.mapper.InsightMapper;
+import zoo.insightnote.domain.insight.mapper.SessionInsightListMapper;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -80,15 +79,28 @@ public class InsightService {
         return new InsightIdResponse(insight.getId());
     }
 
+//    // 특정 세션의 인사이트 목록
+//    @Transactional(readOnly = true)
+//    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
+//
+//        User user = userService.findByUsername(userName);
+//
+//        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable, user.getId());
+//
+//        return InsightMapper.toSessionInsightPageResponse(insightPage, pageable.getPageNumber(), pageable.getPageSize());
+//    }
+
+    // 특정 세션의 인사이트 목록
     @Transactional(readOnly = true)
-    public InsightResponseDto.SessionInsightListPageRes getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
+    public SessionInsightListResponse getInsightsBySession(Long sessionId, String sort, Pageable pageable, String userName) {
 
         User user = userService.findByUsername(userName);
 
-        Page<InsightResponseDto.SessionInsightListQueryDto> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable, user.getId());
+        Page<SessionInsightListQuery> insightPage = insightRepository.findInsightsBySessionId(sessionId, sort, pageable, user.getId());
 
-        return InsightMapper.toSessionInsightPageResponse(insightPage, pageable.getPageNumber(), pageable.getPageSize());
+        return SessionInsightListMapper.toSessionInsightListResponse(insightPage);
     }
+
 
 
 //    @Transactional

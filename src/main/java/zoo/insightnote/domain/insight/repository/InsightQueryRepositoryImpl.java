@@ -21,6 +21,7 @@ import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
 import zoo.insightnote.domain.insight.dto.response.query.InsightDetailQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightListQuery;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
+import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
@@ -303,7 +304,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(
+    public Page<SessionInsightListQuery> findInsightsBySessionId(
             Long sessionId, String sort, Pageable pageable, Long currentUserId
     ) {
         QInsight insight = QInsight.insight;
@@ -333,9 +334,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        List<InsightResponseDto.SessionInsightListQueryDto> results = queryFactory
+        List<SessionInsightListQuery> results = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.SessionInsightListQueryDto.class,
+                        SessionInsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -361,7 +362,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         //  좋아요 여부 in-query로 최적화 처리
         if (currentUserId != null && !results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .map(SessionInsightListQuery::getId)
                     .toList();
 
             List<Long> likedIds = insightLikeRepository.findInsightIdsByUserIdAndInsightIds(currentUserId, insightIds);
@@ -373,7 +374,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         // 연사 댓글 여부
         if (!results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .map(SessionInsightListQuery::getId)
                     .toList();
 
             List<Long> speakerCommentInsightIds =
