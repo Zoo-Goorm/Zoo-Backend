@@ -1,8 +1,8 @@
 package zoo.insightnote.domain.session.mapper;
 
 import com.querydsl.core.Tuple;
-import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithListGenericResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,7 +1,7 @@
 package zoo.insightnote.domain.session.mapper;
 
 import zoo.insightnote.domain.session.dto.response.query.SessionSpeakerDetailQuery;
-import zoo.insightnote.domain.session.dto.response.query.SessionWithSpeakerDetailResponse;
+import zoo.insightnote.domain.session.dto.response.SessionWithSpeakerDetailResponse;
 
 import java.util.*;
 

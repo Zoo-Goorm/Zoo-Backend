@@ -10,7 +10,6 @@ import zoo.insightnote.domain.image.dto.ImageRequest;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.keyword.entity.Keyword;
 import zoo.insightnote.domain.keyword.service.KeywordService;
-import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.*;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.InsightLike.entity.InsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
-import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
 import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.insight.dto.response.*;
@@ -19,10 +18,7 @@ import zoo.insightnote.domain.insight.repository.InsightRepository;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.repository.SessionRepository;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
-import zoo.insightnote.domain.voteOption.entity.VoteOption;
-import zoo.insightnote.domain.voteOption.repository.VoteOptionRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -38,8 +34,6 @@ public class InsightService {
     private final InsightRepository insightRepository;
     private final InsightLikeRepository insightLikeRepository;
     private final SessionRepository sessionRepository;
-    private final UserRepository userRepository;
-    private final VoteOptionRepository voteOptionRepository;
     private final UserService userService;
 
     @Transactional
@@ -82,14 +76,6 @@ public class InsightService {
     }
 
 
-    @Transactional
-    public void saveVoteOptions(Insight insight, List<String> voteOptionTexts) {
-        List<VoteOption> voteOptions = voteOptionTexts.stream()
-                .map(optionText -> new VoteOption(insight, optionText))
-                .collect(Collectors.toList());
-
-        voteOptionRepository.saveAll(voteOptions);
-    }
 
     @Transactional
     public void deleteInsight(Long insightId, User user) {
@@ -103,12 +89,6 @@ public class InsightService {
         insightRepository.delete(insight);
     }
 
-    @Transactional(readOnly = true)
-    public InsightResponseDto.InsightRes getInsightById(Long insightId) {
-        Insight insight = insightRepository.findById(insightId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
-        return InsightMapper.toResponse(insight);
-    }
 
     @Transactional
     public int toggleLike(User user, Long insightId) {

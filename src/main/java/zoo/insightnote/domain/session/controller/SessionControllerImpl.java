@@ -3,14 +3,13 @@ package zoo.insightnote.domain.session.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.*;
-import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionWithSpeakerDetailResponse;
+import zoo.insightnote.domain.session.dto.response.SessionDetailResponse;
+import zoo.insightnote.domain.session.dto.response.SessionDetaileWithImageAndCountResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.SessionWithSpeakerDetailResponse;
 import zoo.insightnote.domain.session.service.SessionService;
 
 @RestController
