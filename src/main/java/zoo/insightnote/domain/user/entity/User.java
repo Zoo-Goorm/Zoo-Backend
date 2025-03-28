@@ -1,5 +1,7 @@
 package zoo.insightnote.domain.user.entity;
 
+import static zoo.insightnote.domain.user.entity.Role.*;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -43,9 +45,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
-
     private String snsUrl;
 
     public User(String username, String name, String email, Role role) {
@@ -53,6 +52,11 @@ public class User {
         this.name = name;
         this.email = email;
         this.role = role;
+    }
+
+    public void updateUsername(String username) {
+        this.username = username;
+        this.role = USER;
     }
 
     public void update(String email, String name) {

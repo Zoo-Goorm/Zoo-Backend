@@ -41,7 +41,6 @@ public class DummyUserService {
                     .occupation(OCCUPATIONS.get(faker.random().nextInt(OCCUPATIONS.size())))
                     .interestCategory(interests)
                     .role(faker.bool().bool() ? Role.USER : Role.GUEST)
-                    .provider(AuthProvider.GOOGLE)
                     .build();
 
             userRepository.save(user);
