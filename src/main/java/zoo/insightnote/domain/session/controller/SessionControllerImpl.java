@@ -10,6 +10,7 @@ import zoo.insightnote.domain.session.dto.response.*;
 import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
 import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
 import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionWithSpeakerDetailResponse;
 import zoo.insightnote.domain.session.service.SessionService;
 
 @RestController
@@ -43,36 +44,15 @@ public class SessionControllerImpl implements SessionController {
         return ResponseEntity.noContent().build();
     }
 
+
     // 1. 세션 전체 조회 (이미지 제외, 인원수 제외)
-//    @Override
-//    @GetMapping("/sessions")
-//    public ResponseEntity<SessionAllListwithTimeResponse> getAllSessions() {
-//        Map<String, List<SessionResponseDto.SessionAllRes>> response = sessionService.getAllSessions();
-//        return ResponseEntity.ok(response);
-//    }
-
-//    @Override
-//    @GetMapping("/sessions")
-//    public ResponseEntity<SessionTimeWithAllListResponse> getAllSessions() {
-//        SessionTimeWithAllListResponse response = sessionService.getAllSessions();
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    // 2. 세션 전체 조회 (연사 이미지, 인원수 포함)
-//    @Override
-//    @GetMapping("/sessions/detailed")
-//    public ResponseEntity<Map<String, List<SessionResponseDto.SessionDetailedRes>>> getAllSessionsWithDetails() {
-//        Map<String, List<SessionResponseDto.SessionDetailedRes>> response = sessionService.getAllSessionsWithDetails();
-//        return ResponseEntity.ok(response);
-//    }
-
-
     @GetMapping("/sessions")
     public ResponseEntity<SessionTimeWithAllListGenericResponse<SessionDetailResponse>> getAllSessions() {
         SessionTimeWithAllListGenericResponse<SessionDetailResponse> response = sessionService.getAllSessions();
         return ResponseEntity.ok(response);
     }
 
+    // 2. 세션 전체 조회 (이미지 , 인원수 포함)
     @GetMapping("/sessions/detailed")
     public ResponseEntity<SessionTimeWithAllListGenericResponse<SessionDetaileWithImageAndCountResponse>> getAllSessionsWithDetails() {
         SessionTimeWithAllListGenericResponse<SessionDetaileWithImageAndCountResponse> response = sessionService.getAllSessionsWithDetails();
@@ -83,8 +63,8 @@ public class SessionControllerImpl implements SessionController {
     // 세션 단일 상세 조회
     @Override
     @GetMapping("/sessions/{sessionId}")
-    public ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(@PathVariable Long sessionId) {
-        SessionResponseDto.SessionSpeakerDetailRes response = sessionService.getSessionDetails(sessionId);
+    public ResponseEntity<SessionWithSpeakerDetailResponse> getSessionDetails(@PathVariable Long sessionId) {
+        SessionWithSpeakerDetailResponse response = sessionService.getSessionDetails(sessionId);
         return ResponseEntity.ok(response);
     }
 

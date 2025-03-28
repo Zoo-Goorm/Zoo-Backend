@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import zoo.insightnote.domain.career.entity.QCareer;
 import zoo.insightnote.domain.image.entity.EntityType;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
+import zoo.insightnote.domain.session.dto.response.query.SessionSpeakerDetailQuery;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.session.entity.SessionStatus;
 import zoo.insightnote.domain.speaker.entity.QSpeaker;
@@ -231,7 +232,7 @@ public class SessionCustomQueryRepository {
     }
 
     // 모달 페이지 전용 쿼리 (세션 정보 클릭시)
-    public SessionResponseDto.SessionSpeakerDetailQueryDto findSessionAndSpeakerDetail(Long sessionId) {
+    public SessionSpeakerDetailQuery findSessionAndSpeakerDetail(Long sessionId) {
         QSession session = QSession.session;
         QSpeaker speaker = QSpeaker.speaker;
         QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
@@ -241,7 +242,7 @@ public class SessionCustomQueryRepository {
 
         return queryFactory
                 .select(Projections.constructor(
-                        SessionResponseDto.SessionSpeakerDetailQueryDto.class,
+                        SessionSpeakerDetailQuery.class,
                         session.name,
                         session.longDescription,
                         session.location,

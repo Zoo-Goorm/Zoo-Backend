@@ -14,6 +14,7 @@ import zoo.insightnote.domain.session.dto.response.*;
 import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
 import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
 import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.query.SessionWithSpeakerDetailResponse;
 
 @Tag(name = "SESSION", description = "세션 관련 API")
 @RequestMapping("/api/v1")
@@ -80,7 +81,7 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/sessions/{sessionId}")
-    ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(
+    ResponseEntity<SessionWithSpeakerDetailResponse> getSessionDetails(
             @Parameter(description = "조회할 세션 ID") @PathVariable Long sessionId
     );
 

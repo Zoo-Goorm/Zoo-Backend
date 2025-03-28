@@ -14,9 +14,7 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.*;
-import zoo.insightnote.domain.session.dto.response.query.SessionDetailResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionDetaileWithImageAndCountResponse;
-import zoo.insightnote.domain.session.dto.response.query.SessionTimeWithAllListGenericResponse;
+import zoo.insightnote.domain.session.dto.response.query.*;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.mapper.*;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
@@ -144,15 +142,36 @@ public class SessionService {
 
 
 
-    @Transactional(readOnly = true)
-    public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {
-        SessionResponseDto.SessionSpeakerDetailQueryDto result = sessionQueryRepository.findSessionAndSpeakerDetail(sessionId);
+//    @Transactional(readOnly = true)
+//    public SessionResponseDto.SessionSpeakerDetailRes getSessionDetails(Long sessionId) {
+//        SessionResponseDto.SessionSpeakerDetailQueryDto result = sessionQueryRepository.findSessionAndSpeakerDetail(sessionId);
+//
+//        if (result == null) {
+//            throw new CustomException(ErrorCode.SESSION_NOT_FOUND); // 커스텀 예외로 처리
+//        }
+//
+//        return SessionMapper.toSessionSpeakerDetailRes(result);
+//    }
+//
+//    public Session findSessionByEventId(Long eventId) {
+//        return sessionRepository.findByEventId(eventId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+//    }
+//
+//    public Session findSessionBySessionId(Long sessionId) {
+//        return sessionRepository.findById(sessionId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+//    }
 
+    @Transactional(readOnly = true)
+    public SessionWithSpeakerDetailResponse getSessionDetails(Long sessionId) {
+
+        SessionSpeakerDetailQuery result = sessionQueryRepository.findSessionAndSpeakerDetail(sessionId);
         if (result == null) {
             throw new CustomException(ErrorCode.SESSION_NOT_FOUND); // 커스텀 예외로 처리
         }
 
-        return SessionMapper.toSessionSpeakerDetailRes(result);
+        return SessionWithSpeakerMapper.toResponse(result);
     }
 
     public Session findSessionByEventId(Long eventId) {
