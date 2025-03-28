@@ -36,7 +36,6 @@ public class SessionService {
     private final SessionKeywordService sessionKeywordService;
     private final KeywordService keywordService;
 
-
     @Transactional
     public SessionResponseDto.SessionRes createSession(SessionRequestDto.Create request) {
 
@@ -57,7 +56,6 @@ public class SessionService {
 
         return SessionMapper.  toResponse(session, request.getKeywords());
     }
-
 
     // 세션 업데이트
     @Transactional
@@ -96,7 +94,6 @@ public class SessionService {
         return sessionQueryRepository.findAllSessionsWithKeywords();
     }
 
-
     // 2. 세션 목록 상세 조회 (연사 이미지, 인원수 포함, 키워드 포함)
     @Transactional(readOnly = true)
     public Map<String, List<SessionResponseDto.SessionDetailedRes>> getAllSessionsWithDetails() {
@@ -120,10 +117,11 @@ public class SessionService {
     }
 
     public void validateSessionTime(List<Long> sessionIds) {
-        List<Session> sessions = sessionIds.stream()
-                .map(this::findSessionBySessionId)
-                .toList();
+        List<Session> sessions = sessionRepository.findAllById(sessionIds);
 
+        if (sessions.size() != sessionIds.size()) {
+            throw new CustomException(ErrorCode.SESSION_NOT_FOUND);
+        }
 
         for (int i = 0; i < sessions.size(); i++) {
             for (int j = i + 1; j < sessions.size(); j++) {
