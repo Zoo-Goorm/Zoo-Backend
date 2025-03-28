@@ -36,9 +36,7 @@ public class KakaoPayService {
     private String adminKey;
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto, User user) {
-        Long orderId = createOrderId();
-
+    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentRequestReadyDto requestDto, User user, Long orderId) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, user, orderId);
 
         try {

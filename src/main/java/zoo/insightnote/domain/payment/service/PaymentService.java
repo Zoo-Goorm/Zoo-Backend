@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.service.ReservationService;
@@ -20,6 +22,7 @@ import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +36,13 @@ public class PaymentService {
     private final ReservationService reservationService;
     private final PaymentRepository paymentRepository;
 
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto request, User user) {
+        Long orderId = createOrderId();
         sessionService.validateSessionTime(request.getSessionIds());
         reservationService.validateReservedSession(user, request.getSessionIds());
+        return kakaoPayService.requestKakaoPayment(request, user, orderId);
+    }
+
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
         String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
