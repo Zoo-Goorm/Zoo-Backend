@@ -102,4 +102,11 @@ public class UserService {
         );
         return userMapper.toResponse(user);
     }
+
+    @Transactional
+    public UserInfoResponse anonymizeUserInfo(String username) {
+        User user = findByUsername(username);
+        user.anonymizeUserData();
+        return userMapper.toResponse(user);
+    }
 }

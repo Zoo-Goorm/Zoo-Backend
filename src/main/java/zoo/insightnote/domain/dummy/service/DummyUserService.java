@@ -3,7 +3,6 @@ package zoo.insightnote.domain.dummy.service;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.stereotype.Service;
-import zoo.insightnote.domain.user.entity.AuthProvider;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
@@ -41,7 +40,6 @@ public class DummyUserService {
                     .occupation(OCCUPATIONS.get(faker.random().nextInt(OCCUPATIONS.size())))
                     .interestCategory(interests)
                     .role(faker.bool().bool() ? Role.USER : Role.GUEST)
-                    .provider(AuthProvider.GOOGLE)
                     .build();
 
             userRepository.save(user);

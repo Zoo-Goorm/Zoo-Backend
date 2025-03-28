@@ -1,5 +1,7 @@
 package zoo.insightnote.domain.user.entity;
 
+import static zoo.insightnote.domain.user.entity.Role.*;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +25,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String username;
 
     private String name;
@@ -43,9 +45,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
-
     private String snsUrl;
 
     public User(String username, String name, String email, Role role) {
@@ -53,6 +52,11 @@ public class User {
         this.name = name;
         this.email = email;
         this.role = role;
+    }
+
+    public void updateUsername(String username) {
+        this.username = username;
+        this.role = USER;
     }
 
     public void update(String email, String name) {
@@ -76,6 +80,12 @@ public class User {
         if (isChanged(this.job, job)) this.job = job;
         if (isChanged(this.interestCategory, interestCategory)) this.interestCategory = interestCategory;
         if (isChanged(this.snsUrl, snsUrl)) this.snsUrl = snsUrl;
+    }
+
+    public void anonymizeUserData() {
+        this.username = null;
+        this.name = "알 수 없음";
+        this.nickname = "알 수 없음";
     }
 
     private boolean isChanged(Object currentValue, Object newValue) {

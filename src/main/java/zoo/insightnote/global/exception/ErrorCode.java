@@ -12,6 +12,7 @@ public enum ErrorCode {
 
     // 세션
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 세션을 찾을 수 없습니다."),
+    SESSION_CAPACITY_EXCEEDED(HttpStatus.BAD_REQUEST, "세션의 정원이 초과되었습니다."),
 
     // 인사이트 노트
     NO_EDIT_PERMISSION(HttpStatus.NOT_FOUND, "인사이트 작성자가 아닙니다, 본인이 작성한 인사이트만 수정할 수 있습니다 "),

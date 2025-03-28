@@ -15,4 +15,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE r.user.username = :username and r.session.id = :sessionId")
     Optional<Reservation> findReservedSession(@Param("username") String username, @Param("sessionId") Long sessionId);
+
+    @Query("SELECT r.session.id FROM Reservation r WHERE r.user.username = :username AND r.session.id IN :sessionIds")
+    List<Long> findReservedSessionIds(@Param("username") String username, @Param("sessionIds") List<Long> sessionIds);
 }
