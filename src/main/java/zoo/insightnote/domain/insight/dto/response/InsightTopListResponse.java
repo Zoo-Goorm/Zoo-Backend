@@ -1,48 +1,42 @@
 package zoo.insightnote.domain.insight.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
 import zoo.insightnote.domain.insight.dto.response.query.InsightTopListQuery;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-@Getter
-@Builder
-public class InsightTopListResponse {
-    private Long id;
-    private String memo;
-    private Boolean isPublic;
-    private Boolean isAnonymous;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Long likeCount;
-    private String imageUrl;
-    private Long commentCount;
-    private String displayName;
-    private String job;
-    private List<String> interestCategory;
-    private Boolean isLiked;
-
+public record InsightTopListResponse(
+        Long id,
+        String memo,
+        Boolean isPublic,
+        Boolean isAnonymous,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        Long likeCount,
+        String imageUrl,
+        Long commentCount,
+        String displayName,
+        String job,
+        List<String> interestCategory,
+        Boolean isLiked
+) {
     public static InsightTopListResponse from(InsightTopListQuery dto) {
-        return InsightTopListResponse.builder()
-                .id(dto.getId())
-                .memo(dto.getMemo())
-                .isPublic(dto.getIsPublic())
-                .isAnonymous(dto.getIsAnonymous())
-                .createdAt(dto.getCreatedAt())
-                .updatedAt(dto.getUpdatedAt())
-                .likeCount(dto.getLikeCount())
-                .imageUrl(dto.getImageUrl())
-                .commentCount(dto.getCommentCount())
-                .displayName(dto.getDisplayName())
-                .job(dto.getJob())
-                .interestCategory(
-                        dto.getInterestCategory() != null ?
-                                Arrays.asList(dto.getInterestCategory().split("\\s*,\\s*")) : List.of()
-                )
-                .isLiked(dto.getIsLiked())
-                .build();
+        return new InsightTopListResponse(
+                dto.getId(),
+                dto.getMemo(),
+                dto.getIsPublic(),
+                dto.getIsAnonymous(),
+                dto.getCreatedAt(),
+                dto.getUpdatedAt(),
+                dto.getLikeCount(),
+                dto.getImageUrl(),
+                dto.getCommentCount(),
+                dto.getDisplayName(),
+                dto.getJob(),
+                dto.getInterestCategory() != null ?
+                        Arrays.asList(dto.getInterestCategory().split("\\s*,\\s*")) : List.of(),
+                dto.getIsLiked()
+        );
     }
 }

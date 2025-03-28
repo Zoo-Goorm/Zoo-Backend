@@ -1,23 +1,18 @@
 package zoo.insightnote.domain.insight.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
-public class SessionInsight {
-    private Long id;
-    private String memo;
-    private Boolean isPublic;
-    private Boolean isAnonymous;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Long likeCount;
-    private Long commentCount;
-    private String displayName;
-    private String job;
-    private Boolean isLiked;
-    private Boolean hasSpeakerComment;
-}
+public record SessionInsight(
+        Long id,
+        String memo,
+        Boolean isPublic,
+        Boolean isAnonymous,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        Long likeCount,
+        Long commentCount,
+        String displayName,
+        String job,
+        Boolean isLiked,
+        Boolean hasSpeakerComment
+) {}

@@ -38,18 +38,16 @@ public class SessionTimeRangeMapper {
             List<SessionTimeWithListGenericResponse<T>> timeList = new ArrayList<>();
 
             for (Map.Entry<String, List<T>> timeEntry : dateEntry.getValue().entrySet()) {
-                timeList.add(SessionTimeWithListGenericResponse.<T>builder()
-                        .timeRange(timeEntry.getKey())
-                        .sessions(timeEntry.getValue())
-                        .build());
+                timeList.add(new SessionTimeWithListGenericResponse<>(
+                        timeEntry.getKey(),
+                        timeEntry.getValue()
+                ));
             }
 
             finalGrouped.put(dateEntry.getKey(), timeList);
         }
 
-        return SessionTimeWithAllListGenericResponse.<T>builder()
-                .sessionsByDay(finalGrouped)
-                .build();
+        return new SessionTimeWithAllListGenericResponse<>(finalGrouped);
     }
 
     public static String formatTimeRange(LocalDateTime start, LocalDateTime end) {

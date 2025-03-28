@@ -1,13 +1,7 @@
 package zoo.insightnote.domain.session.dto.response;
-
-import lombok.Builder;
-import lombok.Getter;
-
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Builder
-public class SessionTimeWithAllListGenericResponse<T> {
-    private Map<String, List<SessionTimeWithListGenericResponse<T>>> sessionsByDay;
-}
+public record SessionTimeWithAllListGenericResponse<T>(
+        Map<String, List<SessionTimeWithListGenericResponse<T>>> sessionsByDay
+) {}

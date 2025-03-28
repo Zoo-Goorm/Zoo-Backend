@@ -1,17 +1,12 @@
 package zoo.insightnote.domain.insight.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.util.List;
 
-@Getter
-@Builder
-public class MyInsightListResponse {
-    private boolean hasNext;
-    private long totalElements;
-    private int totalPages;
-    private int pageNumber;
-    private int pageSize;
-    private List<MyInsightList> content;
-}
+public record MyInsightListResponse(
+        boolean hasNext,
+        long totalElements,
+        int totalPages,
+        int pageNumber,
+        int pageSize,
+        List<MyInsightList> content
+) {}

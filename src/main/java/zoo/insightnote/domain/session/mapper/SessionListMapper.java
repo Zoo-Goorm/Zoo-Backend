@@ -12,15 +12,15 @@ import static zoo.insightnote.domain.session.mapper.SessionTimeRangeMapper.split
 
 public class SessionListMapper {
     public static SessionTimeWithAllListGenericResponse<SessionDetailResponse> toResponse(List<Tuple> results) {
-        return SessionTimeRangeMapper.process(results, tuple -> SessionDetailResponse.builder()
-                .id(tuple.get(0, Long.class))
-                .name(tuple.get(1, String.class))
-                .keywords(splitToSet(tuple.get(2, String.class)))
-                .shortDescription(tuple.get(3, String.class))
-                .location(tuple.get(4, String.class))
-                .startTime(tuple.get(5, LocalDateTime.class))
-                .endTime(tuple.get(6, LocalDateTime.class))
-                .timeRange(formatTimeRange(tuple.get(5, LocalDateTime.class), tuple.get(6, LocalDateTime.class)))
-                .build());
+        return SessionTimeRangeMapper.process(results, tuple -> new SessionDetailResponse(
+                tuple.get(0, Long.class),
+                tuple.get(1, String.class),
+                tuple.get(3, String.class),
+                tuple.get(4, String.class),
+                tuple.get(5, LocalDateTime.class),
+                tuple.get(6, LocalDateTime.class),
+                formatTimeRange(tuple.get(5, LocalDateTime.class), tuple.get(6, LocalDateTime.class)),
+                splitToSet(tuple.get(2, String.class))
+        ));
     }
 }

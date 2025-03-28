@@ -1,12 +1,9 @@
 package zoo.insightnote.domain.insight.dto.request;
 
-import lombok.Getter;
-
-@Getter
-public class InsightCreateRequest {
-    private Long sessionId;
-    private String memo;
-    private Boolean isPublic;
-    private Boolean isAnonymous;
-    private Boolean isDraft;
-}
+public record InsightCreateRequest(
+        Long sessionId,
+        String memo,
+        Boolean isPublic,
+        Boolean isAnonymous,
+        Boolean isDraft
+) {}

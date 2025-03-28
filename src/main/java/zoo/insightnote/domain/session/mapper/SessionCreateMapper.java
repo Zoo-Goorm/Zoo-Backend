@@ -15,18 +15,18 @@ public class SessionCreateMapper {
     }
 
 
-    public static SessionCreateResponse toResponse(Session session, List<String> keywords) {
-        return SessionCreateResponse.builder()
-                .id(session.getId())
-                .name(session.getName())
-                .shortDescription(session.getShortDescription())
-                .location(session.getLocation())
-                .maxCapacity(session.getMaxCapacity())
-                .startTime(session.getStartTime())
-                .endTime(session.getEndTime())
-                .speakerName(session.getSpeaker().getName())
-                .keywords(keywords)
-                .status(session.getStatus())
-                .build();
+    public static SessionCreateResponse of(Session session, List<String> keywords) {
+        return new SessionCreateResponse(
+                session.getId(),
+                session.getName(),
+                session.getShortDescription(),
+                session.getLocation(),
+                session.getMaxCapacity(),
+                session.getStartTime(),
+                session.getEndTime(),
+                session.getSpeaker().getName(),
+                keywords,
+                session.getStatus()
+        );
     }
 }

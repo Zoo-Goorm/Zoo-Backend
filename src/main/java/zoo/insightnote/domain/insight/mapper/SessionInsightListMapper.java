@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 public class SessionInsightListMapper {
 
     public static SessionInsightListResponse toSessionInsightListResponse(Page<SessionInsightListQuery> insightPage) {
-        return SessionInsightListResponse.builder()
-                .content(makeSessionInsightList(insightPage.getContent()))
-                .pageNumber(insightPage.getPageable().getPageNumber())
-                .pageSize(insightPage.getSize())
-                .totalElements(insightPage.getTotalElements())
-                .totalPages(insightPage.getTotalPages())
-                .hasNext(insightPage.hasNext())
-                .build();
+        return new SessionInsightListResponse(
+                insightPage.hasNext(),
+                insightPage.getTotalElements(),
+                insightPage.getTotalPages(),
+                insightPage.getPageable().getPageNumber(),
+                insightPage.getSize(),
+                makeSessionInsightList(insightPage.getContent())
+        );
     }
 
     private static List<SessionInsight> makeSessionInsightList(List<SessionInsightListQuery> insightDtos) {
@@ -28,19 +28,19 @@ public class SessionInsightListMapper {
     }
 
     public static SessionInsight toBuildSessionInsight(SessionInsightListQuery dto) {
-        return SessionInsight.builder()
-                .id(dto.getId())
-                .memo(dto.getMemo())
-                .isPublic(dto.getIsPublic())
-                .isAnonymous(dto.getIsAnonymous())
-                .createdAt(dto.getCreatedAt())
-                .updatedAt(dto.getUpdatedAt())
-                .likeCount(dto.getLikeCount())
-                .commentCount(dto.getCommentCount())
-                .displayName(dto.getDisplayName())
-                .job(dto.getJob())
-                .isLiked(dto.getIsLiked())
-                .hasSpeakerComment(dto.getHasSpeakerComment())
-                .build();
+        return new SessionInsight(
+                dto.getId(),
+                dto.getMemo(),
+                dto.getIsPublic(),
+                dto.getIsAnonymous(),
+                dto.getCreatedAt(),
+                dto.getUpdatedAt(),
+                dto.getLikeCount(),
+                dto.getCommentCount(),
+                dto.getDisplayName(),
+                dto.getJob(),
+                dto.getIsLiked(),
+                dto.getHasSpeakerComment()
+        );
     }
 }

@@ -10,15 +10,16 @@ import java.util.stream.Collectors;
 
 public class MyInsightListMapper {
     public static MyInsightList toBuildMyInsightList(MyInsightListQuery dto) {
-        return MyInsightList.builder()
-                .insightId(dto.getInsightId())
-                .memo(dto.getMemo())
-                .isPublic(dto.getIsPublic())
-                .isAnonymous(dto.getIsAnonymous())
-                .updatedAt(dto.getUpdatedAt())
-                .sessionId(dto.getSessionId())
-                .sessionName(dto.getSessionName())
-                .build();
+        return new MyInsightList(
+                dto.insightId(),
+                dto.memo(),
+                dto.isPublic(),
+                dto.isAnonymous(),
+                dto.isDraft(),
+                dto.updatedAt(),
+                dto.sessionId(),
+                dto.sessionName()
+        );
     }
 
     public static MyInsightListResponse toMyListPageResponse(
@@ -30,13 +31,13 @@ public class MyInsightListMapper {
                 .map(MyInsightListMapper::toBuildMyInsightList)
                 .collect(Collectors.toList());
 
-        return MyInsightListResponse.builder()
-                .hasNext(page.hasNext())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .pageNumber(pageNumber)
-                .pageSize(pageSize)
-                .content(content)
-                .build();
+        return new MyInsightListResponse(
+                page.hasNext(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                pageNumber,
+                pageSize,
+                content
+        );
     }
 }

@@ -42,20 +42,20 @@ public class SessionService {
     @Transactional
     public SessionCreateResponse createSession(SessionCreateRequest request) {
 
-        Event event = eventService.findById(request.getEventId());
-        Speaker speaker = speakerService.findById(request.getSpeakerId());
+        Event event = eventService.findById(request.eventId());
+        Speaker speaker = speakerService.findById(request.speakerId());
 
         Session session = SessionCreateMapper.toEntity(request, event, speaker);
         Session savedSession = sessionRepository.save(session);
 
-        imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.getImages());
+        imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.images());
 
-        List<Keyword> keywords = request.getKeywords().stream()
+        List<Keyword> keywords = request.keywords().stream()
                 .map(keywordService::findOrCreateByName)
                 .toList();
         sessionKeywordService.saveSessionKeywords(savedSession, keywords);
 
-        return SessionCreateMapper.toResponse(session, request.getKeywords());
+        return SessionCreateMapper.of(session, request.keywords());
     }
 
     @Transactional
@@ -64,13 +64,13 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
         session.update(request);
 
-        List<Keyword> newKeywords = request.getKeywords().stream()
+        List<Keyword> newKeywords = request.keywords().stream()
                 .map(keywordService::findOrCreateByName)
                 .toList();
         sessionKeywordService.updateSessionKeywords(session, newKeywords);
-        imageService.updateImages(new ImageRequest.UploadImages(session.getId(), EntityType.SESSION, request.getImages()));
+        imageService.updateImages(new ImageRequest.UploadImages(session.getId(), EntityType.SESSION, request.images()));
 
-        return SessionUpdateMapper.toResponse(session, request.getKeywords());
+        return SessionUpdateMapper.toResponse(session, request.keywords());
     }
 
     @Transactional

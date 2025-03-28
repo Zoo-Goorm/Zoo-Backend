@@ -39,7 +39,7 @@ public class InsightService {
     @Transactional
     public InsightIdResponse createInsight(InsightCreateRequest request , User user) {
 
-        Session session = sessionRepository.findById(request.getSessionId())
+        Session session = sessionRepository.findById(request.sessionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
         Insight insight = Insight.create(session, user, request);
