@@ -14,6 +14,7 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListResponse;
 import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
@@ -56,10 +57,17 @@ public class SessionControllerImpl implements SessionController {
     }
 
     // 1. 세션 전체 조회 (이미지 제외, 인원수 제외)
+//    @Override
+//    @GetMapping("/sessions")
+//    public ResponseEntity<SessionAllListwithTimeResponse> getAllSessions() {
+//        Map<String, List<SessionResponseDto.SessionAllRes>> response = sessionService.getAllSessions();
+//        return ResponseEntity.ok(response);
+//    }
+
     @Override
     @GetMapping("/sessions")
-    public ResponseEntity<Map<String, List<SessionResponseDto.SessionAllRes>>> getAllSessions() {
-        Map<String, List<SessionResponseDto.SessionAllRes>> response = sessionService.getAllSessions();
+    public ResponseEntity<SessionTimeWithAllListResponse> getAllSessions() {
+        SessionTimeWithAllListResponse response = sessionService.getAllSessions();
         return ResponseEntity.ok(response);
     }
 
@@ -71,6 +79,7 @@ public class SessionControllerImpl implements SessionController {
         return ResponseEntity.ok(response);
     }
 
+    // 세션 단일 상세 조회
     @Override
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<SessionResponseDto.SessionSpeakerDetailRes> getSessionDetails(@PathVariable Long sessionId) {

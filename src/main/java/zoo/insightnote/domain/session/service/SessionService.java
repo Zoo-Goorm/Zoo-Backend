@@ -1,5 +1,6 @@
 package zoo.insightnote.domain.session.service;
 
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,13 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithListResponse;
 import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.mapper.SessionCreateMapper;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
+import zoo.insightnote.domain.session.mapper.SessionSplitTimeRangeListMapper;
 import zoo.insightnote.domain.session.mapper.SessionUpdateMapper;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -110,9 +114,16 @@ public class SessionService {
     }
 
     // 세션 목록 일반 페이지 (이미지 제외)
+//    @Transactional(readOnly = true)
+//    public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
+//        return sessionQueryRepository.findAllSessionsWithKeywords();
+//    }
+
+    // 세션 목록 일반 페이지 (이미지 제외)
     @Transactional(readOnly = true)
-    public Map<String, List<SessionResponseDto.SessionAllRes>> getAllSessions() {
-        return sessionQueryRepository.findAllSessionsWithKeywords();
+    public SessionTimeWithAllListResponse getAllSessions() {
+        List<Tuple> results = sessionQueryRepository.findAllSessionsWithKeywords();
+        return SessionSplitTimeRangeListMapper.processResultsForSessionAllRes(results);
     }
 
 

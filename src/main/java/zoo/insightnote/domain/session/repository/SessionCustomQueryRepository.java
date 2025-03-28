@@ -30,7 +30,7 @@ public class SessionCustomQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     // 세션 목록 페이지
-    public Map<String, List<SessionResponseDto.SessionAllRes>> findAllSessionsWithKeywords() {
+    public List<Tuple> findAllSessionsWithKeywords() {
         QSession session = QSession.session;
         QSessionKeyword sessionKeyword = QSessionKeyword.sessionKeyword;
         QKeyword keyword = QKeyword.keyword;
@@ -55,7 +55,7 @@ public class SessionCustomQueryRepository {
                 .orderBy(session.id.asc())
                 .fetch();
 
-        return processResultsForSessionAllRes(results);
+        return results;
     }
 
 

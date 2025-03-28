@@ -15,6 +15,7 @@ import zoo.insightnote.domain.session.dto.SessionResponseDto;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
+import zoo.insightnote.domain.session.dto.response.SessionTimeWithAllListResponse;
 import zoo.insightnote.domain.session.dto.response.SessionUpdateResponse;
 
 import java.util.List;
@@ -67,8 +68,8 @@ public interface SessionController {
             @ApiResponse(responseCode = "200", description = "세션 전체 조회 성공"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    @GetMapping
-    ResponseEntity<Map<String, List<SessionResponseDto.SessionAllRes>>> getAllSessions();
+    @GetMapping("/sessions")
+    ResponseEntity<SessionTimeWithAllListResponse> getAllSessions();
 
     @Operation(summary = "세션 상세 조회", description = "연사 이미지, 인원수, 키워드 포함 세션 조회")
     @ApiResponses(value = {
