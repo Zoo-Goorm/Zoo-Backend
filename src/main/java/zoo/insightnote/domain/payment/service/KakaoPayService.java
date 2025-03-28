@@ -168,9 +168,4 @@ public class KakaoPayService {
 
         return createKakaoHttpEntity(params);
     }
-
-    private Long createOrderId() {
-        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
-        return orderId;
-    }
 }

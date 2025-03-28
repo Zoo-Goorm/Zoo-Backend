@@ -73,4 +73,9 @@ public class PaymentService {
 
         return paymentRepository.save(payment);
     }
+
+    private Long createOrderId() {
+        Long orderId = Math.abs(UUID.randomUUID().getMostSignificantBits());
+        return orderId;
+    }
 }
