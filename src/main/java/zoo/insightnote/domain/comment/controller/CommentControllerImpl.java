@@ -1,11 +1,9 @@
 package zoo.insightnote.domain.comment.controller;
 
-import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,24 +33,19 @@ public class CommentControllerImpl implements CommentController {
     public ResponseEntity<CommentIdResDto> writeComment(
             @PathVariable Long insightId,
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody CommentCreateReqDto request)
-    {
+            @RequestBody CommentCreateReqDto request) {
         CommentIdResDto commentId = commentService.createComment(insightId, userDetails.getUsername(), request);
         return ResponseEntity.ok().body(commentId);
     }
 
-//    @Override
-//    @GetMapping("/{insightId}/comments")
-//    public ResponseEntity<List<CommentResponse>> listComments(@PathVariable Long insightId) {
-//        return ResponseEntity.ok().body(commentService.findCommentsByInsightId(insightId));
-//    }
-
     @Override
     @PutMapping("/{insightId}/comments/{commentId}")
-    public ResponseEntity<CommentIdResDto> updateComment(@PathVariable Long insightId,
-                                                         @PathVariable Long commentId,
-                                                         @AuthenticationPrincipal UserDetails userDetails,
-                                                         @RequestBody CommentUpdateReqDto request) {
+    public ResponseEntity<CommentIdResDto> updateComment(
+            @PathVariable Long insightId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CommentUpdateReqDto request
+    ) {
         CommentIdResDto response = commentService.updateComment(insightId, userDetails.getUsername(), commentId, request);
         return ResponseEntity.ok().body(response);
     }
@@ -62,22 +55,11 @@ public class CommentControllerImpl implements CommentController {
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long insightId,
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails)
-    {
+            @AuthenticationPrincipal UserDetails userDetails) {
         commentService.deleteComment(insightId, userDetails.getUsername(), commentId);
         return ResponseEntity.noContent().build();
     }
 
-    // 임시 로직
-    private UserDetails validateUser(UserDetails userDetails) {
-        if (userDetails != null) {
-            return userDetails;
-        }
-        return new User("001", "password", Collections.emptyList());
-    }
-
-
-    // 댓글 리스트 출력
     @Override
     @GetMapping("/comments/{insightId}")
     public ResponseEntity<List<CommentListResDto>> getListComments(@PathVariable Long insightId) {

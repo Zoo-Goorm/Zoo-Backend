@@ -18,6 +18,7 @@ import zoo.insightnote.domain.comment.mapper.CommentMapper;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.entity.Insight;
 import zoo.insightnote.domain.insight.repository.InsightRepository;
+import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.domain.user.service.UserService;
@@ -35,7 +36,7 @@ public class CommentService {
     public CommentIdResDto createComment(Long insightId, String userName, CommentCreateReqDto request) {
 
         Insight insight = insightRepository.findById(insightId)
-                .orElseThrow(() -> new CustomException(null, "인사이트 노트를 찾을 수 없음"));
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
         User user = userService.findByUsername(userName);
 
@@ -45,18 +46,6 @@ public class CommentService {
 
         return new CommentIdResDto(comment.getId());
     }
-
-//    public List<CommentResponse> findCommentsByInsightId(Long insightId) {
-//
-//        List<Comment> comments = commentRepository.findAllByInsightId(insightId);
-//
-//        List<CommentResponse> responses = new ArrayList<>();
-//        for (Comment comment : comments) {
-//            responses.add(CommentMapper.toResponse(comment));
-//        }
-//
-//        return responses;
-//    }
 
     @Transactional
     public CommentIdResDto updateComment(Long insightId, String userName, Long commentId, CommentUpdateReqDto request) {
