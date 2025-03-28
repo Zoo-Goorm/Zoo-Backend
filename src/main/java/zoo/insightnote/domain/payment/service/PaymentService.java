@@ -34,6 +34,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
         sessionService.validateSessionTime(request.getSessionIds());
+        reservationService.validateReservedSession(user, request.getSessionIds());
     @Transactional
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
         String tid = paymentRedisService.getTidKey(requestDto.getOrderId());

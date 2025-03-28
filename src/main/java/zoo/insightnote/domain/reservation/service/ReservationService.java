@@ -94,5 +94,11 @@ public class ReservationService {
         }
     }
 
+    public void validateReservedSession(User user, List<Long> sessiondIds) {
+        List<Long> alreadyReservedSessions = reservationRepository.findReservedSessionIds(user.getUsername(), sessiondIds);
 
+        if(!alreadyReservedSessions.isEmpty()) {
+            throw new CustomException(ErrorCode.ALREADY_RESERVED_SESSION);
+        }
+    }
 }
