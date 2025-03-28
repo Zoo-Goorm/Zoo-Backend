@@ -13,11 +13,11 @@ import java.util.stream.Stream;
 
 public class SessionMapper {
 
-    public static Session toEntity(SessionRequestDto.Create request, Event event, Speaker speaker) {
-        return Session.create(request, event, speaker);
-    }
+//    public static Session toEntity(SessionRequestDto.Create request, Event event, Speaker speaker) {
+//        return Session.create(request, event, speaker);
+//    }
 
-    // Session엔티티 객체를 dto에서 정의한 record르 변환
+
     public static SessionResponseDto.SessionRes toResponse(Session session, List<String> keywords) {
         return SessionResponseDto.SessionRes.builder()
                 .id(session.getId())

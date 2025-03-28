@@ -11,6 +11,8 @@ import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.insight.service.InsightService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
+import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
 import zoo.insightnote.domain.session.service.SessionService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -25,15 +27,13 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class SessionControllerImpl implements SessionController {
     private final SessionService sessionService;
-    private final InsightService insightService;
-    private final UserService userService;
 
     @Override
     @PostMapping("/sessions")
-    public ResponseEntity<SessionResponseDto.SessionRes> createSession(
-            @RequestBody SessionRequestDto.Create request
+    public ResponseEntity<SessionCreateResponse> createSession(
+            @RequestBody SessionCreateRequest request
     ) {
-        SessionResponseDto.SessionRes response = sessionService.createSession(request);
+        SessionCreateResponse response = sessionService.createSession(request);
         return ResponseEntity.ok(response);
     }
 

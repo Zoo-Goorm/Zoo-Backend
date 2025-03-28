@@ -11,7 +11,10 @@ import zoo.insightnote.domain.keyword.entity.Keyword;
 import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
+import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
 import zoo.insightnote.domain.session.entity.Session;
+import zoo.insightnote.domain.session.mapper.SessionCreateMapper;
 import zoo.insightnote.domain.session.mapper.SessionMapper;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;
 import zoo.insightnote.domain.session.repository.SessionRepository;
@@ -37,15 +40,34 @@ public class SessionService {
     private final KeywordService keywordService;
 
 
+//    @Transactional
+//    public SessionResponseDto.SessionRes createSession(SessionRequestDto.Create request) {
+//
+//        Event event = eventService.findById(request.getEventId());
+//
+//        Speaker speaker = speakerService.findById(request.getSpeakerId());
+//
+//        Session session = SessionMapper.toEntity(request, event, speaker);
+//
+//        Session savedSession = sessionRepository.save(session);
+//
+//        imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.getImages());
+//
+//        List<Keyword> keywords = request.getKeywords().stream()
+//                .map(keywordService::findOrCreateByName)
+//                .toList();
+//        sessionKeywordService.saveSessionKeywords(savedSession, keywords);
+//
+//        return SessionMapper.  toResponse(session, request.getKeywords());
+//    }
+
     @Transactional
-    public SessionResponseDto.SessionRes createSession(SessionRequestDto.Create request) {
+    public SessionCreateResponse createSession(SessionCreateRequest request) {
 
         Event event = eventService.findById(request.getEventId());
-
         Speaker speaker = speakerService.findById(request.getSpeakerId());
 
-        Session session = SessionMapper.toEntity(request, event, speaker);
-
+        Session session = SessionCreateMapper.toEntity(request, event, speaker);
         Session savedSession = sessionRepository.save(session);
 
         imageService.saveImages(savedSession.getId(), EntityType.SESSION, request.getImages());
@@ -55,7 +77,7 @@ public class SessionService {
                 .toList();
         sessionKeywordService.saveSessionKeywords(savedSession, keywords);
 
-        return SessionMapper.  toResponse(session, request.getKeywords());
+        return SessionCreateMapper.toResponse(session, request.getKeywords());
     }
 
 

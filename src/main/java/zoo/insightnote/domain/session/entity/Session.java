@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import lombok.*;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
+import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.speaker.entity.Speaker;
 
 @Entity
@@ -55,7 +56,7 @@ public class Session {
 
     private String location;
 
-    public static Session create(SessionRequestDto.Create request, Event event, Speaker speaker) {
+    public static Session create(SessionCreateRequest request, Event event, Speaker speaker) {
         return Session.builder()
                 .event(event)
                 .speaker(speaker)

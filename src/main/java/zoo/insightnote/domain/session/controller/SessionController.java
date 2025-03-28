@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.insight.dto.InsightResponseDto;
 import zoo.insightnote.domain.session.dto.SessionRequestDto;
 import zoo.insightnote.domain.session.dto.SessionResponseDto;
+import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
+import zoo.insightnote.domain.session.dto.response.SessionCreateResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -27,8 +29,8 @@ public interface SessionController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping
-    ResponseEntity<SessionResponseDto.SessionRes> createSession(
-            @RequestBody SessionRequestDto.Create request
+    ResponseEntity<SessionCreateResponse> createSession(
+            @RequestBody SessionCreateRequest request
     );
 
     @Operation(summary = "세션 수정", description = "기존 세션 정보를 수정합니다.")
