@@ -118,4 +118,36 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
     }
 
+    public void validateSessionTime(List<Long> sessionIds) {
+        List<Session> sessions = sessionRepository.findAllById(sessionIds);
+        if (sessions.size() != sessionIds.size()) {
+            throw new CustomException(ErrorCode.SESSION_NOT_FOUND);
+        }
+
+        for (int i = 0; i < sessions.size(); i++) {
+            for (int j = i + 1; j < sessions.size(); j++) {
+                Session s1 = sessions.get(i);
+                Session s2 = sessions.get(j);
+
+                boolean overlap = s1.getStartTime().isBefore(s2.getEndTime()) &&
+                        s2.getStartTime().isBefore(s1.getEndTime());
+
+                if (overlap) {
+                    throw new CustomException(ErrorCode.DUPLICATE_SESSION_TIME);
+                }
+            }
+        }
+    }
+
+    public void validationParticipantCountOver(List<Long> sessionIds) {
+        for (Long sessionId : sessionIds) {
+            Session session = findSessionBySessionId(sessionId);
+
+            if (session.getMaxCapacity() <= session.getParticipantCount()) {
+                throw new CustomException(ErrorCode.SESSION_CAPACITY_EXCEEDED);
+            }
+        }
+    }
+
+
 }
