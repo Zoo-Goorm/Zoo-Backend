@@ -89,7 +89,7 @@ jobs:
       - name: Deploy using AWS CodeDeploy
         run: |
           DEPLOYMENT_ID=$(aws deploy create-deployment \
-            --application-name goorm \
+            --application-name ${{ secrets.DEPLOY_NAME }} \
             --deployment-group-name ${{ secrets.DEPLOY_GROUP }} \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},key=deploy.zip,bundleType=zip \

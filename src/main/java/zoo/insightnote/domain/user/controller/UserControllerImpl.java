@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,12 @@ public class UserControllerImpl implements UserController {
     @PatchMapping("/me")
     public ResponseEntity<?> updateMyInfo(@RequestBody UserInfoRequest userInfoRequest, @AuthenticationPrincipal UserDetails userDetails) {
         UserInfoResponse userInfoResponse = userService.updateUserInfo(userInfoRequest, userDetails.getUsername());
+        return ResponseEntity.ok(userInfoResponse);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> anonymizeMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        UserInfoResponse userInfoResponse = userService.anonymizeUserInfo(userDetails.getUsername());
         return ResponseEntity.ok(userInfoResponse);
     }
 

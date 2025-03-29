@@ -13,7 +13,7 @@ import zoo.insightnote.domain.keyword.service.KeywordService;
 import zoo.insightnote.domain.session.dto.request.SessionCreateRequest;
 import zoo.insightnote.domain.session.dto.request.SessionUpdateRequest;
 import zoo.insightnote.domain.session.dto.response.*;
-import zoo.insightnote.domain.session.dto.response.query.*;
+import zoo.insightnote.domain.session.dto.response.query.SessionSpeakerDetailQuery;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.session.mapper.*;
 import zoo.insightnote.domain.session.repository.SessionCustomQueryRepository;

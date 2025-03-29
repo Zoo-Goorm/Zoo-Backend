@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.user.dto.request.JoinRequest;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {
@@ -34,6 +36,9 @@ public interface UserController {
 
     @Operation(summary = "마이페이지에서 본인 정보 수정", description = "유저정보에 저장된 내용을 수정합니다.")
     ResponseEntity<?> updateMyInfo(@Parameter(description = "수정할 부분만 넣어주세요.") @RequestBody UserInfoRequest userInfoRequest, @AuthenticationPrincipal UserDetails userDetails);
+
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴시 이름과 닉네임을 익명 처리합니다.")
+    ResponseEntity<?> anonymizeMyInfo(@AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(summary = "쿠키 기반 토큰을 헤더로 변환", description = "쿠키에 저장된 토큰을 헤더로 변환합니다.")
     ResponseEntity<?> convertTokenToHeader(@Parameter(description = "쿠키에 저장된 토큰") @CookieValue(value = "Authorization", required = false) String token);
