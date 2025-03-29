@@ -13,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserTicketInfoResponseDto {
+    private Long eventId;
     private Map<String, Boolean> tickets;
     private Map<String, List<reservationSessions>> registeredSessions;
 
