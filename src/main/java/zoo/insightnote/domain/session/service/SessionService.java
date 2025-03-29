@@ -57,7 +57,7 @@ public class SessionService {
 
         return SessionCreateMapper.of(session, request.keywords());
     }
-
+    
     @Transactional
     public SessionUpdateResponse updateSession(Long sessionId, SessionUpdateRequest request) {
         Session session = sessionRepository.findById(sessionId)
