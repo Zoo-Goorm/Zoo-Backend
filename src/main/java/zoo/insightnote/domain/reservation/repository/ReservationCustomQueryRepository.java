@@ -6,12 +6,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.entity.QEvent;
 import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
 import zoo.insightnote.domain.reservation.entity.QReservation;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.speaker.entity.QSpeaker;
-import zoo.insightnote.domain.speaker.service.SpeakerService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -31,10 +31,12 @@ public class ReservationCustomQueryRepository {
         return queryFactory
                 .select(
                         session.id,
+                        session.event,
                         session.startTime,
                         session.endTime,
                         session.eventDay,
                         session.name,
+                        session.event,
                         speaker.name
                 )
                 .from(reservation)
@@ -60,11 +62,14 @@ public class ReservationCustomQueryRepository {
         QSession session = QSession.session;
         QSpeaker speaker = QSpeaker.speaker;
 
-        // 1️⃣ 유저가 신청한 세션 정보 조회
+        // 유저가 신청한 세션 정보 조회
         List<Tuple> reservationSessions = findUserReservationInfo(username);
         List<Tuple> eventSessions = findEventInfo();
 
-        // 2️⃣ 날짜별 세션 정보 저장
+        // 이벤트 아이디 조회
+        Event event = reservationSessions.get(1).get(session.event);
+
+        // 날짜별 세션 정보 저장
         Map<String, List<UserTicketInfoResponseDto.reservationSessions>> registeredSessions = new LinkedHashMap<>();
         Set<String> eventDates = new LinkedHashSet<>();
         Set<String> userReservedDates = new HashSet<>();
@@ -91,14 +96,15 @@ public class ReservationCustomQueryRepository {
             eventDates.add(row.get(1, String.class)); // 이벤트 종료 날짜
         }
 
-        // 3️⃣ 티켓 여부 설정
+        // 티켓 여부 설정
         Map<String, Boolean> tickets = new LinkedHashMap<>();
         for (String date : eventDates) {
             tickets.put(date, userReservedDates.contains(date));
         }
 
-        // 4️⃣ DTO로 반환
+        // DTO로 반환
         return UserTicketInfoResponseDto.builder()
+                .eventId(event.getId())
                 .tickets(tickets)
                 .registeredSessions(registeredSessions)
                 .build();
