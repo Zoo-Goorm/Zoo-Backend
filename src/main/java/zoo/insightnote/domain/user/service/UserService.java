@@ -28,7 +28,7 @@ public class UserService {
     public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByUsername(email);
         if (!optionalUser.isPresent()) {
             User user = User.builder()
                     .name(name)
