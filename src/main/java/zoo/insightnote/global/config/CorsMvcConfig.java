@@ -23,7 +23,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
                         "https://api.synapsex.online",
                         "http://dev.synapsex.online",
                         "https://dev.synapsex.online") // 특정 Origin만 허용해야 함
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true) // 쿠키 허용 설정 추가
                 .exposedHeaders("Set-Cookie");
