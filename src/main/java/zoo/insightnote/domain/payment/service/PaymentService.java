@@ -54,7 +54,7 @@ public class PaymentService {
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
             savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
-            reservationService.saveReservationsInfo(sessionIds, user);
+            reservationService.saveReservationsInfo(sessionIds, user, userInfo.isOnline());
             userService.updateUserInfo(userInfo, user);
         } catch (Exception e) {
             log.error("❌ 결제 후 내부 로직 실패 → 카카오페이 결제 취소");

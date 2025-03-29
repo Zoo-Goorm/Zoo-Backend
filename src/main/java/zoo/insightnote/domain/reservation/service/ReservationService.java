@@ -79,10 +79,13 @@ public class ReservationService {
         reservationRepository.delete(reservedSession);
     }
 
-    public void saveReservationsInfo(List<Long> sessionIds, User user) {
+    public void saveReservationsInfo(List<Long> sessionIds, User user, Boolean isOnline) {
         for (Long sessionId : sessionIds) {
             Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
-            sessionInfo.increaseParticipantCount();
+
+            if (!isOnline.equals(Boolean.TRUE)) {
+                sessionInfo.increaseParticipantCount();
+            }
 
             Reservation savedReservation = Reservation.create(
                     user,
