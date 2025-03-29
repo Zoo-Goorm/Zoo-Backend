@@ -14,4 +14,5 @@ public class UserInfoResponse {
     private String job;
     private String interestCategory;
     private String snsUrl;
+    private String username;
 }

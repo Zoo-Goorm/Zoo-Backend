@@ -35,7 +35,7 @@ public interface UserController {
     ResponseEntity<?> getMyInfo(@AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(summary = "마이페이지에서 본인 정보 수정", description = "유저정보에 저장된 내용을 수정합니다.")
-    ResponseEntity<?> updateMyInfo(@Parameter(description = "수정할 부분만 넣어주세요.") @RequestBody UserInfoRequest userInfoRequest, @AuthenticationPrincipal UserDetails userDetails);
+    ResponseEntity<?> updateMyInfo(@Parameter(description = "수정할 부분만 넣어주세요. 수정하지 않는 필드는 dto에서 삭제해주세요.") @RequestBody UserInfoRequest userInfoRequest, @AuthenticationPrincipal UserDetails userDetails);
 
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴시 이름과 닉네임을 익명 처리합니다.")
     ResponseEntity<?> anonymizeMyInfo(@AuthenticationPrincipal UserDetails userDetails);
