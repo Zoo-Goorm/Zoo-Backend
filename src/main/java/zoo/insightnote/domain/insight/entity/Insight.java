@@ -12,7 +12,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import zoo.insightnote.domain.insight.dto.InsightRequestDto;
+import zoo.insightnote.domain.insight.dto.request.InsightCreateRequest;
+import zoo.insightnote.domain.insight.dto.request.InsightUpdateRequest;
 import zoo.insightnote.domain.session.entity.Session;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.entity.BaseTimeEntity;
@@ -60,14 +61,14 @@ public class Insight extends BaseTimeEntity {
         this.voteTitle = voteTitle;
     }
 
-    public static Insight create(Session session, User user, InsightRequestDto.CreateInsight request) {
+    public static Insight create(Session session, User user, InsightCreateRequest request) {
         return Insight.builder()
                 .session(session)
                 .user(user)
-                .memo(request.getMemo())
-                .isPublic(request.getIsPublic())
-                .isAnonymous(request.getIsAnonymous())
-                .isDraft(request.getIsDraft())
+                .memo(request.memo())
+                .isPublic(request.isPublic())
+                .isAnonymous(request.isAnonymous())
+                .isDraft(request.isDraft())
 //                .voteTitle(voteTitle)
                 .build();
     }
@@ -78,22 +79,19 @@ public class Insight extends BaseTimeEntity {
     }
 
     // 업데이트 로직 (익명 여부 포함)
-    public void updateIfChanged(InsightRequestDto.UpdateInsight request) {
-        if (request.getMemo() != null && !request.getMemo().equals(this.memo)) {
-            this.memo = request.getMemo();
+    public void updateIfChanged(InsightUpdateRequest request) {
+        if (request.memo() != null && !request.memo().equals(this.memo)) {
+            this.memo = request.memo();
         }
-        if (request.getIsPublic() != null && !request.getIsPublic().equals(this.isPublic)) {
-            this.isPublic = request.getIsPublic();
+        if (request.isPublic() != null && !request.isPublic().equals(this.isPublic)) {
+            this.isPublic = request.isPublic();
         }
-        if (request.getIsAnonymous() != null && !request.getIsAnonymous().equals(this.isAnonymous)) {
-            this.isAnonymous = request.getIsAnonymous();
+        if (request.isAnonymous() != null && !request.isAnonymous().equals(this.isAnonymous)) {
+            this.isAnonymous = request.isAnonymous();
         }
-        if (request.getIsDraft() != null && !request.getIsDraft().equals(this.isDraft)) {
-            this.isDraft = request.getIsDraft();
+        if (request.isDraft() != null && !request.isDraft().equals(this.isDraft)) {
+            this.isDraft = request.isDraft();
         }
-//        if (newVoteTitle != null && !newVoteTitle.equals(this.voteTitle)) {
-//            this.voteTitle = newVoteTitle;
-//        }
     }
 
     public void finalizeDraft() {

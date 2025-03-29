@@ -16,13 +16,13 @@ import zoo.insightnote.domain.InsightLike.entity.QInsightLike;
 import zoo.insightnote.domain.InsightLike.repository.InsightLikeRepository;
 import zoo.insightnote.domain.comment.entity.QComment;
 import zoo.insightnote.domain.comment.repository.CommentRepository;
-import zoo.insightnote.domain.insight.dto.InsightResponseDto;
+import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
+import zoo.insightnote.domain.insight.dto.response.query.*;
 import zoo.insightnote.domain.insight.entity.QInsight;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
 import zoo.insightnote.domain.user.entity.QUser;
-import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.userIntroductionLink.entity.QUserIntroductionLink;
 import zoo.insightnote.domain.voteOption.entity.QVoteOption;
 import zoo.insightnote.domain.voteResponse.entity.QVoteResponse;
@@ -44,7 +44,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<InsightResponseDto.InsightTopListQueryDto> findTopInsights(Long userId) {
+    public List<InsightTopListQuery> findTopInsights(Long userId) {
         QInsight insight = QInsight.insight;
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
@@ -54,9 +54,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        List<InsightResponseDto.InsightTopListQueryDto> result = queryFactory
+        List< InsightTopListQuery> result = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightTopListQueryDto.class,
+                        InsightTopListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -91,7 +91,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         // 2. 성능 최적화된 좋아요 여부 처리
         if (userId != null && !result.isEmpty()) {
             List<Long> insightIds = result.stream()
-                    .map(InsightResponseDto.InsightTopListQueryDto::getId)
+                    .map(InsightTopListQuery::getId)
                     .collect(Collectors.toList());
 
             List<Long> likedInsightIds = queryFactory
@@ -111,7 +111,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
 
     @Override
-    public Page<InsightResponseDto.InsightListQueryDto> findInsightsByEventDay(
+    public Page<InsightListQuery> findInsightsByEventDay(
             LocalDate eventDay,
             Long sessionId,
             String sort,
@@ -145,9 +145,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .otherwise(user.name);
 
 
-        List<InsightResponseDto.InsightListQueryDto> results = queryFactory
+        List<InsightListQuery> results = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightListQueryDto.class,
+                        InsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -181,7 +181,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 
         if (userId != null && !results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.InsightListQueryDto::getId)
+                    .map(InsightListQuery::getId)
                     .collect(Collectors.toList());
 
             List<Long> likedInsightIds = queryFactory
@@ -208,7 +208,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Optional<InsightResponseDto.InsightDetailQueryDto> findByIdWithSessionAndUser(Long insightId , Long userId ) {
+    public Optional<InsightDetailQuery> findByIdWithSessionAndUser(Long insightId , Long userId ) {
         QInsight insight = QInsight.insight;
         QSession session = QSession.session;
         QUser user = QUser.user;
@@ -236,22 +236,22 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .groupBy(voteOption.id)
                 .fetch();
 
-        List<InsightResponseDto.VoteOptionDto> voteOptions = voteResults.stream()
+        List<InsightVoteOption> voteOptions = voteResults.stream()
                 .map(tuple -> {
                     Long voteCount = tuple.get(voteResponse.id.count());
                     double percentage = (voteCount == null ? 0 : (voteCount * 100.0 / totalVotes));
-                    return new InsightResponseDto.VoteOptionDto(
-                            tuple.get(voteOption.id),
-                            tuple.get(voteOption.optionText),
-                            String.format("%.1f%%", percentage)// 퍼센트 변환
+                    return new InsightVoteOption(
+                            tuple.get(voteOption.id), // ID
+                            tuple.get(voteOption.optionText), // 옵션 텍스트
+                            String.format("%.1f%%", percentage) // 퍼센트 형식
                     );
                 })
                 .collect(Collectors.toList());
 
         // 2. 인사이트 상세 정보 조회
-        InsightResponseDto.InsightDetailQueryDto insightDetail = queryFactory
+        InsightDetailQuery insightDetail = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.InsightDetailQueryDto.class,
+                        InsightDetailQuery.class,
                         insight.id,
                         insight.memo,
                         insight.voteTitle,
@@ -298,7 +298,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
     }
 
     @Override
-    public Page<InsightResponseDto.SessionInsightListQueryDto> findInsightsBySessionId(
+    public Page<SessionInsightListQuery> findInsightsBySessionId(
             Long sessionId, String sort, Pageable pageable, Long currentUserId
     ) {
         QInsight insight = QInsight.insight;
@@ -328,9 +328,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
 
-        List<InsightResponseDto.SessionInsightListQueryDto> results = queryFactory
+        List<SessionInsightListQuery> results = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.SessionInsightListQueryDto.class,
+                        SessionInsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
@@ -356,7 +356,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         //  좋아요 여부 in-query로 최적화 처리
         if (currentUserId != null && !results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .map(SessionInsightListQuery::getId)
                     .toList();
 
             List<Long> likedIds = insightLikeRepository.findInsightIdsByUserIdAndInsightIds(currentUserId, insightIds);
@@ -368,7 +368,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         // 연사 댓글 여부
         if (!results.isEmpty()) {
             List<Long> insightIds = results.stream()
-                    .map(InsightResponseDto.SessionInsightListQueryDto::getId)
+                    .map(SessionInsightListQuery::getId)
                     .toList();
 
             List<Long> speakerCommentInsightIds =
@@ -391,7 +391,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         return new PageImpl<>(results, pageable, total == null ? 0 : total);
     }
 
-    public Page<InsightResponseDto.MyInsightListQueryDto> findMyInsights(
+    public Page<MyInsightListQuery> findMyInsights(
             String username,
             LocalDate eventDay,
             Long sessionId,
@@ -417,9 +417,9 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
 //                ? insight.id.desc() // 임시 정렬 (likes 기준 정렬이 필요하다면 별도 countJoin 필요)
 //                : insight.updatedAt.desc();
 
-        List<InsightResponseDto.MyInsightListQueryDto> content = queryFactory
+        List<MyInsightListQuery> content = queryFactory
                 .select(Projections.constructor(
-                        InsightResponseDto.MyInsightListQueryDto.class,
+                        MyInsightListQuery.class,
                         insight.id,
                         insight.memo,
                         insight.isPublic,
