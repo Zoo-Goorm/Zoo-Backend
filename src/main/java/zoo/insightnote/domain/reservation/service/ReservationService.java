@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
+import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponse;
 import zoo.insightnote.domain.reservation.entity.Reservation;
 import zoo.insightnote.domain.reservation.repository.ReservationCustomQueryRepository;
 import zoo.insightnote.domain.reservation.repository.ReservationRepository;
@@ -29,8 +29,8 @@ public class ReservationService {
     private final UserService userService;
     private final SessionService sessionService;
 
-    public UserTicketInfoResponseDto getUserTicketInfo(String username) {
-        UserTicketInfoResponseDto userTicketInfo = reservationQueryRepository.processUserTicketInfo(username);
+    public UserTicketInfoResponse getUserTicketInfo(String username) {
+        UserTicketInfoResponse userTicketInfo = reservationQueryRepository.processUserTicketInfo(username);
         return userTicketInfo;
     }
 

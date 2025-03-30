@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import zoo.insightnote.domain.event.entity.QEvent;
-import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
+import zoo.insightnote.domain.reservation.dto.response.ReservationSessions;
+import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponse;
 import zoo.insightnote.domain.reservation.entity.QReservation;
+import zoo.insightnote.domain.reservation.mapper.UserTicketInfoMapper;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.speaker.entity.QSpeaker;
 import zoo.insightnote.domain.speaker.service.SpeakerService;
@@ -56,7 +58,7 @@ public class ReservationCustomQueryRepository {
                 .fetch();
     }
 
-    public UserTicketInfoResponseDto processUserTicketInfo(String username) {
+    public UserTicketInfoResponse processUserTicketInfo(String username) {
         QSession session = QSession.session;
         QSpeaker speaker = QSpeaker.speaker;
 
@@ -65,7 +67,7 @@ public class ReservationCustomQueryRepository {
         List<Tuple> eventSessions = findEventInfo();
 
         // 2️⃣ 날짜별 세션 정보 저장
-        Map<String, List<UserTicketInfoResponseDto.reservationSessions>> registeredSessions = new LinkedHashMap<>();
+        Map<String, List<ReservationSessions>> registeredSessions = new LinkedHashMap<>();
         Set<String> eventDates = new LinkedHashSet<>();
         Set<String> userReservedDates = new HashSet<>();
 
@@ -78,9 +80,8 @@ public class ReservationCustomQueryRepository {
                     + "~" + row.get(session.endTime).format(DateTimeFormatter.ofPattern("HH:mm"));
 
             // 날짜별 세션 등록
-            registeredSessions.computeIfAbsent(eventDay, k -> new ArrayList<>()).add(
-                    new UserTicketInfoResponseDto.reservationSessions(sessionId, sessionName, speakerName, timeRange)
-            );
+            ReservationSessions dto = UserTicketInfoMapper.toReservationSessions(sessionId, sessionName, speakerName, timeRange);
+            registeredSessions.computeIfAbsent(eventDay, k -> new ArrayList<>()).add(dto);
 
             // 유저가 등록한 날짜 저장
             userReservedDates.add(eventDay);
@@ -98,9 +99,9 @@ public class ReservationCustomQueryRepository {
         }
 
         // 4️⃣ DTO로 반환
-        return UserTicketInfoResponseDto.builder()
-                .tickets(tickets)
-                .registeredSessions(registeredSessions)
-                .build();
+        return UserTicketInfoMapper.toUserTicketInfoResponse(
+                tickets,
+                registeredSessions
+        );
     }
 }
