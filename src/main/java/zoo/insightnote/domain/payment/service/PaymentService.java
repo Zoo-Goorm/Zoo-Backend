@@ -10,7 +10,7 @@ import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponse;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.mapper.PaymentCancelMapper;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
@@ -37,7 +37,7 @@ public class PaymentService {
     private final ReservationService reservationService;
     private final PaymentRepository paymentRepository;
 
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentReadyRequest request, User user) {
+    public ResponseEntity<KakaoPayReadyResponse> requestPayment(PaymentReadyRequest request, User user) {
         Long orderId = createOrderId();
         sessionService.validationParticipantCountOver(request.sessionIds());
         sessionService.validateSessionTime(request.sessionIds());

@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayCancelResponse;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponse;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -36,18 +36,18 @@ public class KakaoPayService {
     private String adminKey;
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponseDto> requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
+    public ResponseEntity<KakaoPayReadyResponse> requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, user, orderId);
 
         try {
-            ResponseEntity<KakaoPayReadyResponseDto> response = restTemplate.exchange(
+            ResponseEntity<KakaoPayReadyResponse> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/ready",
                     HttpMethod.POST,
                     paymentReqeustHttpEntity,
-                    KakaoPayReadyResponseDto.class
+                    KakaoPayReadyResponse.class
             );
 
-            String tid = response.getBody().getTid();
+            String tid = response.getBody().tid();
             log.info("✅ 카카오페이 결제 요청 성공");
 
             paymentRedisService.saveTidKey(orderId, tid);

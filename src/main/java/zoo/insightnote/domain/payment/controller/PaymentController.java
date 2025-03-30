@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponse;
 
 @Tag(name = "PAYMENT", description = "결제 관련 API")
 @RequestMapping("/api/v1/payment")
@@ -26,7 +26,7 @@ public interface PaymentController {
             }
     )
     @PostMapping("/request")
-    ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
+    ResponseEntity<KakaoPayReadyResponse> requestPayment(
             @RequestBody PaymentReadyRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     );
