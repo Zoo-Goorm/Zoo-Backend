@@ -12,9 +12,10 @@ public class UserTicketInfoMapper {
     }
 
     public static UserTicketInfoResponse toUserTicketInfoResponse(
+            Long eventId,
             Map<String, Boolean> tickets,
             Map<String, List<ReservationSessions>> registeredSessions
     ) {
-        return new UserTicketInfoResponse(tickets, registeredSessions);
+        return new UserTicketInfoResponse(eventId, tickets, registeredSessions);
     }
 }
