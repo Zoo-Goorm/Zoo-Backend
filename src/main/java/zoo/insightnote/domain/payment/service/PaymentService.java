@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
+import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
@@ -37,11 +37,11 @@ public class PaymentService {
     private final ReservationService reservationService;
     private final PaymentRepository paymentRepository;
 
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto request, User user) {
+    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentReadyRequest request, User user) {
         Long orderId = createOrderId();
-        sessionService.validationParticipantCountOver(request.getSessionIds());
-        sessionService.validateSessionTime(request.getSessionIds());
-        reservationService.validateReservedSession(user, request.getSessionIds());
+        sessionService.validationParticipantCountOver(request.sessionIds());
+        sessionService.validateSessionTime(request.sessionIds());
+        reservationService.validateReservedSession(user, request.sessionIds());
         return kakaoPayService.requestKakaoPayment(request, user, orderId);
     }
 
@@ -49,7 +49,7 @@ public class PaymentService {
     public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequest requestDto) {
         String tid = paymentRedisService.getTidKey(requestDto.orderId());
         List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.orderId());
-        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.orderId());
+        UserInfo userInfo = paymentRedisService.getUserInfo(requestDto.orderId());
         User user = userService.findByUsername(requestDto.username());
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);

@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.email.service.EmailService;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.mapper.PaymentApproveMapper;
@@ -28,7 +28,7 @@ public class PaymentControllerImpl implements PaymentController {
     // 주문 정보를 가지고 카카오페이 API에 결제 요청
     @PostMapping("/request")
     public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
-            @RequestBody @Valid PaymentRequestReadyDto requestDto,
+            @RequestBody @Valid PaymentReadyRequest requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findByUsername(userDetails.getUsername());
         return paymentService.requestPayment(requestDto, user);

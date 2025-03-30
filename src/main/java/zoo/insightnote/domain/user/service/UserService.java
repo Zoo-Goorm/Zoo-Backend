@@ -4,9 +4,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
+import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
@@ -71,13 +70,13 @@ public class UserService {
         return response;
     }
 
-    public void updateUserInfo(UserInfoDto userInfo, User user) {
+    public void updateUserInfo(UserInfo userInfo, User user) {
         user.update(
-                userInfo.getName(),
-                userInfo.getPhoneNumber(),
-                userInfo.getJob(),              // 직업
-                userInfo.getOccupation(),       // 직군
-                userInfo.getInterestCategory()
+                userInfo.name(),
+                userInfo.phoneNumber(),
+                userInfo.job(),              // 직업
+                userInfo.occupation(),       // 직군
+                userInfo.interestCategory()
         );
         userRepository.save(user);
     }

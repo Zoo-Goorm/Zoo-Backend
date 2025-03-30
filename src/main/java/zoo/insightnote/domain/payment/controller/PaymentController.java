@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 
@@ -27,7 +27,7 @@ public interface PaymentController {
     )
     @PostMapping("/request")
     ResponseEntity<KakaoPayReadyResponseDto> requestPayment(
-            @RequestBody PaymentRequestReadyDto request,
+            @RequestBody PaymentReadyRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     );
 
