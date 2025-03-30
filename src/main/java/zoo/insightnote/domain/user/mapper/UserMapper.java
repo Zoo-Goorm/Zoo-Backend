@@ -16,6 +16,8 @@ public class UserMapper {
                 .occupation(user.getOccupation())
                 .job(user.getJob())
                 .interestCategory(user.getInterestCategory())
+                .username(user.getUsername())
+                .snsUrl(user.getSnsUrl())
                 .build();
     }
 }

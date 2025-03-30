@@ -1,11 +1,10 @@
 package zoo.insightnote.domain.payment.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,5 +44,6 @@ public interface PaymentController {
     ResponseEntity<KakaoPayApproveResponseDto> approvePayment(@RequestParam Long orderId,
                                                               @RequestParam Long userId,
                                                               @RequestParam String pgToken,
-                                                              @AuthenticationPrincipal UserDetails userDetails);
+                                                              @AuthenticationPrincipal UserDetails userDetails)
+            throws MessagingException;
 }
