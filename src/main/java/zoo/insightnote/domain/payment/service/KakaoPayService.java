@@ -12,8 +12,8 @@ import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayCancelResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayCancelResponse;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.exception.CustomException;
@@ -63,15 +63,15 @@ public class KakaoPayService {
 
     // 결제 승인 요청
     @Transactional
-    public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequest requestDto, User user) {
+    public KakaoPayApproveResponse approveKakaoPayment(String tid, PaymentApproveRequest requestDto, User user) {
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, user, tid);
 
         try {
-            ResponseEntity<KakaoPayApproveResponseDto> response = restTemplate.exchange(
+            ResponseEntity<KakaoPayApproveResponse> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/approve",
                     HttpMethod.POST,
                     paymentApproveHttpEntity,
-                    KakaoPayApproveResponseDto.class
+                    KakaoPayApproveResponse.class
             );
 
             log.info("✅ 카카오페이 결제 승인 성공");
@@ -83,15 +83,15 @@ public class KakaoPayService {
         }
     }
 
-    public KakaoPayCancelResponseDto cancelKakaoPayment(PaymentCancelRequest requestDto) {
+    public KakaoPayCancelResponse cancelKakaoPayment(PaymentCancelRequest requestDto) {
         HttpEntity<String> paymentCancelHttpEntity = createPaymentCancelHttpEntity(requestDto, requestDto.tid());
 
         try {
-            ResponseEntity<KakaoPayCancelResponseDto> response = restTemplate.exchange(
+            ResponseEntity<KakaoPayCancelResponse> response = restTemplate.exchange(
                     "https://open-api.kakaopay.com/online/v1/payment/cancel",
                     HttpMethod.POST,
                     paymentCancelHttpEntity,
-                    KakaoPayCancelResponseDto.class
+                    KakaoPayCancelResponse.class
             );
 
             log.info("✅ 카카오페이 결제 취소 성공");

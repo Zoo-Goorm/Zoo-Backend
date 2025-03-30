@@ -9,7 +9,7 @@ import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
 import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.mapper.PaymentCancelMapper;
@@ -46,13 +46,13 @@ public class PaymentService {
     }
 
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequest requestDto) {
+    public ResponseEntity<KakaoPayApproveResponse> approvePayment(PaymentApproveRequest requestDto) {
         String tid = paymentRedisService.getTidKey(requestDto.orderId());
         List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.orderId());
         UserInfo userInfo = paymentRedisService.getUserInfo(requestDto.orderId());
         User user = userService.findByUsername(requestDto.username());
 
-        KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
+        KakaoPayApproveResponse response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
             savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
             reservationService.saveReservationsInfo(sessionIds, user, userInfo.isOnline());
@@ -62,8 +62,8 @@ public class PaymentService {
 
             PaymentCancelRequest cancelRequestDto = PaymentCancelMapper.toBuildPaymentCancel(
                     tid,
-                    response.getAmount().getTotal(),
-                    response.getAmount().getTax_free()
+                    response.amount().total(),
+                    response.amount().tax_free()
             );
 
             kakaoPayService.cancelKakaoPayment(cancelRequestDto);
@@ -72,14 +72,14 @@ public class PaymentService {
         return ResponseEntity.ok(response);
     }
 
-    private Payment savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
+    private Payment savePaymentInfo(KakaoPayApproveResponse responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.create(
                 user,
                 sessionInfo,
                 tid,
-                responseDto.getAmount().getTotal(),
+                responseDto.amount().total(),
                 isOnline
         );
 

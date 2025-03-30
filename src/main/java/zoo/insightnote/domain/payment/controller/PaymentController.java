@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 
 @Tag(name = "PAYMENT", description = "결제 관련 API")
@@ -41,9 +41,9 @@ public interface PaymentController {
             }
     )
     @GetMapping("/approve")
-    ResponseEntity<KakaoPayApproveResponseDto> approvePayment(@RequestParam Long orderId,
-                                                              @RequestParam Long userId,
-                                                              @RequestParam String pgToken,
-                                                              @AuthenticationPrincipal UserDetails userDetails)
+    ResponseEntity<KakaoPayApproveResponse> approvePayment(@RequestParam Long orderId,
+                                                            @RequestParam Long userId,
+                                                            @RequestParam String pgToken,
+                                                            @AuthenticationPrincipal UserDetails userDetails)
             throws MessagingException;
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.email.service.EmailService;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.mapper.PaymentApproveMapper;
 import zoo.insightnote.domain.payment.service.PaymentService;
@@ -36,14 +36,14 @@ public class PaymentControllerImpl implements PaymentController {
 
     // 카카오페이 API에서 결제 요청 승인
     @GetMapping("/approve")
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(
+    public ResponseEntity<KakaoPayApproveResponse> approvePayment(
             @RequestParam(value = "order_id") Long orderId,
             @RequestParam(value = "user_id") Long userId,
             @RequestParam(value = "pg_token") String pgToken,
             @AuthenticationPrincipal UserDetails userDetails
     ) throws MessagingException {
         PaymentApproveRequest requestDto = PaymentApproveMapper.toBuildPaymentApprove(orderId, userId, pgToken, userDetails.getUsername());
-        ResponseEntity<KakaoPayApproveResponseDto> response = paymentService.approvePayment(requestDto);
+        ResponseEntity<KakaoPayApproveResponse> response = paymentService.approvePayment(requestDto);
         User user = userService.findByUsername(userDetails.getUsername());
         emailService.sendPaymentSuccess(user);
         return response;
