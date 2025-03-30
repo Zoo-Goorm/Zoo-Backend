@@ -6,13 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
+import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
 import zoo.insightnote.domain.payment.entity.Payment;
+import zoo.insightnote.domain.payment.mapper.PaymentCancelMapper;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.service.ReservationService;
 import zoo.insightnote.domain.session.entity.Session;
@@ -60,11 +60,11 @@ public class PaymentService {
         } catch (Exception e) {
             log.error("❌ 결제 후 내부 로직 실패 → 카카오페이 결제 취소");
 
-            PaymentCancelRequestDto cancelRequestDto = PaymentCancelRequestDto.builder()
-                    .tid(tid)
-                    .cancelAmount(response.getAmount().getTotal())
-                    .cancelTaxFreeAmount(response.getAmount().getTax_free())
-                    .build();
+            PaymentCancelRequest cancelRequestDto = PaymentCancelMapper.toBuildPaymentCancel(
+                    tid,
+                    response.getAmount().getTotal(),
+                    response.getAmount().getTax_free()
+            );
 
             kakaoPayService.cancelKakaoPayment(cancelRequestDto);
             throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);

@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
+import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -84,8 +83,8 @@ public class KakaoPayService {
         }
     }
 
-    public KakaoPayCancelResponseDto cancelKakaoPayment(PaymentCancelRequestDto requestDto) {
-        HttpEntity<String> paymentCancelHttpEntity = createPaymentCancelHttpEntity(requestDto, requestDto.getTid());
+    public KakaoPayCancelResponseDto cancelKakaoPayment(PaymentCancelRequest requestDto) {
+        HttpEntity<String> paymentCancelHttpEntity = createPaymentCancelHttpEntity(requestDto, requestDto.tid());
 
         try {
             ResponseEntity<KakaoPayCancelResponseDto> response = restTemplate.exchange(
@@ -154,7 +153,7 @@ public class KakaoPayService {
         return createKakaoHttpEntity(params);
     }
 
-    private HttpEntity<String> createPaymentCancelHttpEntity(PaymentCancelRequestDto requestDto, String tid) {
+    private HttpEntity<String> createPaymentCancelHttpEntity(PaymentCancelRequest requestDto, String tid) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
         headers.set("Content-Type", "application/json");
@@ -162,8 +161,8 @@ public class KakaoPayService {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);
-        params.put("cancel_amount", requestDto.getCancelAmount());
-        params.put("cancel_tax_free_amount", requestDto.getCancelTaxFreeAmount());
+        params.put("cancel_amount", requestDto.cancelAmount());
+        params.put("cancel_tax_free_amount", requestDto.cancelTaxFreeAmount());
 
         return createKakaoHttpEntity(params);
     }
