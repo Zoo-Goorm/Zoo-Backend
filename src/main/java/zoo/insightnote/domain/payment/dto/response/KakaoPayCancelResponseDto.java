@@ -3,7 +3,6 @@ package zoo.insightnote.domain.payment.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import zoo.insightnote.domain.payment.dto.etc.AmountDto;
 import zoo.insightnote.domain.payment.dto.etc.ApproveCancelAmountDto;
 import zoo.insightnote.domain.payment.dto.etc.CancelAvailableAmountDto;
 import zoo.insightnote.domain.payment.dto.etc.CanceledAmountDto;
@@ -19,7 +18,7 @@ public class KakaoPayCancelResponseDto {
     private String partner_order_id;
     private String partner_user_id;
     private String payment_method_type;
-    private AmountDto amount;
+    private Amount amount;
     private ApproveCancelAmountDto approved_cancel_amount;
     private CanceledAmountDto canceled_amount;
     private CancelAvailableAmountDto cancel_available_amount;
