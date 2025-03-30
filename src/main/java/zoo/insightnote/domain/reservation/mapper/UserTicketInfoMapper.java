@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 public class UserTicketInfoMapper {
-    public static ReservationSessions toReservationSessions(Long sessionId, String sessionName, String speakerName, String timeRange) {
+    public static ReservationSessions toBuildReservationSessions(Long sessionId, String sessionName, String speakerName, String timeRange) {
         return new ReservationSessions(sessionId, sessionName, speakerName, timeRange);
     }
 
-    public static UserTicketInfoResponse toUserTicketInfoResponse(
+    public static UserTicketInfoResponse toBuildUserTicketInfoResponse(
             Long eventId,
             Map<String, Boolean> tickets,
             Map<String, List<ReservationSessions>> registeredSessions

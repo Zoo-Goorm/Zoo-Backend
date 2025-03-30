@@ -83,7 +83,7 @@ public class ReservationCustomQueryRepository {
                     + "~" + row.get(session.endTime).format(DateTimeFormatter.ofPattern("HH:mm"));
 
             // 날짜별 세션 등록
-            ReservationSessions dto = UserTicketInfoMapper.toReservationSessions(sessionId, sessionName, speakerName, timeRange);
+            ReservationSessions dto = UserTicketInfoMapper.toBuildReservationSessions(sessionId, sessionName, speakerName, timeRange);
             registeredSessions.computeIfAbsent(eventDay, k -> new ArrayList<>()).add(dto);
 
             // 유저가 등록한 날짜 저장
@@ -102,7 +102,7 @@ public class ReservationCustomQueryRepository {
         }
 
         // DTO로 반환
-        return UserTicketInfoMapper.toUserTicketInfoResponse(
+        return UserTicketInfoMapper.toBuildUserTicketInfoResponse(
                 event.getId(),
                 tickets,
                 registeredSessions
