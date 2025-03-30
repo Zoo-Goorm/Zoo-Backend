@@ -8,10 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import zoo.insightnote.domain.email.service.EmailService;
-import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.domain.payment.mapper.PaymentApproveMapper;
 import zoo.insightnote.domain.payment.service.PaymentService;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.domain.user.service.UserService;
@@ -41,8 +42,7 @@ public class PaymentControllerImpl implements PaymentController {
             @RequestParam(value = "pg_token") String pgToken,
             @AuthenticationPrincipal UserDetails userDetails
     ) throws MessagingException {
-        PaymentApproveRequestDto requestDto = new PaymentApproveRequestDto(orderId, userId, pgToken,
-                userDetails.getUsername());
+        PaymentApproveRequest requestDto = PaymentApproveMapper.toBuildPaymentApprove(orderId, userId, pgToken, userDetails.getUsername());
         ResponseEntity<KakaoPayApproveResponseDto> response = paymentService.approvePayment(requestDto);
         User user = userService.findByUsername(userDetails.getUsername());
         emailService.sendPaymentSuccess(user);

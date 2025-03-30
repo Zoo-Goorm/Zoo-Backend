@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,7 +64,7 @@ public class KakaoPayService {
 
     // 결제 승인 요청
     @Transactional
-    public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequestDto requestDto, User user) {
+    public KakaoPayApproveResponseDto approveKakaoPayment(String tid, PaymentApproveRequest requestDto, User user) {
         HttpEntity<String> paymentApproveHttpEntity = createPaymentApproveHttpEntity(requestDto, user, tid);
 
         try {
@@ -138,7 +139,7 @@ public class KakaoPayService {
         return createKakaoHttpEntity(params);
     }
 
-    private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequestDto requestDto, User user, String tid) {
+    private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequest requestDto, User user, String tid) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "SECRET_KEY " + adminKey);
         headers.set("Content-Type", "application/json");
@@ -146,9 +147,9 @@ public class KakaoPayService {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);
-        params.put("partner_order_id", requestDto.getOrderId());
+        params.put("partner_order_id", requestDto.orderId());
         params.put("partner_user_id", user.getId());
-        params.put("pg_token", requestDto.getPgToken());
+        params.put("pg_token", requestDto.pgToken());
 
         return createKakaoHttpEntity(params);
     }

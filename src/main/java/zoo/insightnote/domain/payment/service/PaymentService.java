@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
 import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
 import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
 import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
@@ -45,11 +46,11 @@ public class PaymentService {
     }
 
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
-        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.getOrderId());
-        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
-        User user = userService.findByUsername(requestDto.getUsername());
+    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequest requestDto) {
+        String tid = paymentRedisService.getTidKey(requestDto.orderId());
+        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.orderId());
+        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.orderId());
+        User user = userService.findByUsername(requestDto.username());
 
         KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
