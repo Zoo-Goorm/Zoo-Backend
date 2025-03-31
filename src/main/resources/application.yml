@@ -59,6 +59,18 @@ spring:
     secret: ${JWT_SECRET}
 
 kakao:
-    api:
-      cid: TC0ONETIME
-      admin-key: ${KAKAO_API_KEY}
+  api:
+    cid: TC0ONETIME
+    admin-key: ${KAKAO_API_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: alway
+
+qr:
+  save-path: ${QR_SAVE_PATH}

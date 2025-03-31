@@ -117,7 +117,8 @@ jobs:
             echo "GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }}" >> .env
             echo "GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}" >> .env 
             echo "REDIS_CLUSTER_NODES=${{ secrets.REDIS_CLUSTER_NODES }}" >> .env 
-            echo "PROFILES=dev,${{ secrets.TARGET_UPSTREAM }}" >> .env 
+            echo "PROFILES=dev,${{ secrets.TARGET_UPSTREAM }}" >> .env
+            echo "QR_SAVE_PATH=${{ secrets.QR_SAVE_PATH }}" >> .env
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
