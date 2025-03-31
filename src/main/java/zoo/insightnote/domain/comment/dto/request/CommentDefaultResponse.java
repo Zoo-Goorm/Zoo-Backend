@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentDefaultResponse {
-    private Long commentId;
-    private String content;
-    private LocalDateTime createAt;
-    private String author;
+public record CommentDefaultResponse (
+     Long commentId,
+     String content,
+     LocalDateTime createAt,
+     String author
+){
 }
