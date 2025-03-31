@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static zoo.insightnote.domain.keyword.entity.QKeyword.keyword;
 import static zoo.insightnote.domain.user.entity.QUser.user;
 
 @RequiredArgsConstructor
@@ -305,6 +306,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
         QUser user = QUser.user;
+        QUserIntroductionLink introductionLink = QUserIntroductionLink.userIntroductionLink;
 
         // 정렬 조건 설정
         OrderSpecifier<?> dynamicSort = sort.equals("likes")
@@ -340,10 +342,15 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insightLike.id.countDistinct().as("likeCount"),
                         comment.id.countDistinct().as("commentCount"),
                         displayNameExpr,
-                        user.job
+                        user.job,
+                        user.name,
+                        user.email,
+                        user.interestCategory,
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl)
                 ))
                 .from(insight)
                 .leftJoin(insight.user, user)
+                .leftJoin(introductionLink).on(introductionLink.user.eq(user))
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
                 .where(where)
