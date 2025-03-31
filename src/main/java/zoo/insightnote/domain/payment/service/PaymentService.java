@@ -5,13 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequestDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequestDto;
-import zoo.insightnote.domain.payment.dto.request.PaymentRequestReadyDto;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponseDto;
-import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponseDto;
+import zoo.insightnote.domain.payment.dto.request.PaymentReadyRequest;
+import zoo.insightnote.domain.payment.dto.request.UserInfo;
+import zoo.insightnote.domain.payment.dto.request.PaymentApproveRequest;
+import zoo.insightnote.domain.payment.dto.request.PaymentCancelRequest;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayApproveResponse;
+import zoo.insightnote.domain.payment.dto.response.KakaoPayReadyResponse;
 import zoo.insightnote.domain.payment.entity.Payment;
+import zoo.insightnote.domain.payment.mapper.PaymentCancelMapper;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
 import zoo.insightnote.domain.reservation.service.ReservationService;
 import zoo.insightnote.domain.session.entity.Session;
@@ -36,22 +37,22 @@ public class PaymentService {
     private final ReservationService reservationService;
     private final PaymentRepository paymentRepository;
 
-    public ResponseEntity<KakaoPayReadyResponseDto> requestPayment(PaymentRequestReadyDto request, User user) {
+    public ResponseEntity<KakaoPayReadyResponse> requestPayment(PaymentReadyRequest request, User user) {
         Long orderId = createOrderId();
-        sessionService.validationParticipantCountOver(request.getSessionIds());
-        sessionService.validateSessionTime(request.getSessionIds());
-        reservationService.validateReservedSession(user, request.getSessionIds());
+        sessionService.validationParticipantCountOver(request.sessionIds());
+        sessionService.validateSessionTime(request.sessionIds());
+        reservationService.validateReservedSession(user, request.sessionIds());
         return kakaoPayService.requestKakaoPayment(request, user, orderId);
     }
 
     @Transactional
-    public ResponseEntity<KakaoPayApproveResponseDto> approvePayment(PaymentApproveRequestDto requestDto) {
-        String tid = paymentRedisService.getTidKey(requestDto.getOrderId());
-        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.getOrderId());
-        UserInfoDto userInfo = paymentRedisService.getUserInfo(requestDto.getOrderId());
-        User user = userService.findByUsername(requestDto.getUsername());
+    public ResponseEntity<KakaoPayApproveResponse> approvePayment(PaymentApproveRequest requestDto) {
+        String tid = paymentRedisService.getTidKey(requestDto.orderId());
+        List<Long> sessionIds = paymentRedisService.getSessionIds(requestDto.orderId());
+        UserInfo userInfo = paymentRedisService.getUserInfo(requestDto.orderId());
+        User user = userService.findByUsername(requestDto.username());
 
-        KakaoPayApproveResponseDto response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
+        KakaoPayApproveResponse response = kakaoPayService.approveKakaoPayment(tid, requestDto, user);
         try {
             savePaymentInfo(response, sessionIds.get(0), user, tid, userInfo.isOnline());
             reservationService.saveReservationsInfo(sessionIds, user, userInfo.isOnline());
@@ -59,11 +60,11 @@ public class PaymentService {
         } catch (Exception e) {
             log.error("❌ 결제 후 내부 로직 실패 → 카카오페이 결제 취소");
 
-            PaymentCancelRequestDto cancelRequestDto = PaymentCancelRequestDto.builder()
-                    .tid(tid)
-                    .cancelAmount(response.getAmount().getTotal())
-                    .cancelTaxFreeAmount(response.getAmount().getTax_free())
-                    .build();
+            PaymentCancelRequest cancelRequestDto = PaymentCancelMapper.toBuildPaymentCancel(
+                    tid,
+                    response.amount().total(),
+                    response.amount().tax_free()
+            );
 
             kakaoPayService.cancelKakaoPayment(cancelRequestDto);
             throw new CustomException(ErrorCode.KAKAO_PAY_APPROVE_FAILED);
@@ -71,14 +72,14 @@ public class PaymentService {
         return ResponseEntity.ok(response);
     }
 
-    private Payment savePaymentInfo(KakaoPayApproveResponseDto responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
+    private Payment savePaymentInfo(KakaoPayApproveResponse responseDto, Long sessionId, User user, String tid, Boolean isOnline) {
         Session sessionInfo = sessionService.findSessionBySessionId(sessionId);
 
         Payment payment = Payment.create(
                 user,
                 sessionInfo,
                 tid,
-                responseDto.getAmount().getTotal(),
+                responseDto.amount().total(),
                 isOnline
         );
 

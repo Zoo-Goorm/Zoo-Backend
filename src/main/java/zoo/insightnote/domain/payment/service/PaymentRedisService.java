@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import zoo.insightnote.domain.payment.dto.etc.UserInfoDto;
+import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
@@ -72,7 +71,7 @@ public class PaymentRedisService {
         }
     }
 
-    public void saveUserInfo(Long orderId, UserInfoDto userInfo) {
+    public void saveUserInfo(Long orderId, UserInfo userInfo) {
         String userInfoKey = PAYMENT_USERINFO + orderId;
         try {
             String jsonUserInfo = objectMapper.writeValueAsString(userInfo);
@@ -83,7 +82,7 @@ public class PaymentRedisService {
         }
     }
 
-    public UserInfoDto getUserInfo(Long orderId) {
+    public UserInfo getUserInfo(Long orderId) {
         String userInfoKey = PAYMENT_USERINFO + orderId;
         String getUserInfo = redisTemplate.opsForValue().get(userInfoKey);
 
@@ -94,7 +93,7 @@ public class PaymentRedisService {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(getUserInfo, UserInfoDto.class);
+            return objectMapper.readValue(getUserInfo, UserInfo.class);
         } catch (JsonProcessingException e) {
             log.error("❌ JSON 변환 오류 (userInfo 조회 실패)", e);
             throw new CustomException(ErrorCode.JSON_PROCESSING_ERROR);

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
+import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponse;
 import zoo.insightnote.domain.reservation.service.ReservationService;
 
 @RestController
@@ -15,10 +15,10 @@ public class ReservationControllerImpl implements ReservationController{
     private final ReservationService reservationService;
 
     @GetMapping("/ticket")
-    public ResponseEntity<UserTicketInfoResponseDto> getUserTicketInfo(
+    public ResponseEntity<UserTicketInfoResponse> getUserTicketInfo(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        UserTicketInfoResponseDto userTicketInfo = reservationService.getUserTicketInfo(userDetails.getUsername());
+        UserTicketInfoResponse userTicketInfo = reservationService.getUserTicketInfo(userDetails.getUsername());
         return ResponseEntity.ok(userTicketInfo);
     }
 

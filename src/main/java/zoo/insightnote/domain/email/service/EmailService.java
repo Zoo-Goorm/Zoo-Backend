@@ -6,19 +6,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import zoo.insightnote.domain.email.dto.request.PaymentSuccessMailRequest;
+import zoo.insightnote.domain.email.mapper.PaymentSuccessMailMapper;
 import zoo.insightnote.domain.event.entity.Event;
 import zoo.insightnote.domain.event.service.EventService;
 import zoo.insightnote.domain.payment.entity.Payment;
 import zoo.insightnote.domain.payment.repository.PaymentRepository;
-import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponseDto;
+import zoo.insightnote.domain.reservation.dto.response.UserTicketInfoResponse;
 import zoo.insightnote.domain.reservation.repository.ReservationCustomQueryRepository;
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,64 +55,19 @@ public class EmailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-        UserTicketInfoResponseDto ticketInfo = reservationCustomQueryRepository.processUserTicketInfo(user.getUsername());
-
-        // 세션 내역 구성
-        StringBuilder sessionList = new StringBuilder();
-        Set<String> selectedDates = new HashSet<>();
-
-        ticketInfo.getRegisteredSessions().forEach((date, sessions) -> {
-            selectedDates.add(date); // 날짜 수집
-            for (UserTicketInfoResponseDto.reservationSessions session : sessions) {
-                sessionList.append("<li>")
-                        .append("<strong>").append(session.getSessionName()).append("</strong><br>")
-                        .append("- 시간대: ").append(session.getTimeRange()).append("<br>")
-                        .append("- 연사: ").append(session.getSpeakerName()).append("</li><br>");
-            }
-        });
-
-        // 입장권 구분
-        String selectDate = "";
-        if (ticketInfo.getTickets().size() >= 2) {
-            List<Map.Entry<String, Boolean>> ticketList = new ArrayList<>(ticketInfo.getTickets().entrySet());
-
-            boolean firstDay = ticketList.get(0).getValue();
-            boolean secondDay = ticketList.get(1).getValue();
-
-            if (firstDay && secondDay) {
-                selectDate = "양일(1일차/2일차)";
-            } else if (firstDay) {
-                selectDate = "1일차";
-            } else if (secondDay) {
-                selectDate = "2일차";
-            }
-        }
-
-        // 입장권 가격
-        Event event = eventService.findById(ticketInfo.getEventId());
+        UserTicketInfoResponse ticketInfo = reservationCustomQueryRepository.processUserTicketInfo(user.getUsername());
+        Event event = eventService.findById(ticketInfo.eventId());
         Payment reservedEvent = paymentRepository.findReservedEvent(user.getUsername(), event.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
-        int amount = reservedEvent.getAmount();
 
-        // 이름 가운데 * 처리
-        String name = user.getName();
-        String maskedName = name.length() >= 3
-                ? name.charAt(0) + "*".repeat(name.length() - 2) + name.charAt(name.length() - 1)
-                : name;
-
-        // 전화번호 * 처리
-        String phone = user.getPhoneNumber().replaceAll("\\D", "");
-        String maskedPhone = phone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-****");
-
-        // 현재 시간
-        String paymentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy / MM / dd   HH:mm:ss"));
+        PaymentSuccessMailRequest dto = PaymentSuccessMailMapper.toSuccessMailDto(user, reservedEvent, ticketInfo);
 
         String htmlMsg = "<html>" +
                 "<body style=\"font-family: 'Apple SD Gothic Neo', sans-serif; line-height: 1.6;\">" +
 
                 "<h2>[Synapse X] 결제 및 참가 신청이 정상적으로 완료되었습니다.</h2>" +
 
-                "<p><strong>" + maskedName + "</strong>님, 참가 신청을 해주셔서 감사합니다.</p>" +
+                "<p><strong>" + dto.userNameMasked() + "</strong>님, 참가 신청을 해주셔서 감사합니다.</p>" +
 
                 "<p>아래의 결제 내역을 확인해주세요.<br>" +
                 "자세한 세션 정보는 " +
@@ -125,24 +78,24 @@ public class EmailService {
 
                 "<h3>[선택한 세션 내역]</h3>" +
                 "<ul style=\"list-style-type: none; padding-left: 0;\">" +
-                sessionList.toString() +
+                dto.sessionHtml() +
                 "</ul>" +
 
                 "<h3>[결제 내역]</h3>" +
                 "<ul style=\"list-style-type: none; padding-left: 0;\">" +
-                "<li><strong>선택 날짜:</strong> " + selectDate + "</li>" +
+                "<li><strong>선택 날짜:</strong> " + dto.selectedDateLabel() + "</li>" +
                 "<li><strong>결제 수단:</strong> 카카오페이</li>" +
-                "<li><strong>결제 금액:</strong> " + String.format("%,d원", amount) + "</li>" +
+                "<li><strong>결제 금액:</strong> " + String.format("%,d원", dto.amount()) + "</li>" +
                 "</ul>" +
 
                 "<h3>[결제 일시]</h3>" +
-                "<p>" + paymentTime + "</p>" +
+                "<p>" + dto.paymentTime() + "</p>" +
 
                 "<h3>[결제자 정보]</h3>" +
                 "<ul style=\"list-style-type: none; padding-left: 0;\">" +
-                "<li><strong>이름:</strong> " + maskedName + "</li>" +
-                "<li><strong>전화번호:</strong> " + maskedPhone + "</li>" +
-                "<li><strong>이메일:</strong> " + user.getEmail() + "</li>" +
+                "<li><strong>이름:</strong> " + dto.userNameMasked() + "</li>" +
+                "<li><strong>전화번호:</strong> " + dto.userPhoneMasked() + "</li>" +
+                "<li><strong>이메일:</strong> " + dto.userEmail() + "</li>" +
                 "</ul>" +
 
                 "<h3>[개인정보 이용약관]</h3>" +
