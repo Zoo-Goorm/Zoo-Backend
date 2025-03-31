@@ -27,14 +27,12 @@ public class Comment extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO : user Entity 개발 완료시 nullable = false로 수정
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    //TODO : insight Entity 개발 완료시 nullable = false로 수정
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "insight_id", nullable = true)
+    @JoinColumn(name = "insight_id", nullable = false)
     private Insight insight;
 
     private String content;
