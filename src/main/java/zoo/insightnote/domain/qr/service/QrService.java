@@ -40,6 +40,7 @@ public class QrService {
     private final SessionService sessionService;
     private final EventService eventService;
 
+    // 관리자 QR 저장 파일 경로
     @Value("${qr.save-path}")
     private String QR_SAVE_PATH_NAME;
 
