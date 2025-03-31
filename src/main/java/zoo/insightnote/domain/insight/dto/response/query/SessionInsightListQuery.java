@@ -2,6 +2,7 @@ package zoo.insightnote.domain.insight.dto.response.query;
 
 import lombok.Getter;
 import lombok.Setter;
+import zoo.insightnote.domain.insight.dto.response.UserProfileResponse;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +18,10 @@ public class SessionInsightListQuery {
     private Long commentCount;
     private String displayName;
     private String job;
+    private String userName;
+    private String email;
+    private String interestCategory;
+    private String introductionLinks;
 
     @Setter
     private Boolean isLiked;
@@ -27,7 +32,8 @@ public class SessionInsightListQuery {
     public SessionInsightListQuery(
             Long id, String memo, Boolean isPublic, Boolean isAnonymous,
             LocalDateTime createdAt, LocalDateTime updatedAt,
-            Long likeCount, Long commentCount, String displayName, String job
+            Long likeCount, Long commentCount, String displayName, String job,
+            String userName, String email, String interestCategory, String introductionLinks
     ) {
         this.id = id;
         this.memo = memo;
@@ -39,5 +45,9 @@ public class SessionInsightListQuery {
         this.commentCount = commentCount;
         this.displayName = displayName;
         this.job = job;
+        this.userName = userName;
+        this.email = email;
+        this.interestCategory = interestCategory;
+        this.introductionLinks = introductionLinks;
     }
 }

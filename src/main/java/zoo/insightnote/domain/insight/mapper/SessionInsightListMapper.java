@@ -3,8 +3,10 @@ package zoo.insightnote.domain.insight.mapper;
 import org.springframework.data.domain.Page;
 import zoo.insightnote.domain.insight.dto.response.SessionInsight;
 import zoo.insightnote.domain.insight.dto.response.SessionInsightListResponse;
+import zoo.insightnote.domain.insight.dto.response.UserProfileResponse;
 import zoo.insightnote.domain.insight.dto.response.query.SessionInsightListQuery;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,12 @@ public class SessionInsightListMapper {
     }
 
     public static SessionInsight toBuildSessionInsight(SessionInsightListQuery dto) {
+        UserProfileResponse profile = new UserProfileResponse(
+                dto.getUserName(),
+                dto.getEmail(),
+                splitToList(dto.getInterestCategory()),
+                splitToList(dto.getIntroductionLinks())
+        );
         return new SessionInsight(
                 dto.getId(),
                 dto.getMemo(),
@@ -40,7 +48,14 @@ public class SessionInsightListMapper {
                 dto.getDisplayName(),
                 dto.getJob(),
                 dto.getIsLiked(),
-                dto.getHasSpeakerComment()
+                dto.getHasSpeakerComment(),
+                profile
         );
+    }
+
+
+
+    private static List<String> splitToList(String str) {
+        return (str != null && !str.isBlank()) ? Arrays.asList(str.split("\\s*,\\s*")) : List.of();
     }
 }
