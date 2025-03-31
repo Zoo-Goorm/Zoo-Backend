@@ -89,58 +89,36 @@ jobs:
 
       - name: SSH into Server and Deploy
         uses: appleboy/ssh-action@master
-        env:
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          AWS_S3_ACCESSKEY: ${{ secrets.AWS_S3_ACCESSKEY }}
-          AWS_S3_SECRETKEY: ${{ secrets.AWS_S3_SECRETKEY }}
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
-          KAKAO_CLIENT: ${{ secrets.KAKAO_CLIENT }}
-          KAKAO_SECRET: ${{ secrets.KAKAO_SECRET }}
-          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
-          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          FRONT_URL: ${{ secrets.FRONT_URL }}
-          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
-          KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
-          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
-          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
-          REDIS_CLUSTER_NODES: ${{ secrets.REDIS_CLUSTER_NODES }}
-          QR_SAVE_PATH: ${{ secrets.QR_SAVE_PATH }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         with:
           username: ubuntu
           host: ${{ secrets.LIVE_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "DATABASE_USERNAME=${DATABASE_USERNAME}" > .env
-            echo "DATABASE_PASSWORD=${DATABASE_PASSWORD}" >> .env
-            echo "DATABASE_URL=${DATABASE_URL}" >> .env
-            echo "AWS_S3_ACCESSKEY=${AWS_S3_ACCESSKEY}" >> .env
-            echo "AWS_S3_SECRETKEY=${AWS_S3_SECRETKEY}" >> .env
-            echo "AWS_S3_BUCKET=${AWS_S3_BUCKET}" >> .env
-            echo "AWS_REGION=${AWS_REGION}" >> .env
-            echo "KAKAO_API_KEY=${KAKAO_API_KEY}" >> .env
-            echo "KAKAO_CLIENT=${KAKAO_CLIENT}" >> .env
-            echo "KAKAO_SECRET=${KAKAO_SECRET}" >> .env
-            echo "GOOGLE_CLIENT=${GOOGLE_CLIENT}" >> .env
-            echo "GOOGLE_SECRET=${GOOGLE_SECRET}" >> .env
-            echo "JWT_SECRET=${JWT_SECRET}" >> .env
-            echo "FRONT_URL=${FRONT_URL}" >> .env
-            echo "GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}" >> .env
-            echo "KAKAO_REDIRECT_URI=${KAKAO_REDIRECT_URI}" >> .env
-            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env
-            echo "SPRING_PROFILES_ACTIVE=${{ env.TARGET_UPSTREAM }}" >> .env
-            echo "GMAIL_ADDRESS=${GMAIL_ADDRESS}" >> .env
-            echo "GMAIL_PASSWORD=${GMAIL_PASSWORD}" >> .env
-            echo "REDIS_CLUSTER_NODES=${REDIS_CLUSTER_NODES}" >> .env
-            echo "QR_SAVE_PATH=${QR_SAVE_PATH}" >> .env
-
-            sudo docker pull ${DOCKERHUB_USERNAME}/my-app:latest
-            sudo docker-compose -f docker-compose-${{ env.TARGET_UPSTREAM }}.yml up -d
+            echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" > .env
+            echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+            echo "AWS_S3_ACCESSKEY=${{ secrets.AWS_S3_ACCESSKEY }}" >> .env
+            echo "AWS_S3_SECRETKEY=${{ secrets.AWS_S3_SECRETKEY }}" >> .env
+            echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
+            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+            echo "KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }}" >> .env
+            echo "KAKAO_CLIENT=${{ secrets.KAKAO_CLIENT }}" >> .env
+            echo "KAKAO_SECRET=${{ secrets.KAKAO_SECRET }}" >> .env
+            echo "GOOGLE_CLIENT=${{ secrets.GOOGLE_CLIENT }}" >> .env
+            echo "GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }}" >> .env
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
+            echo "GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}" >> .env
+            echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env          
+            echo "DATABASE_DRIVER=com.mysql.cj.jdbc.Driver" >> .env   
+            echo "SPRING_PROFILES_ACTIVE=${{ env.TARGET_UPSTREAM }}" >> .env 
+            echo "GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }}" >> .env
+            echo "GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}" >> .env
+            echo "QR_SAVE_PATH=${{ secrets.QR_SAVE_PATH }}" >> .env
+            echo "REDIS_CLUSTER_NODES=${{ secrets.REDIS_CLUSTER_NODES }}" >> .env  
+            
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
