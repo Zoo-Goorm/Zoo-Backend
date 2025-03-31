@@ -72,7 +72,7 @@ jobs:
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env")
           if [ $STATUS = 200 ]; then
-               CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env" | jq -r '.activeProfiles[0]')
+               CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env" | jq -r '.activeProfiles[2]')
           else
           CURRENT_UPSTREAM=green
           fi
