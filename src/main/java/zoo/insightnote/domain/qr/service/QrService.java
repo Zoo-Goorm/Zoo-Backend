@@ -6,6 +6,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +40,8 @@ public class QrService {
     private final SessionService sessionService;
     private final EventService eventService;
 
-    // TODO: QR 이미지 파일이 저장되는 경로
-    // TODO: 어떻게 설정하면 좋을지 고민해봐야...
-    private final String QR_SAVE_PATH_NAME = "/Users/hyunoi/Desktop/";
+    @Value("${qr.save-path}")
+    private String QR_SAVE_PATH_NAME;
 
     private final String EVENT_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/event/";
     private final String SESSION_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/session/";
