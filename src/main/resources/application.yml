@@ -77,3 +77,6 @@ management:
 
 environment:
   - SPRING_PROFILES_ACTIVE=${PROFILES}
+
+qr:
+  save-path: ${QR_SAVE_PATH}
