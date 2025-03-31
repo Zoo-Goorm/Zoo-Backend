@@ -3,6 +3,8 @@ name: CI/CD
 on:
   pull_request:
     branches: [ "dev" ]
+  push:
+    branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -72,7 +74,7 @@ jobs:
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env")
           if [ $STATUS = 200 ]; then
-               CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env" | jq -r '.activeProfiles[0]')
+               CURRENT_UPSTREAM=$(curl -s "https://${{ secrets.LIVE_SERVER_IP }}/actuator/env" | jq -r '.activeProfiles[2]')
           else
           CURRENT_UPSTREAM=green
           fi
@@ -117,6 +119,8 @@ jobs:
             echo "GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }}" >> .env
             echo "GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }}" >> .env 
             echo "REDIS_CLUSTER_NODES=${{ secrets.REDIS_CLUSTER_NODES }}" >> .env 
+            echo "SPRING_PROFILES_ACTIVE=dev,${{ env.TARGET_UPSTREAM }}" >> .env
+            echo "QR_SAVE_PATH=${{ secrets.QR_SAVE_PATH }}" >> .env
             
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
             sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d

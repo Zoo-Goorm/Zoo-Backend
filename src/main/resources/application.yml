@@ -2,17 +2,18 @@ spring:
   application:
     name: InsightNote
 
-  profiles:
-    group:
-      blue: blue, oauth
-      green: green, oauth
-      default: oauth
-
   config:
     import: optional:file:.env[.properties]
 
+  profiles:
+    active: ${PROFILES}
+    group:
+      prod: oauth
+      dev: oauth
+      local: oauth
+
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: ${DATABASE_DRIVER}
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
@@ -28,6 +29,7 @@ spring:
       ddl-auto: update
       default_batch_fetch_size: 100
     defer-datasource-initialization: true
+
 
   cloud:
     aws:
@@ -53,11 +55,6 @@ spring:
           starttls:
             enable: true
 
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
   jwt:
     secret: ${JWT_SECRET}
 
@@ -73,7 +70,7 @@ management:
         include: "*"
   endpoint:
     health:
-      show-details: always
+      show-details: alway
 
-environment:
-  - SPRING_PROFILES_ACTIVE=${PROFILES}
+qr:
+  save-path: ${QR_SAVE_PATH}
