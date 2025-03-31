@@ -342,11 +342,11 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insightLike.id.countDistinct().as("likeCount"),
                         comment.id.countDistinct().as("commentCount"),
                         displayNameExpr,
+                        user.job,
                         user.name,
                         user.email,
                         user.interestCategory,
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl),
-                        user.job
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl)
                 ))
                 .from(insight)
                 .leftJoin(insight.user, user)

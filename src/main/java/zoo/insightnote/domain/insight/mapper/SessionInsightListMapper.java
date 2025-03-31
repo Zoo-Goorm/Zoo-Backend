@@ -30,12 +30,13 @@ public class SessionInsightListMapper {
     }
 
     public static SessionInsight toBuildSessionInsight(SessionInsightListQuery dto) {
-        UserProfileResponse profile = new UserProfileResponse(
-                dto.getUserName(),
+        UserProfileResponse newProfile = new UserProfileResponse(
+                dto.getName(),
                 dto.getEmail(),
                 splitToList(dto.getInterestCategory()),
                 splitToList(dto.getIntroductionLinks())
         );
+
         return new SessionInsight(
                 dto.getId(),
                 dto.getMemo(),
@@ -49,7 +50,7 @@ public class SessionInsightListMapper {
                 dto.getJob(),
                 dto.getIsLiked(),
                 dto.getHasSpeakerComment(),
-                profile
+                newProfile
         );
     }
 

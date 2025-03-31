@@ -5,6 +5,7 @@ import lombok.Setter;
 import zoo.insightnote.domain.insight.dto.response.UserProfileResponse;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class SessionInsightListQuery {
@@ -18,7 +19,7 @@ public class SessionInsightListQuery {
     private Long commentCount;
     private String displayName;
     private String job;
-    private String userName;
+    private String name;
     private String email;
     private String interestCategory;
     private String introductionLinks;
@@ -29,11 +30,12 @@ public class SessionInsightListQuery {
     @Setter
     private Boolean hasSpeakerComment;
 
+
     public SessionInsightListQuery(
             Long id, String memo, Boolean isPublic, Boolean isAnonymous,
             LocalDateTime createdAt, LocalDateTime updatedAt,
             Long likeCount, Long commentCount, String displayName, String job,
-            String userName, String email, String interestCategory, String introductionLinks
+            String name, String email, String interestCategory, String introductionLinks
     ) {
         this.id = id;
         this.memo = memo;
@@ -45,7 +47,7 @@ public class SessionInsightListQuery {
         this.commentCount = commentCount;
         this.displayName = displayName;
         this.job = job;
-        this.userName = userName;
+        this.name = name;
         this.email = email;
         this.interestCategory = interestCategory;
         this.introductionLinks = introductionLinks;
