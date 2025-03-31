@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
-@Getter
 public record CommentDefaultResponse (
      Long commentId,
      String content,
