@@ -33,7 +33,7 @@ public class CommentService {
     public CommentIdResponse createComment(Long insightId, String userName, CommentCreateRequest request) {
 
         Insight insight = insightRepository.findById(insightId)
-                .orElseThrow(() -> new CustomException(null, "인사이트 노트를 찾을 수 없음"));
+                .orElseThrow(() -> new CustomException(ErrorCode.INSIGHT_NOT_FOUND));
 
         User user = userService.findByUsername(userName);
 
@@ -43,18 +43,6 @@ public class CommentService {
 
         return new CommentIdResponse(comment.getId());
     }
-
-//    public List<CommentResponse> findCommentsByInsightId(Long insightId) {
-//
-//        List<Comment> comments = commentRepository.findAllByInsightId(insightId);
-//
-//        List<CommentResponse> responses = new ArrayList<>();
-//        for (Comment comment : comments) {
-//            responses.add(CommentMapper.toResponse(comment));
-//        }
-//
-//        return responses;
-//    }
 
     @Transactional
     public CommentIdResponse updateComment(Long insightId, String userName, Long commentId, CommentUpdateRequest request) {
@@ -81,9 +69,6 @@ public class CommentService {
     }
 
     public List<CommentListResponse> getCommentsByInsight(Long insightId) {
-
-        // 예외처리 로직 필요함
-
         List<Comment> comments = commentRepository.findByInsightIdWithUser(insightId);
 
         return comments.stream()
