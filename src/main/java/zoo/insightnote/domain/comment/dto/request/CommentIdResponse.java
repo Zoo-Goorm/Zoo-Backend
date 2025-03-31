@@ -1,10 +1,10 @@
-package zoo.insightnote.domain.comment.dto.res;
+package zoo.insightnote.domain.comment.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CommentIdResDto {
+public class CommentIdResponse {
     private Long id;
 }

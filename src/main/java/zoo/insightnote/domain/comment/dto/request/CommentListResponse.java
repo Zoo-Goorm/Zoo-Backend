@@ -1,4 +1,4 @@
-package zoo.insightnote.domain.comment.dto.res;
+package zoo.insightnote.domain.comment.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @AllArgsConstructor
-public class CommentListResDto {
+public class CommentListResponse {
     private Long id;
     private String name;
     private String createdAt;
@@ -19,7 +19,7 @@ public class CommentListResDto {
     private String content;
     private boolean isSpeaker;
 
-    public CommentListResDto(Comment comment) {
+    public CommentListResponse(Comment comment) {
         this.id = comment.getId();
         this.name = comment.getUser().getName();  // User 엔티티에 name 필드가 있다고 가정
         this.createdAt = formatDate(comment.getCreateAt());
