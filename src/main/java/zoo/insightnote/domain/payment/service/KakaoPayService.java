@@ -47,6 +47,10 @@ public class KakaoPayService {
                     KakaoPayReadyResponse.class
             );
 
+            if (response.getBody() == null || response.getBody().tid() == null) {
+                throw new CustomException(ErrorCode.KAKAO_PAY_REQUEST_FAILED);
+            }
+
             String tid = response.getBody().tid();
             log.info("✅ 카카오페이 결제 요청 성공");
 
