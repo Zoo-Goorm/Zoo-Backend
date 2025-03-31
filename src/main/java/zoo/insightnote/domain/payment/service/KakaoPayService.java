@@ -118,10 +118,6 @@ public class KakaoPayService {
     }
 
     private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentReadyRequest requestDto, User user, Long orderId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("partner_order_id", orderId);
@@ -139,10 +135,6 @@ public class KakaoPayService {
     }
 
     private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequest requestDto, User user, String tid) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);
@@ -154,10 +146,6 @@ public class KakaoPayService {
     }
 
     private HttpEntity<String> createPaymentCancelHttpEntity(PaymentCancelRequest requestDto, String tid) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);
