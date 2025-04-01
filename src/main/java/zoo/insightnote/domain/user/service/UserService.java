@@ -91,13 +91,13 @@ public class UserService {
     public UserInfoResponse updateUserInfo(UserInfoRequest userInfoRequest, String username) {
         User user = findByUsername(username);
         user.update(
-                userInfoRequest.getName(),
-                userInfoRequest.getNickname(),
-                userInfoRequest.getPhoneNumber(),
-                userInfoRequest.getOccupation(),
-                userInfoRequest.getJob(),
-                userInfoRequest.getInterestCategory(),
-                userInfoRequest.getSnsUrl()
+                userInfoRequest.name(),
+                userInfoRequest.nickname(),
+                userInfoRequest.phoneNumber(),
+                userInfoRequest.occupation(),
+                userInfoRequest.job(),
+                userInfoRequest.interestCategory(),
+                userInfoRequest.snsUrl()
         );
         return userMapper.toResponse(user);
     }
