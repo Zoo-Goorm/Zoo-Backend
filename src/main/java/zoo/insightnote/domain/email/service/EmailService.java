@@ -20,6 +20,8 @@ import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -60,10 +62,10 @@ public class EmailService {
 
         UserTicketInfoResponse ticketInfo = reservationCustomQueryRepository.processUserTicketInfo(user.getUsername());
         Event event = eventService.findById(ticketInfo.eventId());
-        Payment reservedEvent = paymentRepository.findReservedEvent(user.getUsername(), event.getId())
+        List<Payment> reservedEvent = paymentRepository.findReservedEvent(user.getUsername(), event.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        PaymentSuccessMailRequest dto = PaymentSuccessMailMapper.toSuccessMailDto(user, reservedEvent, ticketInfo);
+        PaymentSuccessMailRequest dto = PaymentSuccessMailMapper.toSuccessMailDto(user, reservedEvent.get(0), ticketInfo);
 
         String htmlMsg = "<html>" +
                 "<body style=\"font-family: 'Apple SD Gothic Neo', sans-serif; line-height: 1.6;\">" +
