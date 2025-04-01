@@ -71,7 +71,9 @@ public class ReservationCustomQueryRepository {
         Event event = reservationSessions.stream()
                 .findFirst()
                 .map(tuple -> tuple.get(session.event))
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+
 
         // 날짜별 세션 정보 저장
         Map<String, List<ReservationSessions>> registeredSessions = new LinkedHashMap<>();
@@ -107,7 +109,7 @@ public class ReservationCustomQueryRepository {
 
         // DTO로 반환
         return UserTicketInfoMapper.toBuildUserTicketInfoResponse(
-                event.getId(),
+                1L,
                 tickets,
                 registeredSessions
         );
