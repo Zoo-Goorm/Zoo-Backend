@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.user.dto.request.UserJoinRequest;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
-import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponse;
 
 @Tag(name = "USER", description = "유저 관련 API")
 public interface UserController {
@@ -44,5 +44,5 @@ public interface UserController {
     ResponseEntity<Map<String, String>> getToken(HttpServletRequest request);
 
     @Operation(summary = "결제 시 유저 정보 반환", description = "결제 시 참가자 신청 정보에 보여지는 유저 정보를 반환합니다.")
-    ResponseEntity<PaymentUserInfoResponseDto> getPaymentUserInfo(@AuthenticationPrincipal UserDetails userDetails);
+    ResponseEntity<PaymentUserInfoResponse> getPaymentUserInfo(@AuthenticationPrincipal UserDetails userDetails);
 }

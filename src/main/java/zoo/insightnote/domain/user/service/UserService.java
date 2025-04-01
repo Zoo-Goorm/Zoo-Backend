@@ -7,7 +7,7 @@ import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
-import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponse;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
@@ -56,10 +56,10 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public PaymentUserInfoResponseDto getPaymentUserInfo(String username) {
+    public PaymentUserInfoResponse getPaymentUserInfo(String username) {
         User user = findByUsername(username);
 
-        PaymentUserInfoResponseDto response = PaymentUserInfoResponseDto.builder()
+        PaymentUserInfoResponse response = PaymentUserInfoResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
