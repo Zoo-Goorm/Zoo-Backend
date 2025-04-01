@@ -1,4 +1,4 @@
-package zoo.insightnote.domain.comment.dto.request;
+package zoo.insightnote.domain.comment.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
