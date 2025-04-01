@@ -94,7 +94,6 @@ public class ReservationService {
             );
 
             reservationRepository.save(savedReservation);
-            reservationRepository.flush();
         }
     }
 

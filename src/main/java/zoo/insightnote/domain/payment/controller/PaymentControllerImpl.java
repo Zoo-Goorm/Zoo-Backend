@@ -45,7 +45,7 @@ public class PaymentControllerImpl implements PaymentController {
         PaymentApproveRequest requestDto = PaymentApproveMapper.toBuildPaymentApprove(orderId, userId, pgToken, userDetails.getUsername());
         ResponseEntity<KakaoPayApproveResponse> response = paymentService.approvePayment(requestDto);
         User user = userService.findByUsername(userDetails.getUsername());
-//        emailService.sendPaymentSuccess(user);
+        emailService.sendPaymentSuccess(user);
         return response;
     }
 }

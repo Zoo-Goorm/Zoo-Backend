@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.email.dto.request.PaymentSuccessMailRequest;
 import zoo.insightnote.domain.email.mapper.PaymentSuccessMailMapper;
 import zoo.insightnote.domain.event.entity.Event;
@@ -50,6 +52,7 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendPaymentSuccess(User user) throws MessagingException {
         // 세션 내역(세션 이름, 시간대, 연사 이름), 결제 내역(선택 날짜, 금액), 참가자 정보(전화번호, 이름, 이메일)
         MimeMessage mimeMessage = mailSender.createMimeMessage();
