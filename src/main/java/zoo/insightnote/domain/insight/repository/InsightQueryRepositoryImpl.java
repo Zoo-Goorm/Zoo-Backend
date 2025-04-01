@@ -19,6 +19,7 @@ import zoo.insightnote.domain.comment.repository.CommentRepository;
 import zoo.insightnote.domain.insight.dto.response.InsightVoteOption;
 import zoo.insightnote.domain.insight.dto.response.query.*;
 import zoo.insightnote.domain.insight.entity.QInsight;
+import zoo.insightnote.domain.insight.entity.QLatestInsightImage;
 import zoo.insightnote.domain.keyword.entity.QKeyword;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.sessionKeyword.entity.QSessionKeyword;
@@ -124,6 +125,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QInsightLike insightLike = QInsightLike.insightLike;
         QUser user = QUser.user;
         QComment comment = QComment.comment;
+        QLatestInsightImage latestImage = QLatestInsightImage.latestInsightImage;
 
         OrderSpecifier<?> orderSpecifier = sort.equals("likes")
                 ? insightLike.id.count().desc()
@@ -158,10 +160,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         session.id,
                         session.name,
                         insightLike.id.countDistinct().as("likeCount"),
-                        Expressions.stringTemplate(
-                                "(SELECT i.fileUrl FROM Image i WHERE i.entityId = {0} AND i.entityType = 'INSIGHT' ORDER BY i.createAt DESC, i.id DESC LIMIT 1)",
-                                insight.id
-                        ),
+                        Expressions.stringTemplate("MAX({0})", latestImage.fileUrl),
                         user.interestCategory,
                         comment.id.countDistinct().as("commentCount"),
                         displayNameExpr,
@@ -173,6 +172,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .leftJoin(insight.user, user)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
+                .leftJoin(latestImage).on(latestImage.entityId.eq(insight.id))
                 .where(where)
                 .groupBy(insight.id, session.id, session.name, session.eventDay, user.interestCategory, user.nickname, user.name,user.job, insight.isAnonymous)
                 .orderBy(orderSpecifier)
