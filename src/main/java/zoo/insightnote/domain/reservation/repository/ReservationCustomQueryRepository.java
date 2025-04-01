@@ -14,6 +14,8 @@ import zoo.insightnote.domain.reservation.entity.QReservation;
 import zoo.insightnote.domain.reservation.mapper.UserTicketInfoMapper;
 import zoo.insightnote.domain.session.entity.QSession;
 import zoo.insightnote.domain.speaker.entity.QSpeaker;
+import zoo.insightnote.global.exception.CustomException;
+import zoo.insightnote.global.exception.ErrorCode;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -66,8 +68,12 @@ public class ReservationCustomQueryRepository {
         List<Tuple> reservationSessions = findUserReservationInfo(username);
         List<Tuple> eventSessions = findEventInfo();
 
-        // 이벤트 아이디 조회
-        Event event = reservationSessions.get(0).get(session.event);
+        Event event = reservationSessions.stream()
+                .findFirst()
+                .map(tuple -> tuple.get(session.event))
+                .orElseThrow(() -> new CustomException(ErrorCode.RESERVATION_NOT_FOUND));
+
+
 
         // 날짜별 세션 정보 저장
         Map<String, List<ReservationSessions>> registeredSessions = new LinkedHashMap<>();
@@ -103,7 +109,7 @@ public class ReservationCustomQueryRepository {
 
         // DTO로 반환
         return UserTicketInfoMapper.toBuildUserTicketInfoResponse(
-                event.getId(),
+                1L,
                 tickets,
                 registeredSessions
         );

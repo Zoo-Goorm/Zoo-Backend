@@ -36,7 +36,7 @@ public class KakaoPayService {
     private String adminKey;
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponse> requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
+    public KakaoPayReadyResponse requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, user, orderId);
 
         try {
@@ -47,6 +47,10 @@ public class KakaoPayService {
                     KakaoPayReadyResponse.class
             );
 
+            if (response.getBody() == null || response.getBody().tid() == null) {
+                throw new CustomException(ErrorCode.KAKAO_PAY_REQUEST_FAILED);
+            }
+
             String tid = response.getBody().tid();
             log.info("✅ 카카오페이 결제 요청 성공");
 
@@ -54,7 +58,7 @@ public class KakaoPayService {
             paymentRedisService.saveSessionIds(orderId, requestDto.sessionIds());
             paymentRedisService.saveUserInfo(orderId, requestDto.userInfo());
 
-            return response;
+            return response.getBody();
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 요청 실패", e);
             throw new CustomException(ErrorCode.KAKAO_PAY_REQUEST_FAILED);
@@ -118,10 +122,6 @@ public class KakaoPayService {
     }
 
     private HttpEntity<String> createPaymentReqeustHttpEntity(PaymentReadyRequest requestDto, User user, Long orderId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("partner_order_id", orderId);
@@ -131,18 +131,14 @@ public class KakaoPayService {
         params.put("total_amount", requestDto.totalAmount());
         params.put("tax_free_amount", 0);
 
-        params.put("approval_url", "http://localhost:8080/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + user.getId());
-        params.put("cancel_url", "http://localhost:8080/api/v1/payment/cancel");
-        params.put("fail_url", "http://localhost:8080/api/v1/payment/fail");
+        params.put("approval_url", "https://api.synapsex.online/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + user.getId());
+        params.put("cancel_url", "https://api.synapsex.online/api/v1/payment/cancel");
+        params.put("fail_url", "https://api.synapsex.online/api/v1/payment/fail");
 
         return createKakaoHttpEntity(params);
     }
 
     private HttpEntity<String> createPaymentApproveHttpEntity(PaymentApproveRequest requestDto, User user, String tid) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);
@@ -154,10 +150,6 @@ public class KakaoPayService {
     }
 
     private HttpEntity<String> createPaymentCancelHttpEntity(PaymentCancelRequest requestDto, String tid) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY " + adminKey);
-        headers.set("Content-Type", "application/json");
-
         Map<String, Object> params = new HashMap<>();
         params.put("cid", cid);
         params.put("tid", tid);

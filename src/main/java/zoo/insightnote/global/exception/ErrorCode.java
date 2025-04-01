@@ -45,6 +45,7 @@ public enum ErrorCode {
     // 세션 예약
     ALREADY_RESERVED_SESSION(HttpStatus.BAD_REQUEST, "이미 예약된 세션입니다."),
     DUPLICATE_SESSION_TIME(HttpStatus.BAD_REQUEST, "세션 시간이 중복되어 신청할 수 없습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "예약된 세션이 없습니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User 사용자를 찾을 수 없습니다."),

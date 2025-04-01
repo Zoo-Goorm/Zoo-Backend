@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.email.dto.request.PaymentSuccessMailRequest;
 import zoo.insightnote.domain.email.mapper.PaymentSuccessMailMapper;
 import zoo.insightnote.domain.event.entity.Event;
@@ -17,6 +19,8 @@ import zoo.insightnote.domain.reservation.repository.ReservationCustomQueryRepos
 import zoo.insightnote.domain.user.entity.User;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +54,7 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendPaymentSuccess(User user) throws MessagingException {
         // 세션 내역(세션 이름, 시간대, 연사 이름), 결제 내역(선택 날짜, 금액), 참가자 정보(전화번호, 이름, 이메일)
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -57,10 +62,10 @@ public class EmailService {
 
         UserTicketInfoResponse ticketInfo = reservationCustomQueryRepository.processUserTicketInfo(user.getUsername());
         Event event = eventService.findById(ticketInfo.eventId());
-        Payment reservedEvent = paymentRepository.findReservedEvent(user.getUsername(), event.getId())
+        List<Payment> reservedEvent = paymentRepository.findReservedEvent(user.getUsername(), event.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        PaymentSuccessMailRequest dto = PaymentSuccessMailMapper.toSuccessMailDto(user, reservedEvent, ticketInfo);
+        PaymentSuccessMailRequest dto = PaymentSuccessMailMapper.toSuccessMailDto(user, reservedEvent.get(0), ticketInfo);
 
         String htmlMsg = "<html>" +
                 "<body style=\"font-family: 'Apple SD Gothic Neo', sans-serif; line-height: 1.6;\">" +

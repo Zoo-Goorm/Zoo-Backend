@@ -109,11 +109,13 @@ public class QrService {
 
     @Transactional
     public ResponseEntity<QrCheckDto> checkEventQr(Long eventId, String username) {
-        Payment reservedEvent = paymentRepository.findReservedEvent(username, eventId)
+        List<Payment> reservedEvent = paymentRepository.findReservedEvent(username, eventId)
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        reservedEvent.update();
-        paymentRepository.save(reservedEvent);
+        for (Payment payment : reservedEvent) {
+            payment.update();
+            paymentRepository.save(payment);
+        }
 
         User user = userService.findByUsername(username);
         Event event = eventService.findById(eventId);
