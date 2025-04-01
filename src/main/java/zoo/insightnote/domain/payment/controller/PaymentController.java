@@ -41,7 +41,7 @@ public interface PaymentController {
             }
     )
     @GetMapping("/approve")
-    ResponseEntity<KakaoPayApproveResponse> approvePayment(@RequestParam Long orderId,
+    String approvePayment(@RequestParam Long orderId,
                                                             @RequestParam Long userId,
                                                             @RequestParam String pgToken,
                                                             @AuthenticationPrincipal UserDetails userDetails)
