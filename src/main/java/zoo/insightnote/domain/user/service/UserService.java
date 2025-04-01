@@ -11,7 +11,6 @@ import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.mapper.UserMapper;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -22,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
-    private final UserMapper userMapper;
 
     public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
@@ -84,7 +82,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserInfoResponse getUserInfo(String username) {
         User user = findByUsername(username);
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 
     @Transactional
@@ -99,13 +97,13 @@ public class UserService {
                 userInfoRequest.interestCategory(),
                 userInfoRequest.snsUrl()
         );
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 
     @Transactional
     public UserInfoResponse anonymizeUserInfo(String username) {
         User user = findByUsername(username);
         user.anonymizeUserData();
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 }

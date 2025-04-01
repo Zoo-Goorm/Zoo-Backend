@@ -1,18 +1,31 @@
 package zoo.insightnote.domain.user.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
+import zoo.insightnote.domain.user.entity.User;
 
-@Getter
 @Builder
-public class UserInfoResponse {
-    private String name;
-    private String nickname;
-    private String email;
-    private String phoneNumber;
-    private String occupation;
-    private String job;
-    private String interestCategory;
-    private String snsUrl;
-    private String username;
+public record UserInfoResponse(
+        String name,
+        String nickname,
+        String email,
+        String phoneNumber,
+        String occupation,
+        String job,
+        String interestCategory,
+        String snsUrl,
+        String username
+) {
+    public static UserInfoResponse from(User user) {
+        return UserInfoResponse.builder()
+                .name(user.getName())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .occupation(user.getOccupation())
+                .job(user.getJob())
+                .interestCategory(user.getInterestCategory())
+                .username(user.getUsername())
+                .snsUrl(user.getSnsUrl())
+                .build();
+    }
 }
