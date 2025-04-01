@@ -2,6 +2,7 @@ package zoo.insightnote.domain.insight.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import zoo.insightnote.domain.user.service.UserService;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -79,7 +81,10 @@ public class InsightControllerImpl implements InsightController{
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         User user = userService.findByUsername(userDetails.getUsername());
+        long start = System.currentTimeMillis();
         List<InsightTopListResponse> response = insightService.getTopPopularInsights(user);
+        long end = System.currentTimeMillis();
+        log.info("Top3 조회 소요 시간: {}ms", end - start);
         return ResponseEntity.ok(response);
     }
 

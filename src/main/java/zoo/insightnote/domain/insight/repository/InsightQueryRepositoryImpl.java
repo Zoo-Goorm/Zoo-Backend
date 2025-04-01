@@ -51,6 +51,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
         QInsightLike insightLike = QInsightLike.insightLike;
         QComment comment = QComment.comment;
         QUser user = QUser.user;
+        QLatestInsightImage latestImage = QLatestInsightImage.latestInsightImage;
 
         StringExpression displayNameExpr = new CaseBuilder()
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
@@ -66,12 +67,7 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         insight.createAt,
                         insight.updatedAt,
                         insightLike.id.count(),
-                        Expressions.stringTemplate(
-                                "(SELECT i.fileUrl FROM Image i " +
-                                        "WHERE i.entityId = {0} AND i.entityType = 'INSIGHT' " +
-                                        "ORDER BY i.createAt DESC LIMIT 1)",
-                                insight.id
-                        ).as("imageUrl"),
+                        latestImage.fileUrl,
                         comment.id.countDistinct().as("commentCount"),
                         displayNameExpr,
                         user.job,
@@ -81,11 +77,12 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                 .leftJoin(insight.user, user)
                 .leftJoin(insightLike).on(insightLike.insight.eq(insight))
                 .leftJoin(comment).on(comment.insight.eq(insight))
+                .leftJoin(latestImage).on(latestImage.entityId.eq(insight.id))
                 .where(
                         insight.isPublic.isTrue()
                                 .and(insight.isDraft.isFalse())
                 )
-                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous, user.interestCategory)
+                .groupBy(insight.id, user.nickname, user.name, user.job, insight.isAnonymous, user.interestCategory,latestImage.fileUrl )
                 .orderBy(insightLike.id.count().desc(), insight.createAt.desc())
                 .limit(3)
                 .fetch();

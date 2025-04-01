@@ -29,7 +29,9 @@ spring:
       ddl-auto: update
       default_batch_fetch_size: 100
     defer-datasource-initialization: true
-
+  logging:
+    level:
+      root: info
 
   cloud:
     aws:
