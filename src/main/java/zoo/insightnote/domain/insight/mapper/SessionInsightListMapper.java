@@ -50,7 +50,8 @@ public class SessionInsightListMapper {
                 dto.getJob(),
                 dto.getIsLiked(),
                 dto.getHasSpeakerComment(),
-                newProfile
+                newProfile,
+                dto.getIsMine()
         );
     }
 

@@ -30,12 +30,16 @@ public class SessionInsightListQuery {
     @Setter
     private Boolean hasSpeakerComment;
 
+    @Setter
+    private Boolean isMine;
+
 
     public SessionInsightListQuery(
             Long id, String memo, Boolean isPublic, Boolean isAnonymous,
             LocalDateTime createdAt, LocalDateTime updatedAt,
             Long likeCount, Long commentCount, String displayName, String job,
-            String name, String email, String interestCategory, String introductionLinks
+            String name, String email, String interestCategory, String introductionLinks,
+            Boolean isMine
     ) {
         this.id = id;
         this.memo = memo;
@@ -51,5 +55,6 @@ public class SessionInsightListQuery {
         this.email = email;
         this.interestCategory = interestCategory;
         this.introductionLinks = introductionLinks;
+        this.isMine = isMine;
     }
 }

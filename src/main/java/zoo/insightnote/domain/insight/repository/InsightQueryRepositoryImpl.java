@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -326,6 +327,10 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                                 )
                 );
 
+        BooleanExpression isMineExpr = currentUserId != null
+                ? insight.user.id.eq(currentUserId)
+                : Expressions.asBoolean(false);
+
         StringExpression displayNameExpr = new CaseBuilder()
                 .when(insight.isAnonymous.isTrue()).then(user.nickname)
                 .otherwise(user.name);
@@ -346,7 +351,8 @@ public class InsightQueryRepositoryImpl implements InsightQueryRepository {
                         user.name,
                         user.email,
                         user.interestCategory,
-                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl)
+                        Expressions.stringTemplate("GROUP_CONCAT(DISTINCT {0})", introductionLink.linkUrl),
+                        isMineExpr
                 ))
                 .from(insight)
                 .leftJoin(insight.user, user)
