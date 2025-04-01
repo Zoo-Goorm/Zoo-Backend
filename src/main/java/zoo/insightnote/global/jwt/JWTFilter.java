@@ -25,15 +25,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-//        String requestURI = request.getRequestURI();
-//        if (isIgnoredUri(requestURI)) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
         String token = getTokenFromRequest(request);
-        //checkAuthorization(request, response, filterChain, token);
-        //checkToken(request, response, filterChain, token);
 
         if(token != null) {
             if(jwtUtil.isExpired(token)) {
@@ -50,21 +42,6 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-//    private boolean isIgnoredUri(String uri) {
-//        return uri.startsWith("/swagger-ui")
-//                || uri.startsWith("/v3/api-docs")
-//                || uri.startsWith("/actuator")
-//                || uri.startsWith("/favicon.ico")
-//                || uri.startsWith("/login")
-//                || uri.equals("/api/v1/sessions")
-//                || uri.equals("/api/v1/sessions/{sessionId}")
-//                || uri.equals("/api/v1/sessions/detailed")
-//                || uri.startsWith("/api/v1/speakers")
-//                || uri.startsWith("/api/v1/keywords")
-//                || uri.startsWith("/api/v1/user/join")
-//                || uri.startsWith("/api/v1/user/login");
-//    }
-
     private String getTokenFromRequest(HttpServletRequest request) {
         String headerToken = request.getHeader("Authorization");
         if (headerToken != null && headerToken.startsWith("Bearer ")) {
@@ -80,23 +57,6 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
             }
         }
-
         return null;
     }
-
-//    private void checkToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
-//                            String token) throws IOException, ServletException {
-//        if (jwtUtil.isExpired(token)) {
-//            throw new AuthenticationException("token expired") {
-//            };
-//        }
-//    }
-//
-//    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
-//                                    String authorization) throws IOException, ServletException {
-//        if (authorization == null) {
-//            throw new AuthenticationException("token null") {
-//            };
-//        }
-//    }
 }

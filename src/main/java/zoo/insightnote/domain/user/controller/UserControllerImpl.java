@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import zoo.insightnote.domain.email.dto.request.EmailAuthRequest;
 import zoo.insightnote.domain.email.service.EmailVerificationService;
-import zoo.insightnote.domain.user.dto.request.JoinRequest;
+import zoo.insightnote.domain.user.dto.request.UserJoinRequest;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
 import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
@@ -44,7 +44,7 @@ public class UserControllerImpl implements UserController {
 //    }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody JoinRequest joinRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserJoinRequest userJoinRequest) {
         return ResponseEntity.ok().build();
     }
 
