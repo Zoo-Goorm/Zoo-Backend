@@ -43,18 +43,19 @@ public class QrService {
     @Value("${qr.save-path}")
     private String QR_SAVE_PATH_NAME;
 
-    private final String EVENT_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/event/";
-    private final String SESSION_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/session/";
+    private final String QR_REDIRECTION_URL = "https://www.synapsex.online/login";
+//    private final String EVENT_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/event/";
+//    private final String SESSION_QR_REDIRECTION_URL = "https://www.synapsex.online/api/v1/QR/session/";
 
     public void createQr(String qrType, Long Id) {
         String qrInfo;
         String fileName;
 
         if (qrType.equals("event")) {
-            qrInfo = EVENT_QR_REDIRECTION_URL + Id.toString();
+//            qrInfo = QR_REDIRECTION_URL + Id.toString();
             fileName = "event_" + Id.toString() + ".png";
         } else if (qrType.equals("session")) {
-            qrInfo = SESSION_QR_REDIRECTION_URL + Id.toString();
+//            qrInfo = QR_REDIRECTION_URL + Id.toString();
             fileName = "session_" + Id.toString() + ".png";
         } else {
             throw new CustomException(ErrorCode.QR_GENERATION_FAILED);
@@ -65,7 +66,7 @@ public class QrService {
 
         try {
             // QR 정보 삽입
-            BitMatrix bitMatrix = new QRCodeWriter().encode(qrInfo, BarcodeFormat.QR_CODE, width, height);
+            BitMatrix bitMatrix = new QRCodeWriter().encode(QR_REDIRECTION_URL, BarcodeFormat.QR_CODE, width, height);
 
             // QR 생성
             BufferedImage qrImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
