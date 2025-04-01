@@ -15,5 +15,6 @@ public record SessionInsight(
         String job,
         Boolean isLiked,
         Boolean hasSpeakerComment,
-        UserProfileResponse profile
+        UserProfileResponse profile,
+        Boolean isMine
 ) {}
