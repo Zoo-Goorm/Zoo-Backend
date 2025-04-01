@@ -36,7 +36,7 @@ public class KakaoPayService {
     private String adminKey;
 
     // 결제 요청
-    public ResponseEntity<KakaoPayReadyResponse> requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
+    public KakaoPayReadyResponse requestKakaoPayment(PaymentReadyRequest requestDto, User user, Long orderId) {
         HttpEntity<String> paymentReqeustHttpEntity = createPaymentReqeustHttpEntity(requestDto, user, orderId);
 
         try {
@@ -58,7 +58,7 @@ public class KakaoPayService {
             paymentRedisService.saveSessionIds(orderId, requestDto.sessionIds());
             paymentRedisService.saveUserInfo(orderId, requestDto.userInfo());
 
-            return response;
+            return response.getBody();
         } catch (Exception e) {
             log.error("❌ 카카오페이 결제 요청 실패", e);
             throw new CustomException(ErrorCode.KAKAO_PAY_REQUEST_FAILED);

@@ -42,7 +42,7 @@ public class PaymentService {
         sessionService.validationParticipantCountOver(request.sessionIds());
         sessionService.validateSessionTime(request.sessionIds());
         reservationService.validateReservedSession(user, request.sessionIds());
-        return kakaoPayService.requestKakaoPayment(request, user, orderId);
+        return ResponseEntity.ok(kakaoPayService.requestKakaoPayment(request, user, orderId));
     }
 
     @Transactional
