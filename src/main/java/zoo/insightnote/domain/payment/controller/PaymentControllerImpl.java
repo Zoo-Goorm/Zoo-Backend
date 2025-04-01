@@ -31,7 +31,12 @@ public class PaymentControllerImpl implements PaymentController {
             @RequestBody @Valid PaymentReadyRequest requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findByUsername(userDetails.getUsername());
-        return paymentService.requestPayment(requestDto, user);
+        ResponseEntity<KakaoPayReadyResponse> response = paymentService.requestPayment(requestDto, user);;
+
+        if (response == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return response;
     }
 
     // 카카오페이 API에서 결제 요청 승인
