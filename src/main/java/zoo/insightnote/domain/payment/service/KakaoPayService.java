@@ -131,9 +131,9 @@ public class KakaoPayService {
         params.put("total_amount", requestDto.totalAmount());
         params.put("tax_free_amount", 0);
 
-        params.put("approval_url", "https://www.synapsex.online/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + user.getId());
-        params.put("cancel_url", "https://www.synapsex.online/api/v1/payment/cancel");
-        params.put("fail_url", "https://www.synapsex.online/api/v1/payment/fail");
+        params.put("approval_url", "https://api.synapsex.online/api/v1/payment/approve?order_id=" + orderId + "&user_id=" + user.getId());
+        params.put("cancel_url", "https://api.synapsex.online/api/v1/payment/cancel");
+        params.put("fail_url", "https://api.synapsex.online/api/v1/payment/fail");
 
         return createKakaoHttpEntity(params);
     }
