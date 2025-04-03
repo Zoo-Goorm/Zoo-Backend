@@ -7,11 +7,10 @@ import zoo.insightnote.domain.email.service.EmailVerificationService;
 import org.springframework.transaction.annotation.Transactional;
 import zoo.insightnote.domain.payment.dto.request.UserInfo;
 import zoo.insightnote.domain.user.dto.request.UserInfoRequest;
-import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponseDto;
+import zoo.insightnote.domain.user.dto.response.PaymentUserInfoResponse;
 import zoo.insightnote.domain.user.dto.response.UserInfoResponse;
 import zoo.insightnote.domain.user.entity.Role;
 import zoo.insightnote.domain.user.entity.User;
-import zoo.insightnote.domain.user.mapper.UserMapper;
 import zoo.insightnote.domain.user.repository.UserRepository;
 import zoo.insightnote.global.exception.CustomException;
 import zoo.insightnote.global.exception.ErrorCode;
@@ -22,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailVerificationService emailVerificationService;
-    private final UserMapper userMapper;
 
     public void autoRegisterAndLogin(String name, String email, String code) {
         verifyCode(email, code);
@@ -58,10 +56,10 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public PaymentUserInfoResponseDto getPaymentUserInfo(String username) {
+    public PaymentUserInfoResponse getPaymentUserInfo(String username) {
         User user = findByUsername(username);
 
-        PaymentUserInfoResponseDto response = PaymentUserInfoResponseDto.builder()
+        PaymentUserInfoResponse response = PaymentUserInfoResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
@@ -84,28 +82,28 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserInfoResponse getUserInfo(String username) {
         User user = findByUsername(username);
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 
     @Transactional
     public UserInfoResponse updateUserInfo(UserInfoRequest userInfoRequest, String username) {
         User user = findByUsername(username);
         user.update(
-                userInfoRequest.getName(),
-                userInfoRequest.getNickname(),
-                userInfoRequest.getPhoneNumber(),
-                userInfoRequest.getOccupation(),
-                userInfoRequest.getJob(),
-                userInfoRequest.getInterestCategory(),
-                userInfoRequest.getSnsUrl()
+                userInfoRequest.name(),
+                userInfoRequest.nickname(),
+                userInfoRequest.phoneNumber(),
+                userInfoRequest.occupation(),
+                userInfoRequest.job(),
+                userInfoRequest.interestCategory(),
+                userInfoRequest.snsUrl()
         );
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 
     @Transactional
     public UserInfoResponse anonymizeUserInfo(String username) {
         User user = findByUsername(username);
         user.anonymizeUserData();
-        return userMapper.toResponse(user);
+        return UserInfoResponse.from(user);
     }
 }

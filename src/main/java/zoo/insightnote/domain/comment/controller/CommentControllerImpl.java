@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import zoo.insightnote.domain.comment.dto.request.CommentListResponse;
+import zoo.insightnote.domain.comment.dto.response.CommentListResponse;
 
-import zoo.insightnote.domain.comment.dto.response.CommentCreateRequest;
-import zoo.insightnote.domain.comment.dto.response.CommentUpdateRequest;
-import zoo.insightnote.domain.comment.dto.request.CommentIdResponse;
+import zoo.insightnote.domain.comment.dto.request.CommentCreateRequest;
+import zoo.insightnote.domain.comment.dto.request.CommentUpdateRequest;
+import zoo.insightnote.domain.comment.dto.response.CommentIdResponse;
 
 import zoo.insightnote.domain.comment.service.CommentService;
 

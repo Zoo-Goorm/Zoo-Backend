@@ -1,7 +1,7 @@
 package zoo.insightnote.domain.comment.mapper;
 
-import zoo.insightnote.domain.comment.dto.response.CommentCreateRequest;
-import zoo.insightnote.domain.comment.dto.request.CommentDefaultResponse;
+import zoo.insightnote.domain.comment.dto.request.CommentCreateRequest;
+import zoo.insightnote.domain.comment.dto.response.CommentDefaultResponse;
 
 import zoo.insightnote.domain.comment.entity.Comment;
 import zoo.insightnote.domain.insight.entity.Insight;

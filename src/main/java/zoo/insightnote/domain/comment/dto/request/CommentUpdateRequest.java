@@ -1,4 +1,4 @@
-package zoo.insightnote.domain.comment.dto.response;
+package zoo.insightnote.domain.comment.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

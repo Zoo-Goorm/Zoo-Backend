@@ -9,10 +9,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import zoo.insightnote.domain.comment.dto.response.CommentCreateRequest;
-import zoo.insightnote.domain.comment.dto.response.CommentUpdateRequest;
-import zoo.insightnote.domain.comment.dto.request.CommentIdResponse;
-import zoo.insightnote.domain.comment.dto.request.CommentListResponse;
+import zoo.insightnote.domain.comment.dto.request.CommentCreateRequest;
+import zoo.insightnote.domain.comment.dto.request.CommentUpdateRequest;
+import zoo.insightnote.domain.comment.dto.response.CommentIdResponse;
+import zoo.insightnote.domain.comment.dto.response.CommentListResponse;
 
 
 @Tag(name = "Comment API", description = "댓글 관련 API")
